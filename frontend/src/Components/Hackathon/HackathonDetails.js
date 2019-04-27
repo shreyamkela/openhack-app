@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import '../../App.css'
 import {Link} from 'react-router-dom'   
 import NavBar from '../Navbar/Navbar';
+import Sidebar from './Sidebar';
 import AboutPage from './AboutPage';
 import { Layout, Menu, Icon } from 'antd';
 // import { Header, Content, Footer, Sider} from Layout;
@@ -19,7 +20,13 @@ class HackathonDetails extends Component{
             min_size : "",
             max_size : "",
             start_date : "",
-            end_date : ""
+            end_date : "",
+            aboutContent:[],
+            aboutContentFlag:true,
+            teamsContent : [],
+            teamsContentFlag : false,
+            judgesContent:[],
+            judgesContentFlag: false
         }
     }
 
@@ -30,11 +37,109 @@ class HackathonDetails extends Component{
             min_size : "2",
             max_size : "4",
             start_date : "08 Mar 2019, 12:00 PM PT",
-            end_date : "25 Apr 2019, 11:59 PM PT"
+            end_date : "25 Apr 2019, 11:59 PM PT",
+            aboutContent : [
+                {
+                    "title" : "About title",
+                    "desc" : "The Description  of about"
+                },
+                {
+                    "title" : "About title",
+                    "desc" : "The Description  of about"
+                }
+            ]
+        })
+    }
+
+    loadAboutContent = (e) => {
+        this.setState({
+            aboutContentFlag:true,
+            teamsContentFlag:false,
+            judgesContentFlag:false
+        })
+    }
+
+    loadTeamsContent = (e) => {
+        this.setState({
+            teamsContent:[
+                {
+                    "teamName":"XYZ",
+                    "size":"4",
+                    "members":[
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        },
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        },
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        }
+                    ]
+                },
+                {
+                    "teamName":"XYZ",
+                    "size":"4",
+                    "members":[
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        },
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        },
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        }
+                    ]
+                },
+                {
+                    "teamName":"XYZ",
+                    "size":"4",
+                    "members":[
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        },
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        },
+                        {
+                            "name":"abc",
+                            "surname":"pqr"
+                        }
+                    ]
+                }
+            ]
+        },() => {
+            this.setState({
+                aboutContentFlag:false,
+                teamsContentFlag:true,
+                judgesContentFlag:false
+            })
         })
     }
 
     render(){
+        var content = null
+        if(this.state.aboutContentFlag){
+            content = <div>
+                <h3>About </h3>
+            </div>
+        }else if(this.state.teamsContentFlag){
+            content = <div>
+                <h3>Team1</h3>
+                <p>{this.state.teamsContent[0].name}</p>
+                <h3>Team2</h3>
+                <p>{this.state.teamsContent[1].name}</p>
+            </div>
+        }
         return (
             <div>
                 <NavBar></NavBar>
@@ -50,19 +155,23 @@ class HackathonDetails extends Component{
                 </div>
                 <div>
                 <Layout>
-                    <Sider style={{ overflow: 'auto', height: '100%',  left: 0}}>
+                <Sider style={{ overflow: 'auto', height: '100%',  left: 0}}>
                         <div className="logo" />
-                        <Menu mode="inline" defaultSelectedKeys={['2']}>
-                            <Menu.Item key="1">
+                        <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+                            <Menu.Item key="1"
+                                onClick = {this.loadAboutContent}
+                            >
                                 <Icon type="info" />
-                                <span className="nav-text"><Link to="/">About</Link></span>
+                                <span className="nav-text">About</span>
                                 {/* <Link to="/" className="nav-text">About</Link> */}
                             </Menu.Item>
                             <Menu.Item key="2">
                                 <Icon type="user" />
                                 <span className="nav-text">Judges</span>
                             </Menu.Item>
-                            <Menu.Item key="3">
+                            <Menu.Item key="3"
+                                onClick = {this.loadTeamsContent}
+                            >
                                 <Icon type="team" />
                                 <span className="nav-text">Teams</span>
                             </Menu.Item>
@@ -81,7 +190,7 @@ class HackathonDetails extends Component{
                             <div style={{ padding: 14, background: '#fff', textAlign: 'center' }}>
                             ...
                             <br />
-                            Really
+                            {content}
                             <br />...<br />...<br />...<br />
                             long
                             <br />...<br />...<br />...<br />...<br />...<br />...
