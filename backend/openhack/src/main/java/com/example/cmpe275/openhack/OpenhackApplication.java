@@ -20,9 +20,11 @@ public class OpenhackApplication {
 		EntityManager em = emfactory.createEntityManager();
 		Address address = new Address("33 S", "SJ", "CA", "95113", "USA");
 		User user = new User();
-		user.setEmail("darshil");
+		user.setEmail("darshil@gmail.com");
 		user.setName("Darshil");
 		user.setAddress(address);
+		user.setScreenName("Darshil");
+		user.setAboutMe("SJSU Graduate student");
 		em.getTransaction().begin();
 		em.persist(user);
 		em.getTransaction().commit();

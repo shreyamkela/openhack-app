@@ -12,7 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.example.cmpe275.openhack.entity.*;
 
@@ -35,6 +37,7 @@ public class Team {
 	@Column(name="Team_Name",unique=true, nullable=false)
 	private String teamName;
 	
+	@OneToOne
 	private User teamLead;
 	
 	@ManyToMany(mappedBy="teams")

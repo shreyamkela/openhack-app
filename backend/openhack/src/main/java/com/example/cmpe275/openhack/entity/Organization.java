@@ -13,7 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.example.cmpe275.openhack.entity.User;
 
 @Entity
 @Table
@@ -28,12 +31,15 @@ public class Organization {
 	private Address address;
 	
 	//No mapping, manipulation needs to be done manually
+//	@Column
+	@OneToOne
 	private User owner;
 	
 	@OneToMany(mappedBy="organization")
 	private List<User> members;
 	
-	@ManyToMany(fetch=FetchType.EAGER)
+//	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(
 			name="Sponsored_Hackathons",
 			joinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")},

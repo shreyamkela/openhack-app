@@ -42,7 +42,7 @@ public class Hackathon {
 	@ManyToMany(mappedBy="sponsoredHackathons")
 	private List<Organization> sponsors;
 
-	@OneToMany(mappedBy="hackathon", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="hackathon")
 	private List<Submission> submissions;
 //
 	@ManyToMany(mappedBy="participatedHackathon")
