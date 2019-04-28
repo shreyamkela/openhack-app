@@ -2,13 +2,9 @@ import React, { Component } from 'react'
 import '../../App.css'
 import {Link} from 'react-router-dom'   
 import NavBar from '../Navbar/Navbar';
-import Sidebar from './Sidebar';
 import AboutPage from './AboutPage';
 import { Layout, Menu, Icon } from 'antd';
-// import { Header, Content, Footer, Sider} from Layout;
 
-
-// const { Layout, Menu, Icon } = antd;
 const { Header, Content, Footer, Sider} = Layout;
 
 class HackathonDetails extends Component{
