@@ -1,11 +1,18 @@
 package com.example.cmpe275.openhack.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -28,6 +35,28 @@ public class User {
 	private String aboutMe;
 	private String title;
 	private String imageurl;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="organisation_id")
+	private Organization organization;
+
+	
+//	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany
+	@JoinTable(
+			name="Judge_Hackathons",
+			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
+			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
+	private List<Hackathon> judgedHackathons;
+	
+//	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany
+	@JoinTable(
+			name="User_Teams",
+			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
+			inverseJoinColumns= {@JoinColumn(name="Team",referencedColumnName="id")})
+	private List<Team> teams;
+	
 	public User() {
 		
 	}
