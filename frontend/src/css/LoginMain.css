@@ -1,0 +1,29 @@
+
+.login-form {
+    max-width: 500px;
+  }
+  
+  .login-form-forgot {
+    float: right;
+  }
+  .login-form-button {
+    width: 100%;
+  }
+ 
+
+  .login-center{
+display: inline-block;
+margin-top: 10%;
+  margin-left: 35%;
+  margin-right: auto;
+  text-align: left;
+}
+.signup-form{
+    width:700px;
+}
+.signup-center{
+    display: inline-block;
+      margin-left: 20%;
+      margin-right: auto;
+      text-align: left;
+    }
