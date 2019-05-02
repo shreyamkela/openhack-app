@@ -112,5 +112,11 @@ public class Organization {
 	public void setSponsoredHackathons(List<Hackathon> sponsoredHackathons) {
 		this.sponsoredHackathons = sponsoredHackathons;
 	}
+
+	@Override
+	public String toString() {
+		return "Organization [id=" + id + ", name=" + name + ", description=" + description + ", address=" + address
+				+ ", owner=" + owner + ", members=" + members + ", sponsoredHackathons=" + sponsoredHackathons + "]";
+	}
 	
 }
