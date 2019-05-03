@@ -30,13 +30,10 @@ public class OpenhackApplication {
 		Address address3 = new Address("101 N", "SJ", "CA", "95111", "USA");
 		
 		Organization org1 = new Organization();
-//		List <User> mem = new ArrayList<>();
-//		mem.add(user2);
 		org1.setAddress(address3);
 		org1.setName("Org1");
 		org1.setDescription("This organiztion was founded in 2010");
 //		org1.setOwner(user1);
-//		org1.setMembers(mem);
 		Organization org2 = new Organization();
 		org2.setAddress(address2);
 		org2.setName("Org2");
@@ -56,7 +53,7 @@ public class OpenhackApplication {
 		
 		System.out.println("\nOrganization 1 created with id : "+result_org1.getId());
 		System.out.println("\nOrganization 2 created with id : "+result_org2.getId());
-		System.out.println("\nOrganization 2 created with id : "+result_org2.getId());
+		System.out.println("\nOrganization 3 created with id : "+result_org3.getId());
 		
 		Organization result1 = orgdao.findOrganizationById(result_org1.getId());
 		Organization result2 = orgdao.findOrganizationById(result_org2.getId());
@@ -68,7 +65,7 @@ public class OpenhackApplication {
 		result2.setAddress(new Address("100 San Salvador", "SJ", "CA", "95116", "USA"));
 		Organization updated_org = orgdao.update(result2);
 		
-		System.out.println("\nAfter updation, org1 is : \n"+updated_org.toString());
+		System.out.println("\nAfter updation, org2 is : \n"+updated_org.toString());
 		
 		
 		User user1 = new User();
@@ -83,11 +80,18 @@ public class OpenhackApplication {
 		user2.setAddress(address2);
 		user2.setScreenName("DesaiKavina");
 		user2.setAboutMe("Software Engineering graduate student");
+		User user3 = new User();
+		user3.setEmail("sayalee@gmail.com");
+		user3.setName("Sayalee");
+		user3.setAddress(address3);
+		user3.setScreenName("Sayaleee");
+		user3.setAboutMe("Grad student at SJSU");
 		
 		
 		em.getTransaction().begin();
 		em.persist(user1);
 		em.persist(user2);
+		em.persist(user3);
 //		em.getTransaction().commit();
 		
 		
