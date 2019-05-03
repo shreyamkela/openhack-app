@@ -7,6 +7,7 @@ class SignupMain extends Component {
     render() {
         return (<div>
             <NavBar></NavBar>
+            <h3 align="center"><b> Sign Up</b></h3>
             <div className='signup-center'>
                 <Signup />
             </div>

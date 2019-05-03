@@ -5,6 +5,9 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import '../../css/LoginMain.css';
 import NavBar from '../Navbar/Navbar';
+import axios from 'axios';
+var swal = require('sweetalert');
+
 
 
 
@@ -23,6 +26,19 @@ class Signup extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
+
+                axios.defaults.withCredentials = true;
+                axios.post('http://localhost:8080/adduser', values)
+                    .then(response => {
+                        console.log("Status Code : ", response.status);
+                        console.log("Here", JSON.stringify(response));
+                        if (response.status === 200) {
+                            swal("Signup Successful", "", "success");
+                        }
+                        else{
+                            swal("Kindly Register again with correct data", "", "error");
+                        }
+                    });
             }
         });
     }
@@ -101,100 +117,150 @@ class Signup extends Component {
         ));
 
         return (
-            
-
-
-                <Form {...formItemLayout} onSubmit={this.handleSubmit} className='signup-form'>
-                    <Form.Item
-                        label="E-mail"
-                    >
-                        {getFieldDecorator('email', {
-                            rules: [{
-                                type: 'email', message: 'The input is not valid E-mail!',
-                            }, {
-                                required: true, message: 'Please input your E-mail!',
-                            }],
-                        })(
-                            <Input />
-                        )}
-                    </Form.Item>
-                    <Form.Item
-                        label="Password"
-                    >
-                        {getFieldDecorator('password', {
-                            rules: [{
-                                required: true, message: 'Please input your password!',
-                            }, {
-                                validator: this.validateToNextPassword,
-                            }],
-                        })(
-                            <Input type="password" />
-                        )}
-                    </Form.Item>
-                    <Form.Item
-                        label="Confirm Password"
-                    >
-                        {getFieldDecorator('confirm', {
-                            rules: [{
-                                required: true, message: 'Please confirm your password!',
-                            }, {
-                                validator: this.compareToFirstPassword,
-                            }],
-                        })(
-                            <Input type="password" onBlur={this.handleConfirmBlur} />
-                        )}
-                    </Form.Item>
-                    <Form.Item
-                        label={(
-                            <span>
-                                Username&nbsp;
+            <Form {...formItemLayout} onSubmit={this.handleSubmit} className='signup-form'>
+                <Form.Item
+                    label="Title">
+                    {getFieldDecorator('title', {
+                        rules: [{
+                            required: true, message: 'Please input your Title!',
+                        }],
+                    })(
+                        <Input />
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="First Name">
+                    {getFieldDecorator('name', {
+                        rules: [{
+                            required: true, message: 'Please input your Name!',
+                        }],
+                    })(
+                        <Input />
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="E-mail">
+                    {getFieldDecorator('email', {
+                        rules: [{
+                            type: 'email', message: 'The input is not valid E-mail!',
+                        }, {
+                            required: true, message: 'Please input your E-mail!',
+                        }],
+                    })(
+                        <Input />
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="Password">
+                    {getFieldDecorator('password', {
+                        rules: [{
+                            required: true, message: 'Please input your password!',
+                        }, {
+                            validator: this.validateToNextPassword,
+                        }],
+                    })(
+                        <Input type="password" />
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="Confirm Password">
+                    {getFieldDecorator('confirm', {
+                        rules: [{
+                            required: true, message: 'Please confirm your password!',
+                        }, {
+                            validator: this.compareToFirstPassword,
+                        }],
+                    })(
+                        <Input type="password" onBlur={this.handleConfirmBlur} />
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label={(
+                        <span>
+                            Screenname&nbsp;
                 <Tooltip title="What do you want others to call you?">
-                                    <Icon type="question-circle-o" />
-                                </Tooltip>
-                            </span>
-                        )}
-                    >
-                        {getFieldDecorator('username', {
-                            rules: [{ required: true, message: 'Please input your username!', whitespace: true }],
-                        })(
+                                <Icon type="question-circle-o" />
+                            </Tooltip>
+                        </span>
+                    )}>
+                    {getFieldDecorator('screenName', {
+                        rules: [{ required: true, message: 'Please input your Screen name!', whitespace: true }],
+                    })(
+                        <Input />
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="Phone Number">
+                    {getFieldDecorator('phone', {
+                        rules: [{ required: true, message: 'Please input your phone number!' }],
+                    })(
+                        <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="AboutMe">
+                    {getFieldDecorator('aboutMe')(
+                        <AutoComplete
+                            onChange={this.handleAboutMeChange}
+                            placeholder="About me">
                             <Input />
-                        )}
-                    </Form.Item>
-                    <Form.Item
-                        label="Phone Number"
-                    >
-                        {getFieldDecorator('phone', {
-                            rules: [{ required: true, message: 'Please input your phone number!' }],
-                        })(
-                            <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
-                        )}
-                    </Form.Item>
-                    <Form.Item
-                        label="Website"
-                    >
-                        {getFieldDecorator('website', {
-                            rules: [{ required: true, message: 'Please input website!' }],
-                        })(
-                            <AutoComplete
-                                dataSource={websiteOptions}
-                                onChange={this.handleWebsiteChange}
-                                placeholder="website"
-                            >
-                                <Input />
-                            </AutoComplete>
-                        )}
-                    </Form.Item>
-                    <Form.Item {...tailFormItemLayout}>
-                        {getFieldDecorator('agreement', {
-                            valuePropName: 'checked',
-                        })(
-                            <Checkbox>I have read the <a href="">agreement</a></Checkbox>
-                        )}
-                    </Form.Item>
-                    <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">Register</Button>
-                    </Form.Item>
-                </Form>
+                        </AutoComplete>
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="Street">
+                    {getFieldDecorator('street')(
+                        <AutoComplete
+                            onChange={this.handleStreetChange}
+                            placeholder="Street">
+                            <Input />
+                        </AutoComplete>
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="Zip">
+                    {getFieldDecorator('zip')(
+                        <AutoComplete
+                            onChange={this.handleZipChange}
+                            placeholder="Zip">
+                            <Input />
+                        </AutoComplete>
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="City">
+                    {getFieldDecorator('city')(
+                        <AutoComplete
+                            onChange={this.handleCityChange}
+                            placeholder="City">
+                            <Input />
+                        </AutoComplete>
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="State">
+                    {getFieldDecorator('state')(
+                        <AutoComplete
+                            onChange={this.handleStateChange}
+                            placeholder="State">
+                            <Input />
+                        </AutoComplete>
+                    )}
+                </Form.Item>
+                <Form.Item
+                    label="Country">
+                    {getFieldDecorator('country')(
+                        <AutoComplete
+                            onChange={this.handleCountryChange}
+                            placeholder="Country">
+                            <Input />
+                        </AutoComplete>
+                    )}
+                </Form.Item>
+                <Form.Item {...tailFormItemLayout}>
+                    <Button type="primary" htmlType="submit">Register</Button>
+                </Form.Item>
+            </Form>
         );
     }
 }
