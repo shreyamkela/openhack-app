@@ -97,7 +97,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 			tx.begin();
 			Organization updated_organization = em.merge(org);
 			tx.commit();
-			System.out.println("\n- - - - - - - - - - Employer "+org.getName()+" updated successfully! - - - - - - - - - -\n");
+			System.out.println("\n- - - - - - - - - - Organization "+org.getName()+" updated successfully! - - - - - - - - - -\n");
 			return updated_organization;
 		}
 		catch(RuntimeException e)
@@ -114,8 +114,26 @@ public class OrganizationDaoImpl implements OrganizationDao
 	@Override
 	public Organization delete(long orgId) 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = emfactory.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		try
+		{
+			tx.begin();
+			Organization delete_organization = em.find(Organization.class, orgId);
+			em.remove(delete_organization);
+			tx.commit();
+			System.out.println("\n - - - - - - - - - - Organization "+delete_organization.getName()+" deleted successfully! - - - - - - - - - - \n");
+			return delete_organization;
+		}
+		catch(RuntimeException e)
+		{
+			tx.rollback();
+			throw e;
+		}
+		finally
+		{
+			em.close();	
+		}
 	}
 
 

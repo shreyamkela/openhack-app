@@ -25,7 +25,7 @@ public class Organization {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name="Organisation_name",unique=true,nullable=false)
+	@Column(name="Organization_name",unique=true,nullable=false)
 	private String name;
 	private String description;
 	private Address address;
@@ -35,7 +35,7 @@ public class Organization {
 	@OneToOne
 	private User owner;
 	
-	@OneToMany(mappedBy="organization")
+	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)
 	private List<User> members;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
@@ -116,7 +116,7 @@ public class Organization {
 	@Override
 	public String toString() {
 		return "Organization [id=" + id + ", name=" + name + ", description=" + description + ", address=" + address
-				+ ", owner=" + owner + ", members=" + members + ", sponsoredHackathons=" + sponsoredHackathons + "]";
+				+ ", owner=" + owner + ", members=" + members + "]";
 	}
 	
 }
