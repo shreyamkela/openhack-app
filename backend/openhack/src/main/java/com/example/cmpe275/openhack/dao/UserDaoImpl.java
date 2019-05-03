@@ -2,8 +2,10 @@ package com.example.cmpe275.openhack.dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
 
 public class UserDaoImpl implements UserDao {
@@ -57,8 +59,25 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	public User updateUser(User user) {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = emfactory.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		try
+		{
+			tx.begin();
+			User updated_user = em.merge(user);
+			tx.commit();
+			System.out.println("\n- - - - - - - - - - User "+user.getName()+" updated successfully! - - - - - - - - - -\n");
+			return updated_user;
+		}
+		catch(RuntimeException e)
+		{
+			tx.rollback();
+			throw e;
+		}
+		finally
+		{
+			em.close();	
+		}
 	}
 
 	public User deleteUser(long id) {

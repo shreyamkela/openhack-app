@@ -32,7 +32,7 @@ public class Organization {
 	
 	//No mapping, manipulation needs to be done manually
 //	@Column
-	@OneToOne
+	@OneToOne(fetch=FetchType.EAGER)
 	private User owner;
 	
 	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)
