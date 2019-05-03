@@ -1,16 +1,8 @@
 import React, { Component } from 'react'
 import '../../App.css'
-import {Link} from 'react-router-dom'   
-import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon } from 'antd';
-
-const { Header, Content, Footer, Sider} = Layout;
 
 class AboutPage extends Component{
-    constructor(props){
-        super(props);
-    }
-
+    
     render(){
         return (
             <div>

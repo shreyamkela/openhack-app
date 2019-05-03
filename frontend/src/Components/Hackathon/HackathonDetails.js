@@ -2,10 +2,14 @@ import React, { Component } from 'react'
 import '../../App.css'
 import {Link} from 'react-router-dom'   
 import NavBar from '../Navbar/Navbar';
-import AboutPage from './AboutPage';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal } from 'antd';
 
-const { Header, Content, Footer, Sider} = Layout;
+const {  Content, Sider} = Layout;
+
+// 4 states: nothing means no registration, 
+// "payment pending" means payment is yet to be completed,
+// "registred" means registered and paid.
+// "closed" means cannot edit submission
 
 class HackathonDetails extends Component{
     constructor(props){
@@ -22,7 +26,11 @@ class HackathonDetails extends Component{
             teamsContent : [],
             teamsContentFlag : false,
             judgesContent:[],
-            judgesContentFlag: false
+            judgesContentFlag: false,
+            message:null,
+            visibleTeamModal:false,
+            visibleSubmissionModal:false,
+            submission:null
         }
     }
 
@@ -43,7 +51,8 @@ class HackathonDetails extends Component{
                     "title" : "About title",
                     "desc" : "The Description  of about"
                 }
-            ]
+            ],
+            message:"payment pending"
         })
     }
 
@@ -122,8 +131,39 @@ class HackathonDetails extends Component{
         })
     }
 
+    showTeamModal = () => {
+        this.setState({
+            visibleTeamModal:true
+        })
+    }
+
+    showSubmissionModal = () =>{
+        this.setState({
+            visibleSubmissionModal:true
+        })
+    }
+    handleCancel = () => {
+        this.setState({
+            visibleTeamModal:false,
+            visibleSubmissionModal:false
+        })
+    }
+
+    submitWork = (e) => {
+        console.log(this.state.submission)
+        this.setState({
+            visibleSubmissionModal:false
+        })
+    }
+    handleSubmission = (e) => {
+        this.setState({
+            submission:e.target.value
+        })
+    }
     render(){
         var content = null
+        var buttons = null
+        var teamModalContent = null
         if(this.state.aboutContentFlag){
             content = <div>
                 <h3>About </h3>
@@ -136,6 +176,79 @@ class HackathonDetails extends Component{
                 <p>{this.state.teamsContent[1].name}</p>
             </div>
         }
+        if(this.state.team){
+            teamModalContent = <p>Team Name</p>
+        }
+        if(this.state.message === "registered"){
+            buttons = <div>
+                <Button type="primary" size="large" style={{marginTop:"20%"}} onClick={this.showTeamModal}>View Team</Button><br/>
+                <Modal
+                    title="Your Team"
+                    visible={this.state.visibleTeamModal}
+                    onCancel={this.handleCancel}
+                    footer={[
+                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
+                      ]}
+                >
+                <p>{teamModalContent}</p>
+                </Modal>
+                <Button type="primary" size="large" style={{marginTop:"10px"}} onClick={this.showSubmissionModal}>Submit/Edit Work</Button>
+                <Modal
+                    title="Submission"
+                    visible={this.state.visibleSubmissionModal}
+                    onOk={this.submitWork}
+                    onCancel={this.handleCancel}
+                >
+                <input class="form-control" id="submission" onChange={this.handleSubmission} value={this.state.submission}/>
+                </Modal>
+            </div>
+        }else if(this.state.message==="payment pending"){
+            buttons = <div>
+            <Button type="primary" size="large" style={{marginTop:"20%"}} onClick={this.showTeamModal}>View Team</Button><br/>
+            <Modal
+                title="Your Team"
+                visible={this.state.visibleTeamModal}
+                onCancel={this.handleCancel}
+                footer={[
+                    <Button key="back" onClick={this.handleCancel}>Back</Button>,
+                  ]}
+            >
+            <p>{teamModalContent}</p>
+            </Modal>
+            <Link to="/payment"><Button type="primary" size="large" style={{marginTop:"10px"}} onClick={this.showSubmissionModal}>Pay</Button></Link>
+        </div>
+        }
+        else if(this.state.message === "closed"){
+            buttons = <div>
+                <Button type="primary" size="large" style={{marginTop:"20%"}} onClick={this.showTeamModal}>View Team</Button><br/>
+                <Modal
+                    title="Your Team"
+                    visible={this.state.visibleTeamModal}
+                    onCancel={this.handleCancel}
+                    footer={[
+                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
+                      ]}
+                >
+                <p>{teamModalContent}</p>
+                </Modal>
+                <Button type="primary" size="large" style={{marginTop:"10px"}} onClick={this.showSubmissionModal}>View Submission/Grade</Button>
+                <Modal
+                    title="Submission"
+                    visible={this.state.visibleSubmissionModal}
+                    onCancel={this.handleCancel}
+                    footer={[
+                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
+                      ]}
+                >
+                <input class="form-control" id="submission" onChange={this.handleSubmission} value={this.state.submission} disabled={true}/>
+                <p>Grades: {this.state.grades}</p>
+                </Modal>
+            </div>
+        }else{
+            buttons = <div>
+                    <Link to="/hackathon/register/1"><Button type="primary" size="large" style={{marginTop:"20%"}} onClick={this.showTeamModal}>Register</Button><br/></Link>
+                </div>
+        }
         return (
             <div>
                 <NavBar></NavBar>
@@ -144,16 +257,24 @@ class HackathonDetails extends Component{
                 </div>
                 <div style={{ backgroundColor: "#EAECEE" , height:"200px"  }}>
                     <div style={{ marginLeft : "10%" }}>
-                        <p style= {{color:"#46535e", fontSize:"15px", paddingTop: "4%"}}> <Icon type="user" />  Allowed team size : {this.state.min_size} - {this.state.max_size}</p>
-                        <p style= {{color:"#46535e", fontSize:"15px"}}><Icon type="calendar" /> Starts on : {this.state.start_date}</p>
-                        <p style= {{color:"#46535e", fontSize:"15px"}}><Icon type="calendar" /> Ends on : {this.state.end_date}</p>
+                        <Row type="flex">
+                            <Col span={18}>
+                                <p style= {{color:"#46535e", fontSize:"15px", paddingTop: "4%"}}> <Icon type="user" />  Allowed team size : {this.state.min_size} - {this.state.max_size}</p>
+                                <p style= {{color:"#46535e", fontSize:"15px"}}><Icon type="calendar" /> Starts on : {this.state.start_date}</p>
+                                <p style= {{color:"#46535e", fontSize:"15px"}}><Icon type="calendar" /> Ends on : {this.state.end_date}</p>
+                            </Col>
+                            <Col span={6}>
+                                {buttons}
+                            </Col>
+                        </Row>
+                        
                     </div>
                 </div>
                 <div>
                 <Layout>
                 <Sider style={{ overflow: 'auto', height: '100%',  left: 0}}>
                         <div className="logo" />
-                        <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+                        <Menu mode="inline" defaultSelectedKeys={['1']}>
                             <Menu.Item key="1"
                                 onClick = {this.loadAboutContent}
                             >
