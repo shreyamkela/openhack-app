@@ -16,6 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+
+
 @Entity
 @Table
 public class User {
@@ -152,4 +154,23 @@ public class User {
 		return organization;
 	}
 
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		int hash = 3;
+	    hash = 7 * hash + this.email.hashCode();
+	    hash = 7 * hash + this.name.hashCode();
+	    return hash;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if((obj instanceof User) && ((User) obj).id == this.id)
+		{
+			return true;
+		}
+		else
+			return false;
+	}
 }

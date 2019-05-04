@@ -38,7 +38,7 @@ public class Hackathon {
 	private double discount; // percentage
 	
 	//@ManyToMany(mappedBy="judgedHackathons",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
-	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	@JoinTable(
 			name="Judge_Hackathons",
 			joinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")},
@@ -53,10 +53,10 @@ public class Hackathon {
 			inverseJoinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")})
 	private Set<Organization> sponsors;
 
-	@OneToMany(mappedBy="hackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
+	@OneToMany(mappedBy="hackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	private Set<Submission> submissions;
 //
-	@ManyToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
+	@ManyToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	private Set<Team> teams;
 	
 	public Hackathon() 

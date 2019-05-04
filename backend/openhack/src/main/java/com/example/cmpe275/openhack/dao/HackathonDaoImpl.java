@@ -54,9 +54,23 @@ public class HackathonDaoImpl implements HackathonDao{
 	}
 
 	@Override
+	@Transactional
 	public Hackathon findById(long id) {
 		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = emfactory.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		try {
+			tx.begin();
+			Hackathon hackathon = em.find(Hackathon.class, id);
+			tx.commit();
+			return hackathon;
+		}catch (Exception e) {
+			// TODO: handle exception
+			tx.rollback();
+			throw e;
+		}finally {
+			em.close();
+		}
 	}
 
 	@Override

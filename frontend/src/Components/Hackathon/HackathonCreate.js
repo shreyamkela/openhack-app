@@ -1,11 +1,13 @@
 /* eslint-disable eqeqeq */
 import React, { Component } from 'react'
 import '../../App.css'
-import { Icon, Divider, Form, Input, DatePicker, InputNumber, Avatar } from 'antd';
+import { Icon, Divider, Form, Input, DatePicker, InputNumber, Avatar, message } from 'antd';
 import { Row, Col, AutoComplete, Button } from 'antd';
 import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
+import axios from 'axios';
+import swal from 'sweetalert'
 
 class HackathonCreate extends Component {
 
@@ -184,11 +186,11 @@ class HackathonCreate extends Component {
 
   onJudgeSelect = (value,option) => {
     var judge = this.state.users.filter(user => user.id == option.key)
-    console.log(judge[0])
+    // console.log(judge[0])
     var judges = this.state.judges
-    console.log("Judges: ",judges)
-    judges.push(judge[0])
-    console.log("Judges: ",judges)
+    // console.log("Judges: ",judges)
+    judges.push(judge[0].id)
+    // console.log("Judges: ",judges)
     var users = this.state.users.filter(user => {
       return user.id != option.key
     })
@@ -204,11 +206,11 @@ class HackathonCreate extends Component {
 
   onSponsorSelect = (value,option) => {
     var sponsor = this.state.organisations.filter(organisation => organisation.id == option.key)
-    console.log(sponsor[0])
+    // console.log(sponsor[0])
     var sponsors = this.state.sponsors
-    console.log("sponsors: ",sponsors)
-    sponsors.push(sponsor[0])
-    console.log("sponsors: ",sponsors)
+    // console.log("sponsors: ",sponsors)
+    sponsors.push(sponsor[0].id)
+    // console.log("sponsors: ",sponsors)
     var organisations = this.state.organisations.filter(organisation => {
       return organisation.id != option.key
     })
@@ -221,7 +223,34 @@ class HackathonCreate extends Component {
   }
   
   createHackathon = (e) => {
-    console.log(this.state)
+    let body = {
+      "name":this.state.name,
+      "startDate":this.state.startDate,
+      "endDate":this.state.endDate,
+      "description":this.state.description,
+      "teamSizeMin":this.state.teamSizeMin,
+      "teamSizeMax":this.state.teamSizeMax,
+      "fee":this.state.fee,
+      "discount":this.state.discount,
+      "judgesId":this.state.judges,
+      "sponsorsId":this.state.sponsors
+    }
+    axios.defaults.withCredentials = true;
+    axios.post("http://localhost:8080/hackathon/",body)
+      .then( response => {
+        console.log(response)
+        if(response.status===200){
+          console.log("Inside response status 200")
+          swal("Hackathon Created!","", "success");
+          setTimeout(()=>{
+
+          },5000);
+          this.props.history.push("/home")
+        }
+      })
+      .catch(err => {
+        swal(err,"", "error");
+      })
   }
 
   render() {
@@ -255,7 +284,7 @@ class HackathonCreate extends Component {
         <div class="hackathon-create p-5">
           <Title level={3}>Create a Hackathon Event</Title>
           <Divider></Divider>
-          <Form onSubmit={this.createHackathon}>
+          <Form>
             <Form.Item
               label="Event Name"
             >
@@ -386,6 +415,7 @@ class HackathonCreate extends Component {
                 disabled={this.state.nameErrFlag || this.state.dateErrFlag || this.state.descErrFlag || this.state.minErrFlag || this.state.maxErrFlag || this.state.feeErrFlag || this.state.judgesErrFlag}
                 block
                 size="large"
+                onClick={this.createHackathon}
               >
                 Log in
           </Button>
