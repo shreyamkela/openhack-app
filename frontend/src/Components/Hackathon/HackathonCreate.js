@@ -384,6 +384,8 @@ class HackathonCreate extends Component {
                 type="primary"
                 htmlType="submit"
                 disabled={this.state.nameErrFlag || this.state.dateErrFlag || this.state.descErrFlag || this.state.minErrFlag || this.state.maxErrFlag || this.state.feeErrFlag || this.state.judgesErrFlag}
+                block
+                size="large"
               >
                 Log in
           </Button>
@@ -396,39 +398,3 @@ class HackathonCreate extends Component {
 }
 
 export default Form.create()(HackathonCreate);
-
-
-// <form onSubmit={this.createHackathon}>
-//             <div class="form-row py-2">
-//               <div class="form-group col-md-12">
-//               <label for="exampleInputEmail1">Event Name(*)</label>
-//               <input type="text" class="form-control" value={this.state.name} onChange={this.changeValue} placeholder="Event Name" required/>
-//               </div>
-//             </div>
-
-//             <div class="form-row py-2">
-//               <div class="form-group col-md-6">
-//                 <label for="exampleInputEmail1">Event Start Date(*)</label>
-//                 <input type="date" class="form-control col-md-12" value={this.state.startDate} onChange={this.changeValue} placeholder="Event Start Date" required/>
-//               </div>
-//               <div class="form-group col-md-6">
-//               <label for="exampleInputEmail1">Event End Date(*)</label>
-//               <input type="date" class="form-control col-md-12" value={this.state.endDate} onChange={this.changeValue} placeholder="Event End Date" required/>
-//               </div>
-//             </div>
-
-//             <div class="form-row py-2">
-//               <div class="form-group col-md-6">
-//                 <label for="exampleInputEmail1">Registration Fee(*)</label>
-//                 <input type="number" class="form-control col-md-12" value={this.state.startDate} onChange={this.changeValue} placeholder="Event Start Date" required/>
-//               </div>
-//               <div class="form-group col-md-6">
-//               <label for="exampleInputEmail1">Sponsor Discount(*)</label>
-//               <input type="number" class="form-control col-md-12" value={this.state.endDate} onChange={this.changeValue} placeholder="Event End Date" required/>
-//               </div>
-//             </div>
-
-
-//             <label for="exampleInputEmail1">Event Name(*)</label>
-//             <textarea class="form-control" cols={9} value={this.state.name} onChange={this.changeValue} placeholder="Event Description" required/>  
-//           </form>

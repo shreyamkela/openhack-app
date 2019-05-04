@@ -41,14 +41,14 @@ public class Team {
 	private User teamLead;
 	
 	@ManyToMany(mappedBy="teams")
-	private List<User> members;
+	private Set<User> members;
 
 	@ManyToMany
 	@JoinTable(
 			name="Hackathon_Participated",
 			joinColumns= {@JoinColumn(name="Team",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
-	private List<Hackathon> participatedHackathon;
+	private Set<Hackathon> participatedHackathon;
 
 	public long getId() {
 		return id;
@@ -74,19 +74,19 @@ public class Team {
 		this.teamLead = teamLead;
 	}
 
-	public List<User> getMembers() {
+	public Set<User> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<User> members) {
+	public void setMembers(Set<User> members) {
 		this.members = members;
 	}
 
-	public List<Hackathon> getParticipatedHackathon() {
+	public Set<Hackathon> getParticipatedHackathon() {
 		return participatedHackathon;
 	}
 
-	public void setParticipatedHackathon(List<Hackathon> participatedHackathon) {
+	public void setParticipatedHackathon(Set<Hackathon> participatedHackathon) {
 		this.participatedHackathon = participatedHackathon;
 	}
 	

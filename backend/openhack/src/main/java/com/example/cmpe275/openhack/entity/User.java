@@ -2,6 +2,7 @@ package com.example.cmpe275.openhack.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -36,21 +37,17 @@ public class User {
 	private String title;
 	private String imageurl;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER, cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
 	@JoinColumn(name="organisation_id")
 	private Organization organization;
 
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany
-	@JoinTable(
-			name="Judge_Hackathons",
-			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
+	@ManyToMany(mappedBy="judges",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	private List<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
 	@JoinTable(
 			name="User_Teams",
 			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},

@@ -1,7 +1,9 @@
 package com.example.cmpe275.openhack.entity;
 
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -35,15 +37,11 @@ public class Organization {
 	@OneToOne
 	private User owner;
 	
-	@OneToMany(mappedBy="organization")
-	private List<User> members;
+	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)
+	private Set<User> members;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany
-	@JoinTable(
-			name="Sponsored_Hackathons",
-			joinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
+	@ManyToMany(mappedBy="sponsors",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	private List<Hackathon> sponsoredHackathons;
 	
 	public Organization() {}
@@ -97,11 +95,11 @@ public class Organization {
 		this.owner = owner;
 	}
 
-	public List<User> getMembers() {
+	public Set<User> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<User> members) {
+	public void setMembers(Set<User> members) {
 		this.members = members;
 	}
 
