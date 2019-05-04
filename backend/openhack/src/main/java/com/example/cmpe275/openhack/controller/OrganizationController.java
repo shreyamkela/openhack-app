@@ -1,6 +1,8 @@
 package com.example.cmpe275.openhack.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
 import com.example.cmpe275.openhack.dao.UserDao;
 import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Address;
+import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
 
@@ -81,6 +84,121 @@ public class OrganizationController {
 			System.out.println("Exception while creating an organization \n"+e);
 		}
 		return org;		
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/hacker/getOrganizations", method = RequestMethod.GET, produces = { "application/json"})
+	@ResponseBody
+	public Map<Object, Object> getAllOrganizations(HttpServletRequest request, HttpServletResponse response) throws Exception 
+	{
+		System.out.println("\ngetAllOrganizations method called for the organization : ");
+		Map<Object,Object> map = new HashMap<>();
+		List<Organization> result_organizations = new ArrayList<>();
+		try {
+			result_organizations = orgdao.findAllOrganization();
+		}
+		catch (Exception e) {
+			System.out.println("Exception while fetching all organizations \n"+e);
+		}
+
+		map.put("organizations", OrganizationsObject(result_organizations));
+		return map;
+	}
+	
+	@Transactional
+	@RequestMapping(value = "/hacker/getOneOrganization/{id}", method = RequestMethod.GET, produces = { "application/json"})
+	@ResponseBody
+	public Map<Object, Object> getOneOrganization(@PathVariable("id") long orgId, HttpServletRequest request, HttpServletResponse response) throws Exception 
+	{
+		System.out.println("\ngetOneOrganization method called for the organization : ");
+		Map<Object,Object> map = new HashMap<>();
+		Organization org = new Organization();
+		try {
+			org = orgdao.findOrganizationById(orgId);
+		}
+		catch (Exception e) {
+			System.out.println("Exception while fetching the organizations \n"+e);
+		}
+		map = formOrganizationObject(org);
+		return map;
+	}
+	
+	public List<Map<Object, Object>> OrganizationsObject(List<Organization> oganizations)
+	{
+		List<Map<Object, Object>> outerlist = new ArrayList<Map<Object, Object>>();
+		for(Organization org : oganizations) 
+		{
+			Map<Object, Object> innermap = new HashMap<Object, Object>();
+			innermap.put("id", org.getId());
+			innermap.put("name", org.getName());
+			innermap.put("description", org.getDescription());
+			outerlist.add(innermap );
+		}
+		return outerlist;	
+	}
+	
+	public Map<Object, Object> formOrganizationObject(Organization org)
+	{
+		Map<Object, Object> hmap = new HashMap<Object, Object>();
+		hmap.put("id", org.getId());
+		hmap.put("name", org.getName());
+		hmap.put("description", org.getDescription());
+		
+		
+		Address addr = org.getAddress();
+		if(addr!=null)
+		{
+			Map<Object, Object> hmap_addr = new HashMap<Object, Object>();
+			hmap_addr.put("street", addr.getStreet());
+			hmap_addr.put("city", addr.getCity());
+			hmap_addr.put("state", addr.getState());
+			hmap_addr.put("zip", addr.getZip());
+			hmap.put("Address", hmap_addr);
+		}	
+		
+		User owner = org.getOwner();
+		if(owner!=null)
+		{
+			Map<Object, Object> hmap_owner = new HashMap<Object, Object>();
+			hmap_owner.put("id", owner.getId());
+			hmap_owner.put("name", owner.getName());
+			hmap_owner.put("email", owner.getEmail());
+			hmap_owner.put("title", owner.getTitle());
+			hmap.put("owner", hmap_owner);
+		}
+		
+		List<Hackathon> hackathons = org.getSponsoredHackathons();
+		if(hackathons!=null)
+		{
+			List<Map<Object, Object>> outerlist = new ArrayList<Map<Object, Object>>();		
+			for(Hackathon hck : hackathons) 
+			{
+				Map<Object, Object> innermap = new HashMap<Object, Object>();
+				innermap.put("id", hck.getId());
+				innermap.put("name", hck.getName());
+				innermap.put("description", hck.getDescription());
+				outerlist.add(innermap);
+			}	
+			hmap.put("sponsoredHackathons", outerlist);
+		}
+		
+		List<User> members = org.getMembers();
+		if(members!=null)
+		{
+			List<Map<Object, Object>> outerlist1 = new ArrayList<Map<Object, Object>>();	
+			for(User mem : members)
+			{
+				Map<Object, Object> innermap1 = new HashMap<Object, Object>();
+				innermap1.put("id", mem.getId());
+				innermap1.put("name", mem.getName());
+				innermap1.put("email", mem.getEmail());
+				innermap1.put("title", mem.getTitle());
+				outerlist1.add(innermap1);
+			}
+			hmap.put("members",outerlist1);
+		}
+		
+		return hmap;
 	}
 
 }

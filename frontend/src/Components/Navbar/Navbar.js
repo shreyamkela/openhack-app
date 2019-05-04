@@ -8,13 +8,19 @@ var swal = require('sweetalert');
 
 class NavBar extends Component {
 
-    state = {
-        current: 'Challenges',
-        dataSource: [],
-        modalVisible : false,
-        confirmLoading : false,
-        owner_id : null
-    }
+    constructor(props){
+        super(props);
+        this.state = {
+            current: 'Challenges',
+            dataSource: [],
+            modalVisible : false,
+            confirmLoading : false,
+            owner_id : null,
+            organizations : []
+        }
+
+        this.fetchOrganizations = this.fetchOrganizations.bind(this);
+    } 
 
     // renderOption = (item) => {
     //     console.log(`renderOption.item`, item);
@@ -32,6 +38,7 @@ class NavBar extends Component {
     // }
 
     componentDidMount() {
+
         this.setState({
             dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
             owner_id : "5"
@@ -98,12 +105,43 @@ class NavBar extends Component {
         });
     }
 
+    fetchOrganizations = (e) => {
+        axios.defaults.withCredentials = true;
+        axios.get('http://localhost:8080/hacker/getOrganizations')
+                    .then((response) => {
+                        console.log("Status Code : ", response.status);
+                        
+                        if (response.status === 200) {
+                            console.log("Response received from backend");
+                            console.log(JSON.stringify(response.data.organizations));
+
+                            this.setState({
+                                organizations : response.data.organizations
+                            });
+                            
+                            console.log("The number of the organizations is"+response.data.organizations.length);
+                            var org_names = []
+                            for(let i=0;i<response.data.organizations.length;i++)
+                            {
+                                org_names.push(response.data.organizations[i].name)
+                            }
+                            this.setState({
+                                dataSource: org_names
+                            });
+                            console.log("\nOrganization names : "+org_names)
+                        }
+                        else{
+                            console.log("There was some error fetching list of organization from the backend")
+                        }
+                    });
+    }
+
     render() {
         const { modalVisible, confirmLoading } = this.state;
         const { getFieldDecorator } = this.props.form;
         var leftMenuItems = null;
         var rightMenuItems = null;
-        if (localStorage.getItem("userId")) {
+        if (!localStorage.getItem("userId")) {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
@@ -134,7 +172,8 @@ class NavBar extends Component {
                         //dataSource = {this.state.dataSource && this.state.dataSource.map(this.renderOption)}
                         dataSource = {this.state.dataSource && this.state.dataSource}
                         //onSelect = {this.onOrganisationSelect}
-                        placeholder="Find Organisations"
+                        placeholder="Find Organizations"
+                        onFocus = {this.fetchOrganizations}
                         allowClear={true}
                         ></AutoComplete>
                     </Col>

@@ -38,7 +38,7 @@ public class Organization {
 	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)
 	private List<User> members;
 	
-//	@ManyToMany(fetch=FetchType.EAGER)
+//	@ManyToMany(fetch=FetchType.LAZY)
 	@ManyToMany
 	@JoinTable(
 			name="Sponsored_Hackathons",
