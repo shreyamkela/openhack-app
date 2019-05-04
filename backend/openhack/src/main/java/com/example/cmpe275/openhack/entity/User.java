@@ -37,8 +37,8 @@ public class User {
 	private String title;
 	private String imageurl;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
-	@JoinColumn(name="organisation_id")
+	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinColumn(name="organization_id")
 	private Organization organization;
 
 	
@@ -142,6 +142,14 @@ public class User {
 
 	public void setImageurl(String imageurl) {
 		this.imageurl = imageurl;
+	}
+	
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+	
+	public Organization getOrganization() {
+		return organization;
 	}
 
 }
