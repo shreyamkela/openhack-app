@@ -3,10 +3,8 @@ import '../../App.css'
 import { Menu, Icon } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input } from 'antd';
 import { Link } from 'react-router-dom'
-
-
-
-
+import axios from 'axios';
+var swal = require('sweetalert');
 
 class NavBar extends Component {
 
@@ -15,7 +13,7 @@ class NavBar extends Component {
         dataSource: [],
         modalVisible : false,
         confirmLoading : false,
-        owner_name : null
+        owner_id : null
     }
 
     // renderOption = (item) => {
@@ -36,7 +34,7 @@ class NavBar extends Component {
     componentDidMount() {
         this.setState({
             dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
-            owner_name : "User1"
+            owner_id : "5"
         })
     }
 
@@ -77,13 +75,25 @@ class NavBar extends Component {
 
     createOrganization = (e) => {
         e.preventDefault();
-        // console.log("\nPrinting e : ")
-        // console.log(e)
         this.props.form.validateFields((err, values) => {
             if (!err) {
-              console.log('Received values of form: ', values);
-              console.log("Name of the organization : "+values.name)
-              console.log("Description of the organization : "+values.description)
+                console.log('Received values of form: ', values);
+                values.owner_id = this.state.owner_id;
+                console.log("\nSending the organization obejct data to the backend\n")
+                console.log(JSON.stringify(values))
+                axios.defaults.withCredentials = true;
+                axios.post('http://localhost:8080/hacker/createOrganization', values)
+                    .then(response => {
+                        console.log("Status Code : ", response.status);
+                        
+                        if (response.status === 200) {
+                            swal("Organization created successfully", "", "success");
+                            console.log(JSON.stringify(response.data));
+                        }
+                        else{
+                            swal("There was some error creating the organization", "", "error");
+                        }
+                    });
             }
         });
     }
@@ -185,12 +195,12 @@ class NavBar extends Component {
                                       onSubmit={this.createOrganization}
                                       >
                                         <Form.Item label="Organization name">
-                                            {getFieldDecorator('name', {
+                                            {getFieldDecorator('organization_name', {
                                                 rules: [{ required: true, message: 'Please input the name of the organization' }],
                                             })(<Input />)}
                                         </Form.Item>
                                         <Form.Item label="Description">
-                                            {getFieldDecorator('description')(<Input type="textarea" rows="3" cols="10"/>)}
+                                            {getFieldDecorator('organization_desc')(<Input type="textarea" rows="3" cols="10"/>)}
                                         </Form.Item>
                                         <Form.Item label="Street Address">
                                             {getFieldDecorator('street')(<Input />)}
