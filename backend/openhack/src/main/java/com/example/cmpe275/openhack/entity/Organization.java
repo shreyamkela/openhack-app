@@ -42,15 +42,8 @@ public class Organization {
 	private Set<User> members;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-//	@ManyToMany
-//	@JoinTable(
-//			name="Sponsored_Hackathons",
-//			joinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")},
-//			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
-//	private List<Hackathon> sponsoredHackathons;
-	
 	@ManyToMany(mappedBy="sponsors",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
-	private Set<Hackathon> sponsoredHackathons;
+	private List<Hackathon> sponsoredHackathons;
 	
 	public Organization() {}
 

@@ -37,7 +37,7 @@ public class Submission {
 	
 	private String URL;
 	
-	@OneToOne
+	@OneToOne(fetch=FetchType.EAGER)
 	private Team team;
 	
 	private float grade;

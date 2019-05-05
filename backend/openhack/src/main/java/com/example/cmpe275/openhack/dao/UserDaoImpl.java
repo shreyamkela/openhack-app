@@ -57,6 +57,7 @@ public class UserDaoImpl implements UserDao {
 			em.close();	
 		}
 	}
+	
 
 	public User updateUser(User user) {
 		EntityManager em = emfactory.createEntityManager();

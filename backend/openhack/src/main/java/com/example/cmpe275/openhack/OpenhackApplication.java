@@ -72,7 +72,8 @@ public class OpenhackApplication {
 //		org3.setDescription("This is a new organization");
 //		
 //		OrganizationDao orgdao = new OrganizationDaoImpl();
-//
+////		Organization deleted_organization = orgdao.delete(1);
+////		System.out.println("\nThe organization that was deleted was : \n"+deleted_organization.toString());
 //		org1 = orgdao.create(org1);
 //		org2 = orgdao.create(org2);
 //		org3 = orgdao.create(org3);
@@ -80,6 +81,10 @@ public class OpenhackApplication {
 //		System.out.println("\nOrganization 1 created with id : "+org1.getId());
 //		System.out.println("\nOrganization 2 created with id : "+org2.getId());
 //		System.out.println("\nOrganization 3 created with id : "+org3.getId());
+//		
+////		Organization result1 = orgdao.findOrganizationById(result_org1.getId());
+////		Organization result2 = orgdao.findOrganizationById(result_org2.getId());
+////		Organization result3 = orgdao.findOrganizationById(result_org3.getId());
 //		
 //		System.out.println("\nBefore updation, org2 is : \n"+org2.toString());
 //		
@@ -102,6 +107,6 @@ public class OpenhackApplication {
 //		{
 //			System.out.println(org.toString());
 //		}
+//	}
 	}
-    
 }

@@ -48,7 +48,7 @@ public class Team {
 			name="Hackathon_Participated",
 			joinColumns= {@JoinColumn(name="Team",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
-	private List<Hackathon> participatedHackathon;
+	private Set<Hackathon> participatedHackathon;
 
 	public long getId() {
 		return id;
@@ -82,11 +82,11 @@ public class Team {
 		this.members = members;
 	}
 
-	public List<Hackathon> getParticipatedHackathon() {
+	public Set<Hackathon> getParticipatedHackathon() {
 		return participatedHackathon;
 	}
 
-	public void setParticipatedHackathon(List<Hackathon> participatedHackathon) {
+	public void setParticipatedHackathon(Set<Hackathon> participatedHackathon) {
 		this.participatedHackathon = participatedHackathon;
 	}
 	

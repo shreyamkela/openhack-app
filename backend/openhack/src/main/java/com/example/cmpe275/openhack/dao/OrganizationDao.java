@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.cmpe275.openhack.entity.Organization;
 
+
 public interface OrganizationDao 
 {
 	
