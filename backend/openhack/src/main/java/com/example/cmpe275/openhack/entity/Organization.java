@@ -19,6 +19,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
+
 import com.example.cmpe275.openhack.entity.User;
 
 @Entity
@@ -36,6 +39,7 @@ public class Organization {
 	//No mapping, manipulation needs to be done manually
 //	@Column
 	@OneToOne(fetch=FetchType.EAGER)
+	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private User owner;
 	
 	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)

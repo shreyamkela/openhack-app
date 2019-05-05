@@ -47,10 +47,11 @@ public class OrganizationController {
 					consumes = {"application/JSON"})
 	@ResponseBody
 	@Transactional
-	public Organization createOrganization(HttpServletRequest request,
+	public Map<Object, Object> createOrganization(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody HashMap<String,String> params_map) throws Exception 
 	{
 		System.out.println("\ncreateOrganization method called for the organization : "+params_map.get("organization_name"));
+		Map<Object,Object> map = new HashMap<>();
 		Organization org = new Organization();
 		if(params_map.get("street")!=null || params_map.get("city")!=null || params_map.get("state")!=null || params_map.get("zip")!=null ||params_map.get("country")!=null) 
 		{
@@ -85,7 +86,8 @@ public class OrganizationController {
 		catch (Exception e) {
 			System.out.println("Exception while creating an organization \n"+e);
 		}
-		return org;		
+		map = formOrganizationObject(org);
+		return map;	
 	}
 	
 	@RequestMapping(value = "/hacker/getOrganizations", method = RequestMethod.GET, produces = { "application/json"})
@@ -112,11 +114,17 @@ public class OrganizationController {
 	@Transactional
 	public Map<Object, Object> getOneOrganization(@PathVariable("id") long orgId, HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{
-		System.out.println("\ngetOneOrganization method called for the organization : ");
+		System.out.println("\ngetOneOrganization method called for the organization : "+orgId);
 		Map<Object,Object> map = new HashMap<>();
 		Organization org = new Organization();
 		try {
-			org = orgdao.findOrganizationById(orgId);
+			org = orgdao.findOrganizationById(new Long(orgId));
+			if(org==null) 
+			{
+				response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
+				map.put("msg", "No Organization having id "+orgId);
+				return map;
+			}
 		}
 		catch (Exception e) {
 			System.out.println("Exception while fetching the organizations \n"+e);
@@ -141,6 +149,12 @@ public class OrganizationController {
 			User updated_user = new User();
 			try {
 				updated_user = userdao.updateUser(user);
+				if(updated_user==null) 
+				{
+					response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
+					result_map.put("msg", "Some error in the updation of user "+userId);
+					return result_map;
+				}
 			}
 			catch (Exception e) {
 				System.out.println("\nException while setting the organizations for a user\n"+e);
@@ -154,6 +168,47 @@ public class OrganizationController {
 		return result_map;
 	}
 	
+	@RequestMapping(value = "hacker/getOtherOrganizations/{user_id}", method = RequestMethod.GET, produces = { "application/json"})
+	@ResponseBody
+	@Transactional
+	public Map<Object, Object> getOtherOrganizations(@PathVariable("user_id") long userId, 
+			HttpServletRequest request, HttpServletResponse response) throws Exception 
+	{
+		System.out.println("\ngetOtherOrganizations method called for the organizations by the user : "+userId);
+		Map<Object,Object> map = new HashMap<>();
+		List<Organization> own_organizations = new ArrayList<>();
+		List<Organization> other_organizations = new ArrayList<>();
+		List<Organization> result_organizations = new ArrayList<>();
+		try {
+			result_organizations = orgdao.findAllOrganization();
+
+			for(Organization res_org : result_organizations)
+			{
+				if(res_org.getOwner()!=null)
+				{
+					if((long)res_org.getOwner().getId() == userId)
+					{
+						own_organizations.add(res_org);
+					}
+					else
+					{
+						other_organizations.add(res_org);
+					}
+				}
+				else
+				{
+					other_organizations.add(res_org);
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Exception while fetching all organizations \n"+e);
+		}
+		map.put("other_organizations", OrganizationsObject(other_organizations));
+		map.put("own_organizations", OrganizationsObject(own_organizations));
+		return map;
+	}
+
 	public List<Map<Object, Object>> OrganizationsObject(List<Organization> oganizations)
 	{
 		List<Map<Object, Object>> outerlist = new ArrayList<Map<Object, Object>>();
@@ -163,10 +218,14 @@ public class OrganizationController {
 			innermap.put("id", org.getId());
 			innermap.put("name", org.getName());
 			innermap.put("description", org.getDescription());
-			innermap.put("owner", org.getOwner().getId());
+			User owner = org.getOwner();
+			if(owner!=null)
+				innermap.put("owner", owner.getId());
+			else
+				innermap.put("owner", null);
 			outerlist.add(innermap );
 		}
-		return outerlist;	
+		return outerlist;
 	}
 	
 	public Map<Object, Object> formOrganizationObject(Organization org)
@@ -275,8 +334,8 @@ public class OrganizationController {
 				inner_map.put("id", hack.getId());
 				inner_map.put("name", hack.getName());
 				inner_map.put("description", hack.getDescription());
-				inner_map.put("no_of_teams",hack.getTeams().size());
-				inner_map.put("no_of_sponsors", hack.getSponsors().size());
+//				inner_map.put("no_of_teams",hack.getTeams().size());
+//				inner_map.put("no_of_sponsors", hack.getSponsors().size());
 				hackathonDetails.add(inner_map);
 			}
 		}

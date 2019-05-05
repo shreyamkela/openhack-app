@@ -10,6 +10,7 @@ import Signup from './Signup/Signup';
 import LoginMain from './Login/LoginMain';
 import { Form } from 'antd';
 import HackathonRegister from './Hackathon/HackathonRegister';
+import OrganizationsAll from './Organization/OrganizationAll';
 
 
 class Main extends Component {
@@ -24,6 +25,7 @@ class Main extends Component {
                 <Route exact path="/hackathon_details/:id" component={HackathonDetails}></Route>
                 <Route exact path="/hackathon/create" component={HackathonCreate}></Route>
                 <Route exact path="/hackathon/register/:id" component={HackathonRegister}></Route>
+                <Route exact path="/hacker_organizations" component={OrganizationsAll}></Route>
             </div>
         )
     }

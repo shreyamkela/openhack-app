@@ -8,7 +8,7 @@
    <persistence-unit name="openhack" transaction-type="RESOURCE_LOCAL">
    
       <properties>
-         <property name="javax.persistence.jdbc.url" value="jdbc:mysql://collaboration.ct8fkpg2lzjy.us-west-2.rds.amazonaws.com:3306/openhack_darshil"/>
+         <property name="javax.persistence.jdbc.url" value="jdbc:mysql://collaboration.ct8fkpg2lzjy.us-west-2.rds.amazonaws.com:3306/openhack-kavina"/>
          <property name="javax.persistence.jdbc.user" value="rootuser"/>
          <property name="javax.persistence.jdbc.password" value="rootpassword"/>
          <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
