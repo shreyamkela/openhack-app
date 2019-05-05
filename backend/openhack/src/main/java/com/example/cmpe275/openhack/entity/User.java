@@ -1,6 +1,7 @@
 package com.example.cmpe275.openhack.entity;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,12 +44,15 @@ public class User {
 
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany
-	@JoinTable(
-			name="Judge_Hackathons",
-			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
-	private List<Hackathon> judgedHackathons;
+//	@ManyToMany
+//	@JoinTable(
+//			name="Judge_Hackathons",
+//			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
+//			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
+//	private Set<Hackathon> judgedHackathons;
+	
+	@ManyToMany(mappedBy="judges",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	private Set<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
 	@ManyToMany
@@ -56,7 +60,7 @@ public class User {
 			name="User_Teams",
 			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Team",referencedColumnName="id")})
-	private List<Team> teams;
+	private Set<Team> teams;
 	
 	public User() {
 		
@@ -154,6 +158,22 @@ public class User {
 	
 	public Organization getOrganization() {
 		return organization;
+	}
+
+	public Set<Hackathon> getJudgedHackathons() {
+		return judgedHackathons;
+	}
+
+	public void setJudgedHackathons(Set<Hackathon> judgedHackathons) {
+		this.judgedHackathons = judgedHackathons;
+	}
+
+	public Set<Team> getTeams() {
+		return teams;
+	}
+
+	public void setTeams(Set<Team> teams) {
+		this.teams = teams;
 	}
 
 }

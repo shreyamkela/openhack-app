@@ -3,6 +3,7 @@ package com.example.cmpe275.openhack.entity;
 import java.sql.Date;
 import java.util.*;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -36,17 +37,31 @@ public class Hackathon {
 	private int teamSizeMax; // inclusive
 	private double discount; // percentage
 	
-	@ManyToMany(mappedBy="judgedHackathons")
-	private List<User> judges;
+//	@ManyToMany(mappedBy="judgedHackathons")
+//	private List<User> judges;
+	
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@JoinTable(
+			name="Judge_Hackathons",
+			joinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")},
+			inverseJoinColumns= {@JoinColumn(name="User",referencedColumnName="id")})
+	private Set<User> judges;
 
-	@ManyToMany(mappedBy="sponsoredHackathons")
-	private List<Organization> sponsors;
+//	@ManyToMany(mappedBy="sponsoredHackathons")
+//	private List<Organization> sponsors;
+	
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(
+			name="Sponsored_Hackathons",
+			joinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")},
+			inverseJoinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")})
+	private Set<Organization> sponsors;
 
-	@OneToMany(mappedBy="hackathon")
-	private List<Submission> submissions;
-//
-	@ManyToMany(mappedBy="participatedHackathon")
-	private List<Team> teams;
+	@OneToMany(mappedBy="hackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	private Set<Submission> submissions;
+
+	@ManyToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	private Set<Team> teams;
 	
 	public Hackathon() 
 	{}
@@ -128,19 +143,19 @@ public class Hackathon {
 		this.discount = discount;
 	}
 
-	public List<Organization> getSponsors() {
+	public Set<Organization> getSponsors() {
 		return sponsors;
 	}
 
-	public void setSponsors(List<Organization> sponsors) {
+	public void setSponsors(Set<Organization> sponsors) {
 		this.sponsors = sponsors;
 	}
 
-	public List<Team> getTeams() {
+	public Set<Team> getTeams() {
 		return teams;
 	}
 
-	public void setTeams(List<Team> teams) {
+	public void setTeams(Set<Team> teams) {
 		this.teams = teams;
 	}	
 
