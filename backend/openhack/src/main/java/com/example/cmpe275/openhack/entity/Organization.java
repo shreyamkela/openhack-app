@@ -43,7 +43,7 @@ public class Organization {
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
 	@ManyToMany(mappedBy="sponsors",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
-	private List<Hackathon> sponsoredHackathons;
+	private Set<Hackathon> sponsoredHackathons;
 	
 	public Organization() {}
 
