@@ -34,30 +34,48 @@ public class SubmissionController {
 		Submission submission = new Submission();
 
 		try {
-			if (map.get("url") != null)
+			// Check if Team Id and Hackathon Id is already Present in the Submission table. If it is present then the hacker is resubmitting the url. If not present then the hacker is making a new submission
+			boolean newSubmission = true;
+			Long hackathonId = new Long((String) map.get("hackathonId"));
+			Hackathon hackathon = hackathonDao.findById(hackathonId);
+			Set<Submission> allSubmissions = hackathon.getSubmissions();
+			Long teamId = new Long((String) map.get("teamId"));
+
+			System.out.println("Hackathon found:" + hackathon.getName());
+
+			// Checking if this is resubmission
+			for (Submission currentSubmission : allSubmissions) {
+				System.out.println(
+						"qqqq" + currentSubmission.getTeam().getId() + currentSubmission.getHackathon().getId());
+				if (currentSubmission.getTeam().getId() == teamId
+						&& currentSubmission.getHackathon().getId() == hackathonId) {
+					newSubmission = false;
+					System.out.println("Submission found! Old URL: " + currentSubmission.getURL());
+					currentSubmission.setURL(map.get("url"));
+					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
+					System.out.println("Resubmission successful! New URL, submissionId: " + currentSubmission.getURL()
+							+ currentSubmission.getId());
+				}
+			}
+
+			// If this is a new submission
+			if (newSubmission == true) {
 				submission.setURL(map.get("url"));
-
-			if (map.get("hackathonId") != null) {
-				Long hackathonId = new Long((String) map.get("hackathonId"));
-
-				Hackathon hackathon = hackathonDao.findById(hackathonId);
-				System.out.println("Hackathon found:" + hackathon.getName());
 				submission.setHackathon(hackathon);
-
-				if (map.get("teamId") != null) {
-					Long teamId = new Long((String) map.get("teamId"));
-					Set<Team> teams = hackathon.getTeams();
-					for (Team team : teams) {
-						if (team.getId() == teamId) {
-							System.out.println("Team found:" + team.getTeamName());
-							submission.setTeam(team);
-						}
+				Set<Team> teams = hackathon.getTeams();
+				for (Team team : teams) {
+					if (team.getId() == teamId) {
+						System.out.println("Team found:" + team.getTeamName());
+						submission.setTeam(team);
 					}
 				}
 				submission = submissionDao.create(submission);
+				System.out.println(
+						"New submission successful! URL, submissionId: " + submission.getURL() + submission.getId());
 			}
+
 		} catch (Exception e) {
-			System.out.println("Exception while creating a submission" + e);
+			System.out.println("Exception while creating/updating submission: " + e);
 		}
 		return submission.getId();
 	}

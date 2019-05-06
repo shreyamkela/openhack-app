@@ -37,9 +37,22 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
+	@Transactional
 	public Submission updateById(long id, Submission submission) {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = emfactory.createEntityManager();
+		try {
+			em.getTransaction().begin();
+			Submission updatedSubmission = em.merge(submission);
+			em.getTransaction().commit();
+			System.out.println("\n - - - - - - - - - - Submission " + submission.getURL() + " updated to "
+					+ updatedSubmission.getURL() + " successfully! - - - - - - - - - - -\n");
+			return updatedSubmission;
+		} catch (RuntimeException e) {
+			em.getTransaction().rollback();
+			throw e;
+		} finally {
+			em.close();
+		}
 	}
 
 	@Override
