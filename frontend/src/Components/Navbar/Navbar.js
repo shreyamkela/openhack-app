@@ -4,17 +4,24 @@ import { Menu, Icon } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
+import firebase_con from '../../Config/firebase';
 var swal = require('sweetalert');
 
 class NavBar extends Component {
 
-    state = {
-        current: 'Challenges',
-        dataSource: [],
-        modalVisible : false,
-        confirmLoading : false,
-        owner_id : null
-    }
+    constructor(props){
+        super(props);
+        this.state = {
+            current: 'Challenges',
+            dataSource: [],
+            modalVisible : false,
+            confirmLoading : false,
+            owner_id : null,
+            organizations : []
+        }
+
+        this.fetchOrganizations = this.fetchOrganizations.bind(this);
+    } 
 
     // renderOption = (item) => {
     //     console.log(`renderOption.item`, item);
@@ -32,6 +39,7 @@ class NavBar extends Component {
     // }
 
     componentDidMount() {
+
         this.setState({
             dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
             owner_id : "5"
@@ -48,29 +56,29 @@ class NavBar extends Component {
     createOrgModal = () => {
         this.setState({
             modalVisible: true,
-          });
+        });
         console.log("\nCreate organization button clicked!!");
     }
 
     handleOk = () => {
         this.setState({
-          ModalText: 'The modal will be closed in one seconds',
-          confirmLoading: true,
+            ModalText: 'The modal will be closed in one seconds',
+            confirmLoading: true,
         });
         setTimeout(() => {
-          this.setState({
-            modalVisible: false,
-            confirmLoading: false,
-          });
+            this.setState({
+                modalVisible: false,
+                confirmLoading: false,
+            });
         }, 1000);
         console.log("\nOkay button of the modal pressed")
     }
-    
+
     handleCancel = () => {
-    console.log('Clicked cancel button');
-    this.setState({
-        modalVisible: false,
-    });
+        console.log('Clicked cancel button');
+        this.setState({
+            modalVisible: false,
+        });
     }
 
     createOrganization = (e) => {
@@ -97,13 +105,49 @@ class NavBar extends Component {
             }
         });
     }
+    logout = (e) => {
+        firebase_con.auth().signOut();
+        localStorage.removeItem("userId");
+        //this.props.history.push('/login');
+    }
+
+    fetchOrganizations = (e) => {
+        axios.defaults.withCredentials = true;
+        axios.get('http://localhost:8080/hacker/getOrganizations')
+                    .then((response) => {
+                        console.log("Status Code : ", response.status);
+                        
+                        if (response.status === 200) {
+                            console.log("Response received from backend");
+                            console.log(JSON.stringify(response.data.organizations));
+
+                            this.setState({
+                                organizations : response.data.organizations
+                            });
+                            
+                            console.log("The number of the organizations is"+response.data.organizations.length);
+                            var org_names = []
+                            for(let i=0;i<response.data.organizations.length;i++)
+                            {
+                                org_names.push(response.data.organizations[i].name)
+                            }
+                            this.setState({
+                                dataSource: org_names
+                            });
+                            console.log("\nOrganization names : "+org_names)
+                        }
+                        else{
+                            console.log("There was some error fetching list of organization from the backend")
+                        }
+                    });
+    }
 
     render() {
         const { modalVisible, confirmLoading } = this.state;
         const { getFieldDecorator } = this.props.form;
         var leftMenuItems = null;
         var rightMenuItems = null;
-        if (localStorage.getItem("userId")) {
+        if (!localStorage.getItem("userId")) {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
@@ -118,13 +162,13 @@ class NavBar extends Component {
                 </Link>
                 </Menu.Item>
                 {/* <Menu.Item key="Organisations"> */}
-                    {/* <Link to="/organisation"> */}
-                        <Button onClick = {this.createOrgModal}> <Icon type="home" /> Create Organisations</Button>
-                        
+                {/* <Link to="/organisation"> */}
+                <Button onClick={this.createOrgModal}> <Icon type="home" /> Create Organisations</Button>
+
                 {/* </Link> */}
                 {/* </Menu.Item> */}
             </Menu>
-            
+
             rightMenuItems = <div>
                 <br></br>
                 <Row type="flex" justify="end">
@@ -134,7 +178,8 @@ class NavBar extends Component {
                         //dataSource = {this.state.dataSource && this.state.dataSource.map(this.renderOption)}
                         dataSource = {this.state.dataSource && this.state.dataSource}
                         //onSelect = {this.onOrganisationSelect}
-                        placeholder="Find Organisations"
+                        placeholder="Find Organizations"
+                        onFocus = {this.fetchOrganizations}
                         allowClear={true}
                         ></AutoComplete>
                     </Col>
@@ -150,6 +195,13 @@ class NavBar extends Component {
                             <Link to="/profile">
                                 <Icon type="user" /> Hey xyz
                             </Link>
+                        </Badge>
+                    </Col>
+                    <Col span={6}>
+                        <Badge style={{ backgroundColor: '#52c41a' }}>
+                            <Button onClick={this.logout}><Link to='/login'>
+                                <Icon type="logout" /> Logout </Link>
+                            </Button>
                         </Badge>
                     </Col>
                 </Row>
@@ -189,7 +241,8 @@ class NavBar extends Component {
                             onOk={this.handleOk}
                             confirmLoading={confirmLoading}
                             onCancel={this.handleCancel}
-                            >
+                        >
+                        
                                       <Form 
                                       layout="vertical"
                                       onSubmit={this.createOrganization}

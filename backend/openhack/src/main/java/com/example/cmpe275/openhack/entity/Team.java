@@ -40,7 +40,7 @@ public class Team {
 	@OneToOne
 	private User teamLead;
 	
-	@ManyToMany(mappedBy="teams")
+	@ManyToMany(mappedBy="teams", fetch=FetchType.EAGER)
 	private Set<User> members;
 
 	@ManyToMany

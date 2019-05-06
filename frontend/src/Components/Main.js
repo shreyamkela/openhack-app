@@ -5,11 +5,12 @@ import Home from './Challenges/Home'
 import HackathonDetails from './Hackathon/HackathonDetails'
 import HackathonCreate from './Hackathon/HackathonCreate';
 import '../App.css'
-import SignupMain from './Signup/SignupMain';
 import Signup from './Signup/Signup';
-import LoginMain from './Login/LoginMain';
+import Login from './Login/Login';
+import Profile from './Profile/Profile';
 import { Form } from 'antd';
 import HackathonRegister from './Hackathon/HackathonRegister';
+import OrganizationsAll from './Organization/OrganizationAll';
 
 
 class Main extends Component {
@@ -19,11 +20,13 @@ class Main extends Component {
             <div>
                 <Route exact path="/" component={Navbar}></Route>
                 <Route exact path="/home" component={Home}></Route>
-                <Route exact path="/signup" component={SignupMain}></Route>
-                <Route exact path="/login" component={LoginMain}></Route>
+                <Route exact path="/signup" component={Signup}></Route>
+                <Route exact path="/login" component={Login}></Route>
+                <Route exact path="/profile" component={Profile}></Route>
                 <Route exact path="/hackathon_details/:id" component={HackathonDetails}></Route>
                 <Route exact path="/hackathon/create" component={HackathonCreate}></Route>
                 <Route exact path="/hackathon/register/:id" component={HackathonRegister}></Route>
+                <Route exact path="/hacker_organizations" component={OrganizationsAll}></Route>
             </div>
         )
     }

@@ -1,6 +1,7 @@
 package com.example.cmpe275.openhack.entity;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,6 +39,9 @@ public class User {
 	private String aboutMe;
 	private String title;
 	private String imageurl;
+	private String verified;
+	private String usertype;
+	private String lastname;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="organization_id")
@@ -46,7 +50,7 @@ public class User {
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
 	@ManyToMany(mappedBy="judges",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
-	private List<Hackathon> judgedHackathons;
+	private Set<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
 	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
@@ -54,7 +58,7 @@ public class User {
 			name="User_Teams",
 			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Team",referencedColumnName="id")})
-	private List<Team> teams;
+	private Set<Team> teams;
 	
 	public User() {
 		
@@ -152,6 +156,46 @@ public class User {
 	
 	public Organization getOrganization() {
 		return organization;
+	}
+
+	public String getVerified() {
+		return verified;
+	}
+
+	public void setVerified(String verified) {
+		this.verified = verified;
+	}
+
+	public String getUsertype() {
+		return usertype;
+	}
+
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+	public Set<Hackathon> getJudgedHackathons() {
+		return judgedHackathons;
+	}
+
+	public void setJudgedHackathons(Set<Hackathon> judgedHackathons) {
+		this.judgedHackathons = judgedHackathons;
+	}
+
+	public Set<Team> getTeams() {
+		return teams;
+	}
+
+	public void setTeams(Set<Team> teams) {
+		this.teams = teams;
 	}
 
 	@Override

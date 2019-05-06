@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.transaction.Transactional;
 
 import com.example.cmpe275.openhack.entity.Organization;
 
@@ -20,6 +21,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	}
 
 	@Override
+	@Transactional
 	public Organization create(Organization org) 
 	{
 		EntityManager em = emfactory.createEntityManager();
@@ -44,6 +46,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	}
 
 	@Override
+	@Transactional
 	public Organization findOrganizationById(long orgId) 
 	{
 		EntityManager em = emfactory.createEntityManager();
@@ -67,6 +70,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	}
 	
 	@Override
+	@Transactional
 	public List<Organization> findAllOrganization() 
 	{
 		EntityManager em = emfactory.createEntityManager();
@@ -88,6 +92,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	}
 
 	@Override
+	@Transactional
 	public Organization update(Organization org) 
 	{
 		EntityManager em = emfactory.createEntityManager();
@@ -112,6 +117,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	}
 
 	@Override
+	@Transactional
 	public Organization delete(long orgId) 
 	{
 		EntityManager em = emfactory.createEntityManager();

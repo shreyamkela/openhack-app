@@ -1,12 +1,19 @@
 package com.example.cmpe275.openhack.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
+
 
 public class UserDaoImpl implements UserDao {
 	
@@ -16,7 +23,7 @@ public class UserDaoImpl implements UserDao {
 		emfactory =Persistence.createEntityManagerFactory("openhack");
 	}
 
-	public User create(User user) {
+	public User createUser(User user) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.createEntityManager();
 		try
@@ -37,7 +44,52 @@ public class UserDaoImpl implements UserDao {
 			em.close();	
 		}
 	}
+	public User updateUser(User user) {
+		// TODO Auto-generated method stub
+		EntityManager em = emfactory.createEntityManager();
+		try
+		{			
+			em.getTransaction().begin();
+			User user2 = em.merge(user);
+			em.getTransaction().commit();
+			System.out.println("\n - - - - - - - - - - User "+user.getName()+" updated successfully! - - - - - - - - - - -\n");
+			return user2;
+		}
+		catch(RuntimeException e)
+		{	
+			em.getTransaction().rollback();
+			throw e;
+		}
+		finally
+		{
+			em.close();	
+		}
+	}
 //    @Override
+	public User findUserbyEmail(String email) {
+		EntityManager em = emfactory.createEntityManager();
+		User user =null;
+		try
+		{
+			em.getTransaction().begin();
+			 Query query = em.createQuery("SELECT u FROM User u WHERE u.email = :email");
+		        query.setParameter("email", email);
+		        user = (User) query.getSingleResult();
+			em.getTransaction().commit();
+			return user;
+		}
+		catch(RuntimeException e)
+		{
+			em.getTransaction().rollback();
+			throw e;
+		}
+		finally
+		{
+			em.close();	
+		}
+	}
+	
+
 	public User findUserbyID(long id) {
 		EntityManager em = emfactory.createEntityManager();
 		try
@@ -57,33 +109,30 @@ public class UserDaoImpl implements UserDao {
 			em.close();	
 		}
 	}
-	
 
-	public User updateUser(User user) {
+	public User deleteUser(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List<User> findAllUsers(){
 		EntityManager em = emfactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
 		try
 		{
-			tx.begin();
-			User updated_user = em.merge(user);
-			tx.commit();
-			System.out.println("\n- - - - - - - - - - User "+user.getName()+" updated successfully! - - - - - - - - - -\n");
-			return updated_user;
+			em.getTransaction().begin();
+			String usertype="user";
+			return (List<User>) em.createQuery("select e from User e where e.usertype = :usertype",
+				    User.class).setParameter("usertype",usertype ).getResultList();
 		}
 		catch(RuntimeException e)
 		{
-			tx.rollback();
+			em.getTransaction().rollback();
 			throw e;
 		}
 		finally
 		{
 			em.close();	
 		}
-	}
-
-	public User deleteUser(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 }

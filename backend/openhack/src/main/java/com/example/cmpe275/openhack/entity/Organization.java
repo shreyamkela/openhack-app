@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +18,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
 
 import com.example.cmpe275.openhack.entity.User;
 
@@ -35,6 +39,7 @@ public class Organization {
 	//No mapping, manipulation needs to be done manually
 //	@Column
 	@OneToOne(fetch=FetchType.EAGER)
+	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private User owner;
 	
 	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)
@@ -42,7 +47,7 @@ public class Organization {
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
 	@ManyToMany(mappedBy="sponsors",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
-	private List<Hackathon> sponsoredHackathons;
+	private Set<Hackathon> sponsoredHackathons;
 	
 	public Organization() {}
 
@@ -103,11 +108,11 @@ public class Organization {
 		this.members = members;
 	}
 
-	public List<Hackathon> getSponsoredHackathons() {
+	public Set<Hackathon> getSponsoredHackathons() {
 		return sponsoredHackathons;
 	}
 
-	public void setSponsoredHackathons(List<Hackathon> sponsoredHackathons) {
+	public void setSponsoredHackathons(Set<Hackathon> sponsoredHackathons) {
 		this.sponsoredHackathons = sponsoredHackathons;
 	}
 
