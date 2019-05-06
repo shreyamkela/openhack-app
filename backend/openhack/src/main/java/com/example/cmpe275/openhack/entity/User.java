@@ -1,6 +1,7 @@
 package com.example.cmpe275.openhack.entity;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+
 
 @Entity
 @Table
@@ -46,20 +49,16 @@ public class User {
 
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany
-	@JoinTable(
-			name="Judge_Hackathons",
-			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
-	private List<Hackathon> judgedHackathons;
+	@ManyToMany(mappedBy="judges",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	private Set<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
 	@JoinTable(
 			name="User_Teams",
 			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Team",referencedColumnName="id")})
-	private List<Team> teams;
+	private Set<Team> teams;
 	
 	public User() {
 		
@@ -183,4 +182,39 @@ public class User {
 		this.lastname = lastname;
 	}
 
+	public Set<Hackathon> getJudgedHackathons() {
+		return judgedHackathons;
+	}
+
+	public void setJudgedHackathons(Set<Hackathon> judgedHackathons) {
+		this.judgedHackathons = judgedHackathons;
+	}
+
+	public Set<Team> getTeams() {
+		return teams;
+	}
+
+	public void setTeams(Set<Team> teams) {
+		this.teams = teams;
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		int hash = 3;
+	    hash = 7 * hash + this.email.hashCode();
+	    hash = 7 * hash + this.name.hashCode();
+	    return hash;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if((obj instanceof User) && ((User) obj).id == this.id)
+		{
+			return true;
+		}
+		else
+			return false;
+	}
 }

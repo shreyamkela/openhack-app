@@ -105,7 +105,7 @@ class HackathonRegister extends Component {
                 filteredUsers:this.state.users
             })
         }else{
-            var filteredUsers = this.state.filteredUsers.filter(user => {
+            var filteredUsers = this.state.users.filter(user => {
                 console.log(user.firstname," and ",value)
                 return user.firstname.startsWith(value)
             })

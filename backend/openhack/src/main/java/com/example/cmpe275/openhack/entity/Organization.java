@@ -1,8 +1,11 @@
 package com.example.cmpe275.openhack.entity;
 
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +18,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
 
 import com.example.cmpe275.openhack.entity.User;
 
@@ -32,19 +38,16 @@ public class Organization {
 	
 	//No mapping, manipulation needs to be done manually
 //	@Column
-	@OneToOne
+	@OneToOne(fetch=FetchType.EAGER)
+	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private User owner;
 	
 	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)
-	private List<User> members;
+	private Set<User> members;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany
-	@JoinTable(
-			name="Sponsored_Hackathons",
-			joinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
-	private List<Hackathon> sponsoredHackathons;
+	@ManyToMany(mappedBy="sponsors",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	private Set<Hackathon> sponsoredHackathons;
 	
 	public Organization() {}
 
@@ -97,19 +100,19 @@ public class Organization {
 		this.owner = owner;
 	}
 
-	public List<User> getMembers() {
+	public Set<User> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<User> members) {
+	public void setMembers(Set<User> members) {
 		this.members = members;
 	}
 
-	public List<Hackathon> getSponsoredHackathons() {
+	public Set<Hackathon> getSponsoredHackathons() {
 		return sponsoredHackathons;
 	}
 
-	public void setSponsoredHackathons(List<Hackathon> sponsoredHackathons) {
+	public void setSponsoredHackathons(Set<Hackathon> sponsoredHackathons) {
 		this.sponsoredHackathons = sponsoredHackathons;
 	}
 

@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
+import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
 
 
@@ -86,6 +88,7 @@ public class UserDaoImpl implements UserDao {
 			em.close();	
 		}
 	}
+	
 
 	public User findUserbyID(long id) {
 		EntityManager em = emfactory.createEntityManager();
