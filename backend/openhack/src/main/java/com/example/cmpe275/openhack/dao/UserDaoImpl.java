@@ -1,6 +1,7 @@
 package com.example.cmpe275.openhack.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -114,13 +115,13 @@ public class UserDaoImpl implements UserDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public List<User> findAllUsers(){
+	public Set<User> findAllUsers(){
 		EntityManager em = emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();
 			String usertype="user";
-			return (List<User>) em.createQuery("select e from User e where e.usertype = :usertype",
+			return (Set<User>) em.createQuery("select e from User e where e.usertype = :usertype",
 				    User.class).setParameter("usertype",usertype ).getResultList();
 		}
 		catch(RuntimeException e)

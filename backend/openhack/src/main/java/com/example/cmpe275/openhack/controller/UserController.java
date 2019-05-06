@@ -3,7 +3,9 @@ package com.example.cmpe275.openhack.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -129,9 +131,9 @@ public class UserController {
 	}
 	@GetMapping("/getalluser")
 	@ResponseBody
-	public List<User> getAllUser(){
+	public Set<User> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
-		List<User> listusers =new ArrayList<User>();
+		Set<User> listusers =new HashSet<User>();
 		try
 		{
 			listusers = userdao.findAllUsers();
