@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Menu, Icon } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input } from 'antd';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import firebase_con from '../../Config/firebase';
+
 
 
 
@@ -13,9 +15,9 @@ class NavBar extends Component {
     state = {
         current: 'Challenges',
         dataSource: [],
-        modalVisible : false,
-        confirmLoading : false,
-        owner_name : null
+        modalVisible: false,
+        confirmLoading: false,
+        owner_name: null
     }
 
     // renderOption = (item) => {
@@ -35,8 +37,8 @@ class NavBar extends Component {
 
     componentDidMount() {
         this.setState({
-            dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
-            owner_name : "User1"
+            dataSource: ["Organisation 1", "Organisation 2", "Organisation 3"],
+            owner_name: "User1"
         })
     }
 
@@ -50,29 +52,29 @@ class NavBar extends Component {
     createOrgModal = () => {
         this.setState({
             modalVisible: true,
-          });
+        });
         console.log("\nCreate organization button clicked!!");
     }
 
     handleOk = () => {
         this.setState({
-          ModalText: 'The modal will be closed in one seconds',
-          confirmLoading: true,
+            ModalText: 'The modal will be closed in one seconds',
+            confirmLoading: true,
         });
         setTimeout(() => {
-          this.setState({
-            modalVisible: false,
-            confirmLoading: false,
-          });
+            this.setState({
+                modalVisible: false,
+                confirmLoading: false,
+            });
         }, 1000);
         console.log("\nOkay button of the modal pressed")
     }
-    
+
     handleCancel = () => {
-    console.log('Clicked cancel button');
-    this.setState({
-        modalVisible: false,
-    });
+        console.log('Clicked cancel button');
+        this.setState({
+            modalVisible: false,
+        });
     }
 
     createOrganization = (e) => {
@@ -81,11 +83,16 @@ class NavBar extends Component {
         // console.log(e)
         this.props.form.validateFields((err, values) => {
             if (!err) {
-              console.log('Received values of form: ', values);
-              console.log("Name of the organization : "+values.name)
-              console.log("Description of the organization : "+values.description)
+                console.log('Received values of form: ', values);
+                console.log("Name of the organization : " + values.name)
+                console.log("Description of the organization : " + values.description)
             }
         });
+    }
+    logout = (e) => {
+        firebase_con.auth().signOut();
+        localStorage.removeItem("userId");
+        //this.props.history.push('/login');
     }
 
     render() {
@@ -108,24 +115,24 @@ class NavBar extends Component {
                 </Link>
                 </Menu.Item>
                 {/* <Menu.Item key="Organisations"> */}
-                    {/* <Link to="/organisation"> */}
-                        <Button onClick = {this.createOrgModal}> <Icon type="home" /> Create Organisations</Button>
-                        
+                {/* <Link to="/organisation"> */}
+                <Button onClick={this.createOrgModal}> <Icon type="home" /> Create Organisations</Button>
+
                 {/* </Link> */}
                 {/* </Menu.Item> */}
             </Menu>
-            
+
             rightMenuItems = <div>
                 <br></br>
                 <Row type="flex" justify="end">
                     <Col span={12}>
                         <AutoComplete
-                        style={{ width: 200 }}
-                        //dataSource = {this.state.dataSource && this.state.dataSource.map(this.renderOption)}
-                        dataSource = {this.state.dataSource && this.state.dataSource}
-                        //onSelect = {this.onOrganisationSelect}
-                        placeholder="Find Organisations"
-                        allowClear={true}
+                            style={{ width: 200 }}
+                            //dataSource = {this.state.dataSource && this.state.dataSource.map(this.renderOption)}
+                            dataSource={this.state.dataSource && this.state.dataSource}
+                            //onSelect = {this.onOrganisationSelect}
+                            placeholder="Find Organisations"
+                            allowClear={true}
                         ></AutoComplete>
                     </Col>
                     <Col span={6}>
@@ -140,6 +147,13 @@ class NavBar extends Component {
                             <Link to="/profile">
                                 <Icon type="user" /> Hey xyz
                             </Link>
+                        </Badge>
+                    </Col>
+                    <Col span={6}>
+                        <Badge style={{ backgroundColor: '#52c41a' }}>
+                            <Button onClick={this.logout}><Link to='/login'>
+                                <Icon type="logout" /> Logout </Link>
+                            </Button>
                         </Badge>
                     </Col>
                 </Row>
@@ -179,38 +193,38 @@ class NavBar extends Component {
                             onOk={this.handleOk}
                             confirmLoading={confirmLoading}
                             onCancel={this.handleCancel}
+                        >
+                            <Form
+                                layout="vertical"
+                                onSubmit={this.createOrganization}
                             >
-                                      <Form 
-                                      layout="vertical"
-                                      onSubmit={this.createOrganization}
-                                      >
-                                        <Form.Item label="Organization name">
-                                            {getFieldDecorator('name', {
-                                                rules: [{ required: true, message: 'Please input the name of the organization' }],
-                                            })(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="Description">
-                                            {getFieldDecorator('description')(<Input type="textarea" rows="3" cols="10"/>)}
-                                        </Form.Item>
-                                        <Form.Item label="Street Address">
-                                            {getFieldDecorator('street')(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="City">
-                                            {getFieldDecorator('city')(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="State">
-                                            {getFieldDecorator('state')(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="Zip code">
-                                            {getFieldDecorator('zip')(<Input />)} 
-                                        </Form.Item>
-                                        <Form.Item label="Country">
-                                            {getFieldDecorator('country')(<Input />)} 
-                                        </Form.Item>
-                                        <Form.Item>
-                                            <Button type="primary" htmlType="submit">Create</Button>
-                                        </Form.Item>
-                                    </Form>
+                                <Form.Item label="Organization name">
+                                    {getFieldDecorator('name', {
+                                        rules: [{ required: true, message: 'Please input the name of the organization' }],
+                                    })(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="Description">
+                                    {getFieldDecorator('description')(<Input type="textarea" rows="3" cols="10" />)}
+                                </Form.Item>
+                                <Form.Item label="Street Address">
+                                    {getFieldDecorator('street')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="City">
+                                    {getFieldDecorator('city')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="State">
+                                    {getFieldDecorator('state')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="Zip code">
+                                    {getFieldDecorator('zip')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="Country">
+                                    {getFieldDecorator('country')(<Input />)}
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">Create</Button>
+                                </Form.Item>
+                            </Form>
                         </Modal>
                     </Col>
                     <Col span={8} offset={4}>

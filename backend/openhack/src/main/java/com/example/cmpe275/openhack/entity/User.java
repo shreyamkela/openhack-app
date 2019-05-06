@@ -36,6 +36,9 @@ public class User {
 	private String aboutMe;
 	private String title;
 	private String imageurl;
+	private String verified;
+	private String usertype;
+	private String lastname;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="organization_id")
@@ -154,6 +157,30 @@ public class User {
 	
 	public Organization getOrganization() {
 		return organization;
+	}
+
+	public String getVerified() {
+		return verified;
+	}
+
+	public void setVerified(String verified) {
+		this.verified = verified;
+	}
+
+	public String getUsertype() {
+		return usertype;
+	}
+
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
 }
