@@ -120,6 +120,8 @@ public class HackathonController {
 	public Map<Object,Object> createHackathonResponseBody(Hackathon hackathon,User user){
 		Map<Object,Object> responseBody = new HashMap<>();
 		String message="";
+		Team userTeam = null;
+		String submissionUrl = "";
 		responseBody.put("id",hackathon.getId());
 		responseBody.put("name",hackathon.getName());
 		responseBody.put("description",hackathon.getDescription());
@@ -144,7 +146,8 @@ public class HackathonController {
 			temp.put("teamName", team.getTeamName());
 			teamDetails.add(temp);
 			if(team.getMembers().contains(user)) {
-				message="registred";
+				message="registered";
+				userTeam = team;
 			}
 		}
 		for(User judge : judges) {
@@ -165,18 +168,25 @@ public class HackathonController {
 			temp.put("sponsorDescription",sponsor.getDescription());
 			sponsorDetails.add(temp);
 		}
-		for(Submission submission : submissions) {
-			Map<Object,Object> temp = new HashMap<>();
-			temp.put("submissionId",submission.getId());
-			temp.put("url", submission.getURL());
-			temp.put("submittedBy",submission.getTeam().getTeamName());
-			temp.put("grade",submission.getGrade());
-			submissionDetails.add(temp);
+		if(userTeam!=null) {
+			for(Submission submission : submissions) {
+				if(submission.getTeam().getId() == userTeam.getId()) {
+					submissionUrl = submission.getURL();
+				}
+//				Map<Object,Object> temp = new HashMap<>();
+//				temp.put("submissionId",submission.getId());
+//				temp.put("url", submission.getURL());
+//				temp.put("submittedBy",submission.getTeam().getTeamName());
+//				temp.put("grade",submission.getGrade());
+//				submissionDetails.add(temp);
+			}
 		}
+		
+		
 		responseBody.put("teamDetails", teamDetails);
 		responseBody.put("judgeDetails", judgeDetails);
 		responseBody.put("sponsorDetails", sponsorDetails);
-		responseBody.put("submissionDetails", submissionDetails);
+		responseBody.put("submissionUrl", submissionUrl);
 		responseBody.put("message", message);
 		return responseBody;
 	}

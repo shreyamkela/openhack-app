@@ -2,10 +2,18 @@ package com.example.cmpe275.openhack.controller;
 
 
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -90,5 +98,14 @@ public class UserController {
 			System.out.println("Exception while creating a user"+e);
 		}
 		return user;
+	}
+	
+	@RequestMapping(value="/user/notHackathon", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<Object,Object> getUsersNotInHackathon(HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(name="id") long hackathonId){
+		
+		return null;
 	}
 }
