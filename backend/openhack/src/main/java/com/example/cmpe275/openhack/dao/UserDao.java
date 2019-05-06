@@ -11,5 +11,5 @@ public interface UserDao {
 	User findUserbyID(long id);
 	User updateUser(User user);
 	User deleteUser(long id);
-	List<User> findAllUsers();
+	Set<User> findAllUsers();
 }

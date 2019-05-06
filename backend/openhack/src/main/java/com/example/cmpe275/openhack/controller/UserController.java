@@ -170,7 +170,7 @@ public class UserController {
 			}
 	@GetMapping("/getalluser")
 	@ResponseBody
-	public List<User> getAllUser(){
+	public Set<User> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
 		List<User> listusers =new ArrayList<>();
 		try
