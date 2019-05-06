@@ -53,11 +53,7 @@ public class User {
 	private Set<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
-	@JoinTable(
-			name="User_Teams",
-			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Team",referencedColumnName="id")})
+	@ManyToMany(mappedBy="members", fetch=FetchType.EAGER)
 	private Set<Team> teams;
 	
 	public User() {

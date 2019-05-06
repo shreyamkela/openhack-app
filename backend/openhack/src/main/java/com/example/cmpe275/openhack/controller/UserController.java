@@ -3,7 +3,9 @@ package com.example.cmpe275.openhack.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.cmpe275.openhack.dao.UserDao;
 import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Address;
+import com.example.cmpe275.openhack.entity.Hackathon;
+import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
 
 //@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600,allowedHeaders=
@@ -134,20 +138,41 @@ public class UserController {
 		return user;
 	}
 	
-	@RequestMapping(value="/user/notHackathon", method=RequestMethod.POST)
+	@GetMapping(value="/user/notHackathon/{hackathonId}/{userId}")
 	@ResponseBody
 	public Map<Object,Object> getUsersNotInHackathon(HttpServletRequest request,
 			HttpServletResponse response,
-			@PathVariable(name="id") long hackathonId){
-		
-				return null;
+			@PathVariable(name="hackathonId") long hackathonId,
+			@PathVariable(name="userId") long userId){
+				List<User> users = userdao.findAllUsers();
+				Map<Object,Object> responseBody = new HashMap<>();
+				List<Map<Object,Object>> userDetails = new ArrayList<>();
+				for(User user : users) {
+					boolean flag=true;
+					if(user.getId()!=userId) {
+						Set<Team> teams = user.getTeams();
+						for(Team team : teams) {
+							if(team.getParticipatedHackathon().getId()==hackathonId) {
+								flag=false;
+								break;
+							}
+						}
+						if(flag) {
+							Map<Object,Object> temp = new HashMap<>();
+							temp.put("id", user.getId());
+							temp.put("name", user.getName());
+							userDetails.add(temp);
+						}
+					}
+				}
+				responseBody.put("userDetails", userDetails);
+				return responseBody;
 			}
-	
 	@GetMapping("/getalluser")
 	@ResponseBody
 	public List<User> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
-		List<User> listusers =new ArrayList<User>();
+		List<User> listusers =new ArrayList<>();
 		try
 		{
 			listusers = userdao.findAllUsers();

@@ -1,6 +1,7 @@
 package com.example.cmpe275.openhack.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

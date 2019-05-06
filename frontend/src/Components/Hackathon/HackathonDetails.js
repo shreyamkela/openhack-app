@@ -64,7 +64,7 @@ class HackathonDetails extends Component {
                         teamSizeMin: response.data.teamSizeMin,
                         teamSizeMax: response.data.teamSizeMax,
                         discount: response.data.discount,
-                        message: "",//response.data.message,
+                        message: response.data.message,
                         teamDetails: response.data.teamDetails,
                         judgeDetails: response.data.judgeDetails,
                         sponsorDetails: response.data.sponsorDetails,

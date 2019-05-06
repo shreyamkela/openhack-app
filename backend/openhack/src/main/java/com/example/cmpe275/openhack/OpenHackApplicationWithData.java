@@ -52,9 +52,9 @@ public class OpenHackApplicationWithData {
 //		
 		UserDao userdao = new UserDaoImpl();
 //		
-		user1 = userdao.create(user1);
-		user2 = userdao.create(user2);
-		user3 = userdao.create(user3);
+		user1 = userdao.createUser(user1);
+		user2 = userdao.createUser(user2);
+		user3 = userdao.createUser(user3);
 //
 		Organization org1 = new Organization();
 		org1.setAddress(address3);

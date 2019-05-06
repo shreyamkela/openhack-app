@@ -1,5 +1,6 @@
 package com.example.cmpe275.openhack.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,8 +8,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,10 +35,15 @@ import com.example.cmpe275.openhack.dao.HackathonDao;
 import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
 import com.example.cmpe275.openhack.dao.OrganizationDao;
 import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
+import com.example.cmpe275.openhack.dao.PaymentDao;
+import com.example.cmpe275.openhack.dao.PaymentDaoImpl;
+import com.example.cmpe275.openhack.dao.TeamDao;
+import com.example.cmpe275.openhack.dao.TeamDaoImpl;
 import com.example.cmpe275.openhack.dao.UserDao;
 import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
+import com.example.cmpe275.openhack.entity.Payment;
 import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
@@ -41,12 +57,16 @@ public class HackathonController {
 	private UserDao userDao;
 	private HackathonDao hackathonDao;
 	private OrganizationDao organizationDao;
+	private TeamDao teamDao;
+	private PaymentDao paymentDao;
 	
 	public HackathonController() {
 		// TODO Auto-generated constructor stub
 		userDao = new UserDaoImpl();
 		hackathonDao = new HackathonDaoImpl();
 		organizationDao = new OrganizationDaoImpl();
+		teamDao = new TeamDaoImpl();
+		paymentDao = new PaymentDaoImpl();
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
@@ -128,7 +148,7 @@ public class HackathonController {
 		responseBody.put("startDate",hackathon.getStartDate());
 		responseBody.put("endDate",hackathon.getEndDate());
 		responseBody.put("fee",hackathon.getFee());
-		responseBody.put("teamSizeMin", hackathon.getTeamSizeMax());
+		responseBody.put("teamSizeMin", hackathon.getTeamSizeMin());
 		responseBody.put("teamSizeMax", hackathon.getTeamSizeMax());
 		responseBody.put("discount",hackathon.getDiscount());
 		Set<Team> teams = hackathon.getTeams();
@@ -189,5 +209,111 @@ public class HackathonController {
 		responseBody.put("submissionUrl", submissionUrl);
 		responseBody.put("message", message);
 		return responseBody;
+	}
+	
+	@RequestMapping(value="register/{id}",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<Object,Object> registerHackathon(HttpServletRequest request,
+				HttpServletResponse response,
+				@PathVariable(name="id") long hackathonId,
+				@RequestBody Map<Object,Object> requestBody){
+		
+		Map<Object,Object> responseObject = new HashMap<>();
+		String teamName = (String) requestBody.get("teamName");
+		String idea = (String)requestBody.get("idea");
+		List<Integer> userIds = (List<Integer>)requestBody.get("userIds");
+		long leadId = new Long((String)requestBody.get("leadId"));
+		
+		Team team = new Team();
+		team.setTeamName(teamName);
+		team.setIdea(idea);
+		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		team.setParticipatedHackathon(hackathon);
+		User teamLead = userDao.findUserbyID(leadId);
+		team.setTeamLead(teamLead);		
+		Set<User> members = new HashSet<>();
+		List<String> userEmails = new ArrayList<>();
+		for(int i=0;i<userIds.size();i++) { 
+			User temp = userDao.findUserbyID(new Long(userIds.get(i)));
+			members.add(temp);
+			userEmails.add(temp.getEmail());
+		}
+		team.setMembers(members);
+		try {
+			Team createdTeam = teamDao.createTeam(team);
+			responseObject.put("msg","Successfully registered");
+			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
+	        emailExecutor.execute(new Runnable() {
+	            @Override
+	            public void run() {
+	                try {
+	                    for(int i=0;i<userIds.size();i++) {
+	                    	User temp = userDao.findUserbyID(userIds.get(i));
+	                    	Payment payment = new Payment();
+	                    	payment.setFee(hackathon.getFee());
+	                    	payment.setTeamId(createdTeam.getId());
+	                    	payment.setMemberId(userIds.get(i));
+	                    	payment.setStatus(false);
+	                    	Payment createdPayment = paymentDao.createPayment(payment);
+	                    	sendPaymentEmail(temp.getEmail(), hackathon, teamLead, createdPayment.getId(),createdTeam.getId());
+	                    }
+	                } catch (Exception e) {
+	                	System.out.println("error in sending mails: "+e.getMessage());
+	                }
+	            }
+	        });
+	        emailExecutor.shutdown();
+			return responseObject;
+		}catch (Exception e) {
+			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
+			responseObject.put("msg",e.getMessage());
+			return responseObject;
+		}
+		
+	}
+	
+	public void sendPaymentEmail(String userEmail,Hackathon hackathon,User teamLead, long paymentId, long teamId) {
+		
+		final String username = "openhackservice@gmail.com";
+        final String password = "openhack123";
+
+        Properties prop = new Properties();
+		prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true"); //TLS
+        
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+        try {
+        	
+        		Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(username));
+                message.setRecipients(
+                        Message.RecipientType.TO,
+                        InternetAddress.parse(userEmail)
+                );
+                message.setSubject("Registered to Hackathon: Payment Required");
+                message.setText("Dear "+userEmail+", "
+                        + "\n\n Congratulations!!! You have been invited by ."+teamLead.getName()+"("+teamLead.getEmail()+") for the following hackathon event."
+                        + "\n\n Hackathon Name: "+hackathon.getName()
+                		+ "\n Hackathon Description: "+hackathon.getDescription()
+                		+ "\n Hackathon Start Date: "+hackathon.getStartDate()
+                		+ "\n Hackathon End Date: "+hackathon.getEndDate()
+                		+ "\n Hackathon Fee: $"+hackathon.getFee()
+                		+ "\n\n Go to http://localhost:3000/payment/"+paymentId+"/"+teamId+" for payment and confirm your seat."
+                        +"\n\n Happy Hacking,"
+                		+"\n OpenHack Service");
+
+                Transport.send(message);
+                System.out.println("Done");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 	}
 }

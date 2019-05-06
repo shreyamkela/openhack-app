@@ -61,7 +61,7 @@ public class Hackathon {
 	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<Submission> submissions;
 //
-	@ManyToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<Team> teams;
 	

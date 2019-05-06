@@ -5,6 +5,8 @@ import { Row, Col, AutoComplete, Badge, Steps, Button, message } from 'antd';
 import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
+import axios from 'axios'
+import swal from 'sweetalert';
 class HackathonRegister extends Component {
 
     state = {
@@ -21,30 +23,22 @@ class HackathonRegister extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            users: [
-                {
-                    "id": 1,
-                    "firstname": "Sayalee",
-                    "lastname": "Bhusari"
-                },
-                {
-                    "id": 2,
-                    "firstname": "Kavina",
-                    "lastname": "Desai"
-                },
-                {
-                    "id": 3,
-                    "firstname": "Disha",
-                    "lastname": "Kapadia"
-                },
-            ]
-        }, () => {
-            this.setState({
-                filteredUsers: this.state.users
+        
+        axios.get(`http://localhost:8080/user/notHackathon/${this.props.match.params.id}/${localStorage.getItem("userId")}`)
+            .then(response => {
+                if(response.status===200){
+                    console.log(response.data)
+                    this.setState({
+                        users:response.data.userDetails,
+                        filteredUsers:response.data.userDetails,
+                    })
+                }
             })
-        })
+            .catch(err => {
+                console.log(err);
+            })
     }
+
     onChangeName = (e) => {
         if (e.target.value) {
             this.setState({
@@ -67,8 +61,8 @@ class HackathonRegister extends Component {
     renderOption = (item) => {
         console.log(`renderOption.item`, item);
         return (
-            <AutoComplete.Option key={item.id} text={item.firstname}>
-                <span>{item.firstname}</span>
+            <AutoComplete.Option key={item.id} text={item.name}>
+                <span>{item.name}</span>
             </AutoComplete.Option>
         );
     }
@@ -76,19 +70,19 @@ class HackathonRegister extends Component {
     onMemberSelect = (value, option) => {
         var member = this.state.users.filter(user => user.id == option.key)
         var members = this.state.members
-        members.push(member[0])
+        members.push(member[0].id)
         console.log(members)
         var users = this.state.users.filter(user => {
             return user.id != option.key
         })
-        if(members.length < this.state.min){
+        if(members.length+1 < this.state.min){
             this.setState({
                 users: users,
                 members: members,
                 membersErr: "Select more members",
                 membersErrFlag: true
             })
-        }else if(members.length === this.state.max){
+        }else if(members.length+1 === this.state.max){
             this.setState({
                 users: users,
                 members: members,
@@ -105,15 +99,36 @@ class HackathonRegister extends Component {
                 filteredUsers:this.state.users
             })
         }else{
-            var filteredUsers = this.state.users.filter(user => {
-                console.log(user.firstname," and ",value)
-                return user.firstname.startsWith(value)
+            var filteredUsers = this.state.filteredUsers.filter(user => {
+                console.log(user.name," and ",value)
+                return user.name.startsWith(value)
             })
             console.log(filteredUsers)
             this.setState({
                 filteredUsers:filteredUsers
             })
         }
+    }
+
+    registerHackathon = (e) => {
+        let body = {
+            "teamName":this.state.teamName,
+            "idea":this.state.idea,
+            "userIds":this.state.members,
+            "leadId":localStorage.getItem("userId")
+        }
+        body.userIds.push(parseInt(localStorage.getItem("userId")));
+        axios.post(`http://localhost:8080/hackathon/register/${this.props.match.params.id}`,body)
+            .then(response => {
+                console.log(response);
+                swal("Successfully registered","Payment Link Sent","success")
+                this.props.history.push("/home");
+            })
+            .catch(err => {
+                console.log(err);
+                swal("Something went wrong","Try again later","error")
+                window.location.reload();
+            })
     }
     render() {
 
@@ -126,7 +141,7 @@ class HackathonRegister extends Component {
                         <a id={member.id} onClick={this.removeMember}>
                             <Avatar shape="square" size="large" icon="user" />
                         </a>
-                        <p>{member.firstname}</p>
+                        <p>{member.name}</p>
                     </Col>
                 )
             })
@@ -137,7 +152,7 @@ class HackathonRegister extends Component {
                 <div class="hackathon-create p-5" style={{ "backgroundColor": "white" }}>
                     <Title style={3}>Register to Hackathon</Title>
                     <Divider></Divider>
-                    <Form onSubmit={this.createHackathon}>
+                    <Form>
                         <Form.Item
                             label="Team Name"
                         >
@@ -181,8 +196,9 @@ class HackathonRegister extends Component {
                                 type="primary"
                                 htmlType="submit"
                                 disabled={this.state.teamNameErrFlag || this.state.membersErrFlag}
+                                onClick={this.registerHackathon}
                             >
-                                Log in
+                                Join Hackathon
                             </Button>
                         </Form.Item>
                     </Form>
@@ -191,5 +207,6 @@ class HackathonRegister extends Component {
         )
     }
 }
-
 export default Form.create()(HackathonRegister);
+
+
