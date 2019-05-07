@@ -204,6 +204,7 @@ public class HackathonController {
 				userTeamDetails.add(temp);
 				System.out.println(temp);
 			}
+			responseBody.put("userTeamId", userTeam.getId());
 			responseBody.put("userTeam", userTeamDetails);
 			for(Submission submission : submissions) {
 				if(submission.getTeam().getId() == userTeam.getId()) {
@@ -232,15 +233,15 @@ public class HackathonController {
 		Map<Object,Object> responseObject = new HashMap<>();
 		String teamName = (String) requestBody.get("teamName");
 		String idea = (String)requestBody.get("idea");
-		List<Integer> userIds = (List<Integer>)requestBody.get("userIds");
+		final List<Integer> userIds = (List<Integer>)requestBody.get("userIds");
 		long leadId = new Long((String)requestBody.get("leadId"));
 		
 		Team team = new Team();
 		team.setTeamName(teamName);
 		team.setIdea(idea);
-		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		final Hackathon hackathon = hackathonDao.findById(hackathonId);
 		team.setParticipatedHackathon(hackathon);
-		User teamLead = userDao.findUserbyID(leadId);
+		final User teamLead = userDao.findUserbyID(leadId);
 		team.setTeamLead(teamLead);		
 		Set<User> members = new HashSet<>();
 		List<String> userEmails = new ArrayList<>();

@@ -5,7 +5,7 @@ import { Row, Col, AutoComplete, Badge, Steps, Button, message } from 'antd';
 import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
-import axios from 'axios'
+import axios from 'axios';
 import swal from 'sweetalert';
 class HackathonRegister extends Component {
 
@@ -28,6 +28,9 @@ class HackathonRegister extends Component {
             .then(response => {
                 if(response.status===200){
                     console.log(response.data)
+                    let users = response.data.userDetails.filter(user => {
+                        return user.id != localStorage.getItem("userId")
+                    })
                     this.setState({
                         users:response.data.userDetails,
                         filteredUsers:response.data.userDetails,

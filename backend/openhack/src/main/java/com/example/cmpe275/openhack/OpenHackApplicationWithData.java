@@ -55,6 +55,8 @@ public class OpenHackApplicationWithData {
 		user1 = userdao.createUser(user1);
 		user2 = userdao.createUser(user2);
 		user3 = userdao.createUser(user3);
+	}
+}
 //
 //import com.example.cmpe275.openhack.dao.OrganizationDao;
 //import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;

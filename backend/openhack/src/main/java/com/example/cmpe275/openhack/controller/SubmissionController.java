@@ -1,10 +1,20 @@
 package com.example.cmpe275.openhack.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +25,7 @@ import com.example.cmpe275.openhack.dao.SubmissionDaoImpl;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
+import com.example.cmpe275.openhack.entity.User;
 
 @RestController
 public class SubmissionController {
@@ -52,7 +63,7 @@ public class SubmissionController {
 					currentSubmission.setURL(map.get("url"));
 					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
 					System.out.println("Resubmission successful! New URL, submissionId: " + currentSubmission.getURL()
-							+ currentSubmission.getId());
+					+ currentSubmission.getId());
 				}
 			}
 
@@ -100,7 +111,7 @@ public class SubmissionController {
 					currentSubmission.setGrade(grade);
 					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
 					System.out.println("Resubmission successful! New Grade: " + currentSubmission.getGrade()
-							+ " submissionId: " + currentSubmission.getId());
+					+ " submissionId: " + currentSubmission.getId());
 				}
 			}
 
@@ -110,4 +121,42 @@ public class SubmissionController {
 		return submission.getId();
 	}
 
+
+	@GetMapping("/submission/{hackathonId}")
+	@ResponseBody
+	public Map<Object,Object> getAllSubmissions(HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(name="hackathonId") long hackathonId){
+		Map<Object,Object> responseBody = new HashMap<>();
+		List<Map<Object,Object>> submissionDetails = new ArrayList<>();
+		try {
+			List<Submission> submissions = submissionDao.findAll();
+			for (Submission submission:submissions) {
+				if(submission.getHackathon().getId() == hackathonId) {
+					Map<Object,Object> submissionTemp = new HashMap<>();
+					submissionTemp.put("submissionId",submission.getId());
+					submissionTemp.put("submissionUrl",submission.getURL());
+					submissionTemp.put("grade", submission.getGrade());
+					submissionTemp.put("hackathonName", submission.getHackathon().getName());
+					submissionTemp.put("teamName", submission.getTeam().getTeamName());
+					List<Map<Object,Object>> memberDetails = new ArrayList<>();
+							for(User member : submission.getTeam().getMembers()) {
+								Map<Object,Object> teamMembers = new HashMap<>();
+								teamMembers.put("memberId", member.getId());
+								teamMembers.put("memberName", member.getName());
+								memberDetails.add(teamMembers);
+							}
+					submissionTemp.put("memberDetails", memberDetails);
+					submissionDetails.add(submissionTemp);
+				}	
+			}
+			responseBody.put("submissionDetails", submissionDetails);
+			return responseBody;
+		}catch(Exception e){
+			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
+			responseBody.put("msg",e);
+			return responseBody;
+		}
+
+	}
 }
