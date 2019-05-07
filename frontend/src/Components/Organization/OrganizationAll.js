@@ -51,64 +51,6 @@ class organizationAll extends Component {
                             console.log("There was some error fetching list of organization from the backend")
                         }
                     });
-        // this.setState({
-        //     organizationAllData:[
-        //         {
-        //             "id":"1",
-        //             "description":"This is the description of the Organization 1. This is the description of the Organization 1",
-        //             "organization_name": "Organization ABC",
-
-        //         },
-        //         {
-        //             "id":"2",
-        //             "description":"This is the description of the Organization 2. This is the description of the Organization 2",
-        //             "organization_name": "Organization DEF",
-                    
-        //         },
-        //         {
-        //             "id":"3",
-        //             "description":"This is the description of the Organization 3. This is the description of the Organization 3",
-        //             "organization_name": "Organization GHI",
-                    
-        //         },
-        //         {
-        //             "id":"4",
-        //             "description":"This is the description of the Organization 4. This is the description of the Organization 4",
-        //             "organization_name": "Organization JKL",
-                    
-        //         },
-        //         {
-        //             "id":"5",
-        //             "description":"This is the description of the Organization 5. This is the description of the Organization 5",
-        //             "organization_name": "Organization MNO",
-                    
-        //         }
-        //     ],
-        //     organizationOwnData : [
-        //         {
-        //             "id":"6",
-        //             "description":"This is the description of the Organization 6. This is the description of the Organization 6",
-        //             "organization_name": "Organization PQR",     
-        //         },
-        //         {
-        //             "id":"7",
-        //             "description":"This is the description of the Organization 7. This is the description of the Organization 7",
-        //             "organization_name": "Organization STU",     
-        //         },
-        //         {
-        //             "id":"8",
-        //             "description":"This is the description of the Organization 8. This is the description of the Organization 8",
-        //             "organization_name": "Organization VWX",     
-        //         },
-        //     ]
-        // }, () => {
-        //     this.setState({
-        //         organizationAllSize:Math.ceil(this.state.organizationAllData.length),
-        //         organizationOwnSize:Math.ceil(this.state.organizationOwnData.length),
-        //         vieworganizationAll: this.state.organizationAllData.slice((this.state.organizationAllPage-1)*3,((this.state.organizationAllPage-1)*3)+3),
-        //         viewOrganizationOwn: this.state.organizationOwnData.slice((this.state.organizationOwnPage-1)*3,((this.state.organizationOwnPage-1)*3)+3),
-        //     })
-        // })
 
     }
 
@@ -130,6 +72,11 @@ class organizationAll extends Component {
         })
     }
 
+    viewOrganizationDetails = (orgId) => {
+        console.log("View button pressed for organization id"+orgId)
+        this.props.history.push(`/organization_details/${this.state.user_id}/${orgId}`)
+    }
+
     render(){
 
         var organizationAllCards = this.state.viewOrganizationAll && this.state.viewOrganizationAll.map(card => {
@@ -145,7 +92,7 @@ class organizationAll extends Component {
                             <center>{card && card.description}</center>
                             <hr></hr>
                             <center class="py-2">
-                                <Button type="primary">View</Button>
+                                <Button type="primary" onClick = {() => {this.viewOrganizationDetails(card.id)}}>View</Button>
                             </center>
                         </Card>
                     </a>
@@ -167,7 +114,7 @@ class organizationAll extends Component {
                             <center>{card && card.description}</center>
                             <hr></hr>
                             <center class="py-2">
-                                <Button type="primary">View</Button>
+                                <Button type="primary" onClick = {() => {this.viewOrganizationDetails(card.id)}}>View</Button>
                             </center>
                         </Card>
                     </a>

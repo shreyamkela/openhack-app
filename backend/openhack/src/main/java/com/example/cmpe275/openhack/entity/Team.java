@@ -1,6 +1,7 @@
 package com.example.cmpe275.openhack.entity;
 import java.util.*;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,10 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.ColumnDefault;
 
 import com.example.cmpe275.openhack.entity.*;
 
@@ -37,19 +41,26 @@ public class Team {
 	@Column(name="Team_Name",unique=true, nullable=false)
 	private String teamName;
 	
+	private String Idea;
+
 	@OneToOne
 	private User teamLead;
 	
-	@ManyToMany(mappedBy="teams", fetch=FetchType.EAGER)
+	//@ManyToMany(mappedBy="teams", fetch=FetchType.EAGER)
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@JoinTable(
+			name="User_Teams",
+			joinColumns= {@JoinColumn(name="Team",referencedColumnName="id")},
+			inverseJoinColumns= {@JoinColumn(name="User",referencedColumnName="id")})
 	private Set<User> members;
 
-	@ManyToMany
-	@JoinTable(
-			name="Hackathon_Participated",
-			joinColumns= {@JoinColumn(name="Team",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")})
-	private Set<Hackathon> participatedHackathon;
+	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinColumn(name="participatedHackathon")
+	private Hackathon participatedHackathon;
 
+	@ColumnDefault(value="false")
+	private boolean paymentStatus;
+	
 	public long getId() {
 		return id;
 	}
@@ -82,12 +93,27 @@ public class Team {
 		this.members = members;
 	}
 
-	public Set<Hackathon> getParticipatedHackathon() {
+	public String getIdea() {
+		return Idea;
+	}
+
+	public void setIdea(String idea) {
+		Idea = idea;
+	}
+
+	public Hackathon getParticipatedHackathon() {
 		return participatedHackathon;
 	}
 
-	public void setParticipatedHackathon(Set<Hackathon> participatedHackathon) {
+	public void setParticipatedHackathon(Hackathon participatedHackathon) {
 		this.participatedHackathon = participatedHackathon;
 	}
-	
+
+	public boolean getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(boolean paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
 }

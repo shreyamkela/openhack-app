@@ -11,6 +11,8 @@ import Profile from './Profile/Profile';
 import { Form } from 'antd';
 import HackathonRegister from './Hackathon/HackathonRegister';
 import OrganizationsAll from './Organization/OrganizationAll';
+import OrganizationDetails from './Organization/OrganizationDetails'
+import HackathonPayment from './Hackathon/HackathonPayment';
 
 
 class Main extends Component {
@@ -27,6 +29,8 @@ class Main extends Component {
                 <Route exact path="/hackathon/create" component={HackathonCreate}></Route>
                 <Route exact path="/hackathon/register/:id" component={HackathonRegister}></Route>
                 <Route exact path="/hacker_organizations" component={OrganizationsAll}></Route>
+                <Route exact path="/organization_details/:user_id/:org_id" component={OrganizationDetails}></Route>
+                <Route exact path="/hackathon/payment/:paymentId" component={HackathonPayment}></Route>
             </div>
         )
     }
