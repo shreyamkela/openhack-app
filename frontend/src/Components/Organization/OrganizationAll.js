@@ -4,6 +4,7 @@ import { Menu, Icon } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input, Card, Pagination } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
+import NavBar from '../Navbar/Navbar';
 var swal = require('sweetalert');
 
 class organizationAll extends Component {
@@ -20,7 +21,7 @@ class organizationAll extends Component {
             organizationOwnSize : 0, 
             organizationAllPage : 1,
             organizationOwnPage : 1,
-            user_id : 4
+            user_id : localStorage.getItem("userId")
         }
     }
 
@@ -126,6 +127,7 @@ class organizationAll extends Component {
 
         return(
             <div>
+                <NavBar></NavBar>
                 <div class="px-4 py-4">
                     <h2>Organizations</h2>
                 </div>

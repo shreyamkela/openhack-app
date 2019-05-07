@@ -292,7 +292,7 @@ class OrganizationDetails extends Component {
                             
                             <br></br>
                             <center>
-                                <p style = {{fontSize:"15px", color: "#46535e"}}>There are no sponsored hackathons yet!!</p>
+                                <p style = {{fontSize:"15px", color: "#46535e"}}>There are no pending requests !!</p>
                             </center>
                         </div>
                     )
@@ -306,8 +306,6 @@ class OrganizationDetails extends Component {
                                 <h2 style={{ color: "#46535e", paddingTop: "4%" }}>  {this.state.organizationData.name} </h2>
                                 <p style={{ color: "#46535e", fontSize: "20px" }}> {this.state.organizationData.description} </p>
                                 {address}
-                                {/* <p style={{ color: "#46535e", fontSize: "20px" }}> Address : {this.state.organizationData.address} </p> */}
-                                {/* <p style={{ color: "#46535e", fontSize: "20px" }}> Owner of the organization : {this.state.organizationData.owner.name} </p> */}
                                 {ownerName}
                                 <hr/>
                                 <p style={{ color: "#46535e", fontSize: "20px" }}> Members of the organization :  </p>
@@ -322,7 +320,6 @@ class OrganizationDetails extends Component {
                             </Col>
                             <Col span={6}>
                                 {buttons}
-                                {/* <Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal}>Request to join</Button><br />                             */}
                             </Col>
                         </Row>
                     </div>
@@ -331,6 +328,7 @@ class OrganizationDetails extends Component {
         }
         return (
             <div>
+                <NavBar></NavBar>
                 <div style={{ backgroundImage: "url(" + this.state.cover_image + ")", height: "300px", position: "relative" }}>
                 </div>
                 {orgDataDisplay}
