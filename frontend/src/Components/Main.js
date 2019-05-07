@@ -32,7 +32,7 @@ class Main extends Component {
                 <Route exact path="/hacker_organizations" component={OrganizationsAll}></Route>
                 <Route exact path="/organization_details/:user_id/:org_id" component={OrganizationDetails}></Route>
                 <Route exact path="/hackathon/payment/:paymentId" component={HackathonPayment}></Route>
-                <Route exact path="/hacker/gradeSubmissions" component={ViewSubmissions}></Route>
+                <Route exact path="/hacker/gradeSubmissions/:hackathonId" component={ViewSubmissions}></Route>
             </div>
         )
     }

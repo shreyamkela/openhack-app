@@ -89,36 +89,41 @@ public class SubmissionController {
 		return submission.getId();
 	}
 
-	@PostMapping("/gradeSubmission")
+	@PostMapping("/gradeSubmission/{submissionId}")
 	@ResponseBody
-	public Long gradeSubmission(@RequestBody HashMap<String, String> map) {
+	public Long gradeSubmission(@RequestBody HashMap<String, String> map,
+			@PathVariable long submissionId) {
 		System.out.println("\ngradeSubmission method called for the Submission");
 		System.out.println("Submission data from post " + map);
-		Submission submission = new Submission();
 
 		try {
-			Long hackathonId = new Long((String) map.get("hackathonId"));
-			Hackathon hackathon = hackathonDao.findById(hackathonId);
-			Set<Submission> allSubmissions = hackathon.getSubmissions();
-			Long teamId = new Long((String) map.get("teamId"));
-			System.out.println("Hackathon found:" + hackathon.getName());
-
-			for (Submission currentSubmission : allSubmissions) {
-				if (currentSubmission.getTeam().getId() == teamId
-						&& currentSubmission.getHackathon().getId() == hackathonId) {
-					System.out.println("Submission found! Initial Grade: " + currentSubmission.getGrade());
-					Float grade = new Float((String) map.get("grade"));
-					currentSubmission.setGrade(grade);
-					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
-					System.out.println("Resubmission successful! New Grade: " + currentSubmission.getGrade()
-					+ " submissionId: " + currentSubmission.getId());
-				}
-			}
+			
+			Submission submission = submissionDao.findById(submissionId);
+			submission.setGrade(new Long((String)map.get("grade")));
+			Submission updatedSubmission = submissionDao.updateById(submissionId, submission);
+			return 1l;
+//			Long hackathonId = new Long((String) map.get("hackathonId"));
+//			Hackathon hackathon = hackathonDao.findById(hackathonId);
+//			Set<Submission> allSubmissions = hackathon.getSubmissions();
+//			Long teamId = new Long((String) map.get("teamId"));
+//			System.out.println("Hackathon found:" + hackathon.getName());
+//
+//			for (Submission currentSubmission : allSubmissions) {
+//				if (currentSubmission.getTeam().getId() == teamId
+//						&& currentSubmission.getHackathon().getId() == hackathonId) {
+//					System.out.println("Submission found! Initial Grade: " + currentSubmission.getGrade());
+//					Float grade = new Float((String) map.get("grade"));
+//					currentSubmission.setGrade(grade);
+//					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
+//					System.out.println("Resubmission successful! New Grade: " + currentSubmission.getGrade()
+//					+ " submissionId: " + currentSubmission.getId());
+//				}
+//			}
 
 		} catch (Exception e) {
 			System.out.println("Exception while creating/updating submission: " + e);
+			return 0l;
 		}
-		return submission.getId();
 	}
 
 
