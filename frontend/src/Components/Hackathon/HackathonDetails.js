@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 const { Content, Sider } = Layout;
@@ -30,13 +30,17 @@ class HackathonDetails extends Component {
             teamDetails: [],
             judgeDetails: [],
             sponsorDetails: [],
+            userTeam:[],
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
             sponsorsContentFlag:false,
             visibleTeamModal: false,
             visibleSubmissionModal: false,
-            submission: null // IDK right now
+            submissionUrl: null, // IDK right now
+            submissionButtonFlag:false,
+            gradeButtonFlag:false,
+            registerButtonFlag:false
         }
     }
 
@@ -60,17 +64,20 @@ class HackathonDetails extends Component {
                         fee: response.data.fee,
                         teamSizeMin: response.data.teamSizeMin,
                         teamSizeMax: response.data.teamSizeMax,
+                        userTeam:response.data.userTeam,
                         discount: response.data.discount,
                         message: response.data.message,
                         teamDetails: response.data.teamDetails,
                         judgeDetails: response.data.judgeDetails,
                         sponsorDetails: response.data.sponsorDetails,
+                        submissionUrl: response.data.submissionUrl
                     })
                 }
             })
             .catch(err => {
                 console.log(err)
             })
+            
     }
 
     loadAboutContent = (e) => {
@@ -140,6 +147,19 @@ class HackathonDetails extends Component {
         var content = null
         var buttons = null
         var teamModalContent = null
+        var registerButtonFlag = false
+        var submissionButtonFlag = false
+        var gradeButtonFlag = false
+        console.log(new Date(this.state.startDate) >  new Date())
+        if(new Date(this.state.startDate) >  new Date() || new Date(this.state.endDate) <  new Date()){
+            submissionButtonFlag=true
+        }
+        if(new Date(this.state.startDate) < new Date()){
+            registerButtonFlag = true
+        }
+        if(new Date(this.state.endDate) > Date.now()){
+            gradeButtonFlag=true
+        }
         if (this.state.aboutContentFlag) {
             content = <div>
                 <p><b>Overview</b>: {this.state.description}</p>
@@ -183,8 +203,17 @@ class HackathonDetails extends Component {
                 )
             })
         }
-        if (this.state.team) {
-            teamModalContent = <p>Team Name</p>
+        if(this.state.userTeam){
+            console.log(this.state.userTeam)
+            teamModalContent = this.state.userTeam.map(member => {
+                return(
+                    <Col span={6}>
+                        <Avatar shape="square" icon="user"/>
+                        <p><b>{member.name}</b></p>
+                        <p>{member.title}</p>
+                    </Col>
+                )
+            })
         }
         if (this.state.message === "registered") {
             buttons = <div>
@@ -206,7 +235,7 @@ class HackathonDetails extends Component {
                     onOk={this.submitWork}
                     onCancel={this.handleCancel}
                 >
-                    <input class="form-control" id="submission" onChange={this.handleSubmission} value={this.state.submission} />
+                    <input class="form-control" id="submission" onChange={this.handleSubmission} value={this.state.submission} disabled={submissionButtonFlag}/>
                 </Modal>
             </div>
         } else if (this.state.message === "payment pending") {
@@ -219,41 +248,25 @@ class HackathonDetails extends Component {
                     footer={[
                         <Button key="back" onClick={this.handleCancel}>Back</Button>,
                     ]}
+                    style={{height:"300px"}}
                 >
-                    <p>{teamModalContent}</p>
+                    <div style={{"height":"50px"}}>
+                        <Row type="flex">
+                            {teamModalContent}
+                        </Row>
+                    </div>
                 </Modal>
-                <Link to="/payment"><Button type="primary" size="large" style={{ marginTop: "10px" }} onClick={this.showSubmissionModal}>Pay</Button></Link>
+                <p class="text-warning large">Team Payment Due</p>
             </div>
-        }
-        else if (this.state.message === "closed") {
+        }else if(this.state.message === "judge"){
             buttons = <div>
-                <Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal}>View Team</Button><br />
-                <Modal
-                    title="Your Team"
-                    visible={this.state.visibleTeamModal}
-                    onCancel={this.handleCancel}
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
-                    ]}
-                >
-                    <p>{teamModalContent}</p>
-                </Modal>
-                <Button type="primary" size="large" style={{ marginTop: "10px" }} onClick={this.showSubmissionModal}>View Submission/Grade</Button>
-                <Modal
-                    title="Submission"
-                    visible={this.state.visibleSubmissionModal}
-                    onCancel={this.handleCancel}
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
-                    ]}
-                >
-                    <input class="form-control" id="submission" onChange={this.handleSubmission} value={this.state.submission} disabled={true} />
-                    <p>Grades: {this.state.grades}</p>
-                </Modal>
+                <Link to="/hackathon/grade">
+                    <Button type="primary" size="large" style={{ marginTop: "25%" }} disabled={gradeButtonFlag}>Grade Submission</Button>
+                </Link>
             </div>
         } else {
             buttons = <div>
-                <Link to="/hackathon/register/1"><Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal}>Register</Button><br /></Link>
+                <Link to={`/hackathon/register/${this.props.match.params.id}`}><Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal} disabled={registerButtonFlag}>Register</Button><br /></Link>
             </div>
         }
         return (

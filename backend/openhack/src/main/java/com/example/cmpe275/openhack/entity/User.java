@@ -20,6 +20,10 @@ import javax.persistence.Table;
 
 
 
+/**
+ * @author darsh
+ *
+ */
 @Entity
 @Table
 public class User {
@@ -40,6 +44,9 @@ public class User {
 	private String aboutMe;
 	private String title;
 	private String imageurl;
+	private String verified;
+	private String usertype;
+	private String lastname;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="organization_id")
@@ -51,11 +58,7 @@ public class User {
 	private Set<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
-	@JoinTable(
-			name="User_Teams",
-			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
-			inverseJoinColumns= {@JoinColumn(name="Team",referencedColumnName="id")})
+	@ManyToMany(mappedBy="members", fetch=FetchType.EAGER)
 	private Set<Team> teams;
 	
 	@OneToMany(mappedBy="requested_by_user", fetch=FetchType.EAGER)
@@ -163,6 +166,30 @@ public class User {
 		return organization;
 	}
 
+	public String getVerified() {
+		return verified;
+	}
+
+	public void setVerified(String verified) {
+		this.verified = verified;
+	}
+
+	public String getUsertype() {
+		return usertype;
+	}
+
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
 	public Set<Hackathon> getJudgedHackathons() {
 		return judgedHackathons;
 	}
@@ -192,8 +219,6 @@ public class User {
 	public int hashCode() {
 		// TODO Auto-generated method stub
 		int hash = 3;
-	    hash = 7 * hash + this.email.hashCode();
-	    hash = 7 * hash + this.name.hashCode();
 	    return hash;
 	}
 	
@@ -208,3 +233,18 @@ public class User {
 			return false;
 	}
 }
+
+
+
+/*
+ * INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('1', 'New User', 'SJ', 'USA', 'CA', '33', '95113', 'gundagaon@zetmail.com', 'Gundagaon', 'Gundagaon', '12345678', 'Gundagaon', 'Developer', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('2', 'New User', 'SJ', 'USA', 'CA', '33', '95113', 'salah@zetmail.com', 'Moh', 'Salah', '12345678', 'MoSalah', 'Manager', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `imageurl`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('3', 'New User', 'SJ', 'USA', 'CA', '33', '95113', 'mane@zetmail.com', '', 'Sadio', 'Mane', '12345678', 'SMane', 'Developer', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('4', 'New USer', 'SJ', 'USA', 'CA', '33', '95113', 'bale@zetmail.com', 'Gareth ', 'Bale', '12345678', 'GBale', 'Developer', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('5', 'New User', 'SJ', 'USA', 'CA', '33', '95113', 'vinicious@zetmail.com', 'Vinicious', 'Jr', '12345678', 'VJR', 'Tester', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('6', 'New User', 'SJ', 'USA', 'CA', '33', '95113', 'tony@zetmail.com', 'Tony', 'Stark', '12345678', 'IronMan', 'Manager', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('7', 'New User', 'SJ', 'USA', 'CA', '33', '95113', 'steve@zetmail.com', 'Steve', 'Rogers', '12345678', 'CaptainA', 'Leader', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('8', 'New User', 'SJ', 'USA', 'CA', '33', '95113', 'zidane@zetmail.com', 'Zinedine', 'Zidane', '12345678', 'Zizou', 'Developer', 'user', 'Y');
+INSERT INTO `openhack_darshil`.`User` (`id`, `aboutMe`, `city`, `country`, `state`, `street`, `zip`, `email`, `lastname`, `name`, `password`, `screenName`, `title`, `usertype`, `verified`) VALUES ('9', 'New User', 'SJ', 'USA', 'Ca', '33 ', '95113', 'mandhana@zetmail.com', 'Smriti', 'Mandhana', '12345678', 'Mandhana', 'Developer', 'user', 'Y');
+
+ * */

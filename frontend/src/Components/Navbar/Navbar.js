@@ -4,6 +4,7 @@ import { Menu, Icon } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
+import firebase_con from '../../Config/firebase';
 var swal = require('sweetalert');
 
 class NavBar extends Component {
@@ -55,29 +56,29 @@ class NavBar extends Component {
     createOrgModal = () => {
         this.setState({
             modalVisible: true,
-          });
+        });
         console.log("\nCreate organization button clicked!!");
     }
 
     handleOk = () => {
         this.setState({
-          ModalText: 'The modal will be closed in one seconds',
-          confirmLoading: true,
+            ModalText: 'The modal will be closed in one seconds',
+            confirmLoading: true,
         });
         setTimeout(() => {
-          this.setState({
-            modalVisible: false,
-            confirmLoading: false,
-          });
+            this.setState({
+                modalVisible: false,
+                confirmLoading: false,
+            });
         }, 1000);
         console.log("\nOkay button of the modal pressed")
     }
-    
+
     handleCancel = () => {
-    console.log('Clicked cancel button');
-    this.setState({
-        modalVisible: false,
-    });
+        console.log('Clicked cancel button');
+        this.setState({
+            modalVisible: false,
+        });
     }
 
     createOrganization = (e) => {
@@ -103,6 +104,11 @@ class NavBar extends Component {
                     });
             }
         });
+    }
+    logout = (e) => {
+        firebase_con.auth().signOut();
+        localStorage.removeItem("userId");
+        //this.props.history.push('/login');
     }
 
     fetchOrganizations = (e) => {
@@ -156,13 +162,13 @@ class NavBar extends Component {
                 </Link>
                 </Menu.Item>
                 {/* <Menu.Item key="Organisations"> */}
-                    {/* <Link to="/organisation"> */}
-                        <Button onClick = {this.createOrgModal}> <Icon type="home" /> Create Organisations</Button>
-                        
+                {/* <Link to="/organisation"> */}
+                <Button onClick={this.createOrgModal}> <Icon type="home" /> Create Organisations</Button>
+
                 {/* </Link> */}
                 {/* </Menu.Item> */}
             </Menu>
-            
+
             rightMenuItems = <div>
                 <br></br>
                 <Row type="flex" justify="end">
@@ -189,6 +195,13 @@ class NavBar extends Component {
                             <Link to="/profile">
                                 <Icon type="user" /> Hey xyz
                             </Link>
+                        </Badge>
+                    </Col>
+                    <Col span={6}>
+                        <Badge style={{ backgroundColor: '#52c41a' }}>
+                            <Button onClick={this.logout}><Link to='/login'>
+                                <Icon type="logout" /> Logout </Link>
+                            </Button>
                         </Badge>
                     </Col>
                 </Row>
@@ -228,7 +241,8 @@ class NavBar extends Component {
                             onOk={this.handleOk}
                             confirmLoading={confirmLoading}
                             onCancel={this.handleCancel}
-                            >
+                        >
+                        
                                       <Form 
                                       layout="vertical"
                                       onSubmit={this.createOrganization}

@@ -17,6 +17,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+
 import com.example.cmpe275.openhack.entity.*;
 
 @Entity
@@ -43,6 +45,7 @@ public class Hackathon {
 			name="Judge_Hackathons",
 			joinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="User",referencedColumnName="id")})
+	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<User> judges;
 
 	//@ManyToMany(mappedBy="sponsoredHackathons",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
@@ -51,12 +54,15 @@ public class Hackathon {
 			name="Sponsored_Hackathons",
 			joinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")})
+	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<Organization> sponsors;
 
 	@OneToMany(mappedBy="hackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<Submission> submissions;
 //
-	@ManyToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<Team> teams;
 	
 	public Hackathon() 
