@@ -58,7 +58,7 @@ public class Payment {
 		this.fee = fee;
 	}
 
-	public boolean isStatus() {
+	public boolean getStatus() {
 		return status;
 	}
 

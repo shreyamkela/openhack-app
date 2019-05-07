@@ -115,13 +115,13 @@ public class UserDaoImpl implements UserDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public Set<User> findAllUsers(){
+	public List<User> findAllUsers(){
 		EntityManager em = emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();
 			String usertype="user";
-			return (Set<User>) em.createQuery("select e from User e where e.usertype = :usertype",
+			return (List<User>) em.createQuery("select e from User e where e.usertype = :usertype",
 				    User.class).setParameter("usertype",usertype ).getResultList();
 		}
 		catch(RuntimeException e)

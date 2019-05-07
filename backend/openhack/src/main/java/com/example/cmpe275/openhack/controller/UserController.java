@@ -161,6 +161,7 @@ public class UserController {
 							Map<Object,Object> temp = new HashMap<>();
 							temp.put("id", user.getId());
 							temp.put("name", user.getName());
+							temp.put("title", user.getTitle());
 							userDetails.add(temp);
 						}
 					}
@@ -170,7 +171,7 @@ public class UserController {
 			}
 	@GetMapping("/getalluser")
 	@ResponseBody
-	public Set<User> getAllUser(){
+	public List<User> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
 		List<User> listusers =new ArrayList<>();
 		try

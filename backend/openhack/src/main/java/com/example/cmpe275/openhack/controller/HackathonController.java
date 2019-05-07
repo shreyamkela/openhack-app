@@ -97,6 +97,8 @@ public class HackathonController {
 		if(map.get("discount") != null) {
 			double discount = new Double((String)map.get("discount"));
 			hackathon.setDiscount(discount);
+		}else {
+			hackathon.setDiscount(new Long(0));
 		}
 		Set<User> judges = new HashSet<>();
 		for(int i=0;i<judgesId.size();i++) {
@@ -166,8 +168,13 @@ public class HackathonController {
 			temp.put("teamName", team.getTeamName());
 			teamDetails.add(temp);
 			if(team.getMembers().contains(user)) {
-				message="registered";
 				userTeam = team;
+				if(team.getPaymentStatus()) {
+					message="registered";
+				}else {
+					message="payment pending";
+				}
+				
 			}
 		}
 		for(User judge : judges) {
@@ -189,20 +196,24 @@ public class HackathonController {
 			sponsorDetails.add(temp);
 		}
 		if(userTeam!=null) {
+			List<Map<Object,Object>> userTeamDetails = new ArrayList<>();  
+			for(User member: userTeam.getMembers()) {
+				Map<Object,Object> temp = new HashMap<>();
+				temp.put("name", member.getName());
+				temp.put("title", member.getTitle());
+				userTeamDetails.add(temp);
+				System.out.println(temp);
+			}
+			responseBody.put("userTeam", userTeamDetails);
 			for(Submission submission : submissions) {
 				if(submission.getTeam().getId() == userTeam.getId()) {
 					submissionUrl = submission.getURL();
 				}
-//				Map<Object,Object> temp = new HashMap<>();
-//				temp.put("submissionId",submission.getId());
-//				temp.put("url", submission.getURL());
-//				temp.put("submittedBy",submission.getTeam().getTeamName());
-//				temp.put("grade",submission.getGrade());
-//				submissionDetails.add(temp);
 			}
 		}
-		
-		
+		if(user.getUsertype()=="admin") {
+			message="admin";
+		}
 		responseBody.put("teamDetails", teamDetails);
 		responseBody.put("judgeDetails", judgeDetails);
 		responseBody.put("sponsorDetails", sponsorDetails);
@@ -248,9 +259,20 @@ public class HackathonController {
 	            public void run() {
 	                try {
 	                    for(int i=0;i<userIds.size();i++) {
+	                    	boolean isSponsor = false;
 	                    	User temp = userDao.findUserbyID(userIds.get(i));
+	                    	Set<Organization> sponsors = hackathon.getSponsors();
+	                    	for(Organization sponsor : sponsors) {
+	                    		if(sponsor.getMembers().contains(userDao.findUserbyID(userIds.get(i)))) {
+	                    			isSponsor = true; 
+	                    		}
+	                    	}
 	                    	Payment payment = new Payment();
-	                    	payment.setFee(hackathon.getFee());
+	                    	if(!isSponsor) {
+	                    		payment.setFee(hackathon.getFee());
+	                    	}else {
+	                    		payment.setFee(hackathon.getFee() * (1 - (hackathon.getDiscount()/100)));
+	                    	}
 	                    	payment.setTeamId(createdTeam.getId());
 	                    	payment.setMemberId(userIds.get(i));
 	                    	payment.setStatus(false);
@@ -258,7 +280,7 @@ public class HackathonController {
 	                    	sendPaymentEmail(temp.getEmail(), hackathon, teamLead, createdPayment.getId(),createdTeam.getId());
 	                    }
 	                } catch (Exception e) {
-	                	System.out.println("error in sending mails: "+e.getMessage());
+	                	System.out.println("error encountered: "+e.getMessage());
 	                }
 	            }
 	        });
@@ -306,7 +328,7 @@ public class HackathonController {
                 		+ "\n Hackathon Start Date: "+hackathon.getStartDate()
                 		+ "\n Hackathon End Date: "+hackathon.getEndDate()
                 		+ "\n Hackathon Fee: $"+hackathon.getFee()
-                		+ "\n\n Go to http://localhost:3000/payment/"+paymentId+"/"+teamId+" for payment and confirm your seat."
+                		+ "\n\n Go to http://localhost:3000/payment/"+paymentId+"/"+hackathon.getId()+" for payment and confirm your seat."
                         +"\n\n Happy Hacking,"
                 		+"\n OpenHack Service");
 

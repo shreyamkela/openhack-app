@@ -13,6 +13,7 @@
     "react-facebook-login": "^4.1.1",
     "react-firebaseui": "^3.1.2",
     "react-google-login": "^5.0.4",
+    "react-payment": "^0.1.8",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.0",

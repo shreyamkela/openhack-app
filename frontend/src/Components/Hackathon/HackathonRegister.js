@@ -61,8 +61,8 @@ class HackathonRegister extends Component {
     renderOption = (item) => {
         console.log(`renderOption.item`, item);
         return (
-            <AutoComplete.Option key={item.id} text={item.name}>
-                <span>{item.name}</span>
+            <AutoComplete.Option key={item.id} text={item.name+","+item.title}>
+                <span>{item.name},{item.title}</span>
             </AutoComplete.Option>
         );
     }

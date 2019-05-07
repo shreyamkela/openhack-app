@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 const { Content, Sider } = Layout;
@@ -30,6 +30,7 @@ class HackathonDetails extends Component {
             teamDetails: [],
             judgeDetails: [],
             sponsorDetails: [],
+            userTeam:[],
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
@@ -63,6 +64,7 @@ class HackathonDetails extends Component {
                         fee: response.data.fee,
                         teamSizeMin: response.data.teamSizeMin,
                         teamSizeMax: response.data.teamSizeMax,
+                        userTeam:response.data.userTeam,
                         discount: response.data.discount,
                         message: response.data.message,
                         teamDetails: response.data.teamDetails,
@@ -201,6 +203,18 @@ class HackathonDetails extends Component {
                 )
             })
         }
+        if(this.state.userTeam){
+            console.log(this.state.userTeam)
+            teamModalContent = this.state.userTeam.map(member => {
+                return(
+                    <Col span={6}>
+                        <Avatar shape="square" icon="user"/>
+                        <p><b>{member.name}</b></p>
+                        <p>{member.title}</p>
+                    </Col>
+                )
+            })
+        }
         if (this.state.message === "registered") {
             buttons = <div>
                 <Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal}>View Team</Button><br />
@@ -234,10 +248,15 @@ class HackathonDetails extends Component {
                     footer={[
                         <Button key="back" onClick={this.handleCancel}>Back</Button>,
                     ]}
+                    style={{height:"300px"}}
                 >
-                    <p>{teamModalContent}</p>
+                    <div style={{"height":"50px"}}>
+                        <Row type="flex">
+                            {teamModalContent}
+                        </Row>
+                    </div>
                 </Modal>
-                <Link to="/payment"><Button type="primary" size="large" style={{ marginTop: "10px" }} onClick={this.showSubmissionModal}>Pay</Button></Link>
+                <p class="text-warning large">Team Payment Due</p>
             </div>
         }else if(this.state.message === "judge"){
             buttons = <div>
@@ -247,7 +266,7 @@ class HackathonDetails extends Component {
             </div>
         } else {
             buttons = <div>
-                <Link to="/hackathon/register/1"><Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal} disabled={registerButtonFlag}>Register</Button><br /></Link>
+                <Link to={`/hackathon/register/${this.props.match.params.id}`}><Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal} disabled={registerButtonFlag}>Register</Button><br /></Link>
             </div>
         }
         return (

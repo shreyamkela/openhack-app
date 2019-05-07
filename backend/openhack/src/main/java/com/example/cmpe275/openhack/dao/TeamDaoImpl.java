@@ -58,7 +58,20 @@ public class TeamDaoImpl implements TeamDao{
 	@Override
 	public Team getTeamById(long id) {
 		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = emfactory.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		try {
+			tx.begin();
+			Team team = em.find(Team.class, id);
+			tx.commit();
+			return team;
+		}catch (Exception e) {
+			// TODO: handle exception
+			tx.rollback();
+			throw e;
+		}finally {
+			em.close();
+		}
 	}
 
 	@Override

@@ -109,7 +109,7 @@ public class Team {
 		this.participatedHackathon = participatedHackathon;
 	}
 
-	public boolean isPaymentStatus() {
+	public boolean getPaymentStatus() {
 		return paymentStatus;
 	}
 
