@@ -43,7 +43,7 @@ class NavBar extends Component {
 
         this.setState({
             dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
-            owner_id : "1"
+            owner_id : localStorage.getItem("userId")
         })
     }
 
