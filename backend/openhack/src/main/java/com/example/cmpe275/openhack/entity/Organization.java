@@ -49,6 +49,13 @@ public class Organization {
 	@ManyToMany(mappedBy="sponsors",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	private Set<Hackathon> sponsoredHackathons;
 	
+	@OneToMany(mappedBy="requested_for_org", fetch=FetchType.EAGER)
+	private Set<Request> join_requests;
+	
+//	@OneToMany(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
+//	@JoinColumn(name="join_requests_org_id")
+//	private Set<Request> join_requests;
+	
 	public Organization() {}
 
 	public Organization(long id, String name, String description, Address address, User owner) {
@@ -114,6 +121,14 @@ public class Organization {
 
 	public void setSponsoredHackathons(Set<Hackathon> sponsoredHackathons) {
 		this.sponsoredHackathons = sponsoredHackathons;
+	}
+
+	public Set<Request> getJoin_requests() {
+		return join_requests;
+	}
+
+	public void setJoin_requests(Set<Request> join_requests) {
+		this.join_requests = join_requests;
 	}
 
 	@Override

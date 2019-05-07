@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -40,7 +41,7 @@ public class User {
 	private String title;
 	private String imageurl;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="organization_id")
 	private Organization organization;
 
@@ -56,6 +57,13 @@ public class User {
 			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Team",referencedColumnName="id")})
 	private Set<Team> teams;
+	
+	@OneToMany(mappedBy="requested_by_user", fetch=FetchType.EAGER)
+	private Set<Request> join_requests;
+	
+//	@OneToMany(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
+//	@JoinColumn(name="join_requests_user_id")
+//	private Set<Request> join_requests;
 	
 	public User() {
 		
@@ -169,6 +177,15 @@ public class User {
 
 	public void setTeams(Set<Team> teams) {
 		this.teams = teams;
+	}
+	
+
+	public Set<Request> getJoin_requests() {
+		return join_requests;
+	}
+
+	public void setJoin_requests(Set<Request> join_requests) {
+		this.join_requests = join_requests;
 	}
 
 	@Override

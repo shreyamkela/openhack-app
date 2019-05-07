@@ -1,7 +1,9 @@
 package com.example.cmpe275.openhack;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -17,6 +19,7 @@ import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Address;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.entity.Request;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class OpenhackApplication {
@@ -108,5 +111,31 @@ public class OpenhackApplication {
 //			System.out.println(org.toString());
 //		}
 //	}
+//		UserDao userdao = new UserDaoImpl();
+//		Set<Request> res = new HashSet<>();
+//		User user1 = userdao.findUserbyID(5);
+//		res = user1.getJoin_requests();
+//		System.out.println("The length of res : "+res.size());
+//		if(res.size()>0)
+//		{
+//			for(Request req : res)
+//			{
+//				System.out.println(req.toString());
+//			}
+//		}
+//		
+//		OrganizationDao orgdao = new OrganizationDaoImpl();
+//		Set<Request> res1 = new HashSet<>();
+//		Organization org1 = orgdao.findOrganizationById(1);
+//		res1 = org1.getJoin_requests();
+//		System.out.println("The length of res1 : "+res1.size());
+//		if(res1.size()>0)
+//		{
+//			for(Request req1 : res1)
+//			{
+//				System.out.println(req1.toString());
+//			}
+//		}
+		
 	}
 }
