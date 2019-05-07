@@ -6,22 +6,23 @@ import { Link } from 'react-router-dom'
 import axios from 'axios';
 import firebase_con from '../../Config/firebase';
 var swal = require('sweetalert');
+const username = localStorage.getItem("userName");
 
 class NavBar extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             current: 'Challenges',
             dataSource: [],
-            modalVisible : false,
-            confirmLoading : false,
-            owner_id : null,
-            organizations : []
+            modalVisible: false,
+            confirmLoading: false,
+            owner_id: null,
+            organizations: []
         }
 
-        this.fetchOrganizations = this.fetchOrganizations.bind(this);
-    } 
+        //  this.fetchOrganizations = this.fetchOrganizations.bind(this);
+    }
 
     // renderOption = (item) => {
     //     console.log(`renderOption.item`, item);
@@ -41,8 +42,8 @@ class NavBar extends Component {
     componentDidMount() {
 
         this.setState({
-            dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
-            owner_id : "5"
+            dataSource: ["Organisation 1", "Organisation 2", "Organisation 3"],
+            owner_id: "5"
         })
     }
 
@@ -93,12 +94,12 @@ class NavBar extends Component {
                 axios.post('http://localhost:8080/hacker/createOrganization', values)
                     .then(response => {
                         console.log("Status Code : ", response.status);
-                        
+
                         if (response.status === 200) {
                             swal("Organization created successfully", "", "success");
                             console.log(JSON.stringify(response.data));
                         }
-                        else{
+                        else {
                             swal("There was some error creating the organization", "", "error");
                         }
                     });
@@ -108,46 +109,46 @@ class NavBar extends Component {
     logout = (e) => {
         firebase_con.auth().signOut();
         localStorage.removeItem("userId");
+        localStorage.removeItem("userName");
         //this.props.history.push('/login');
     }
 
-    fetchOrganizations = (e) => {
-        axios.defaults.withCredentials = true;
-        axios.get('http://localhost:8080/hacker/getOrganizations')
-                    .then((response) => {
-                        console.log("Status Code : ", response.status);
-                        
-                        if (response.status === 200) {
-                            console.log("Response received from backend");
-                            console.log(JSON.stringify(response.data.organizations));
+    // fetchOrganizations = (e) => {
+    //     axios.defaults.withCredentials = true;
+    //     axios.get('http://localhost:8080/hacker/getOrganizations')
+    //         .then((response) => {
+    //             console.log("Status Code : ", response.status);
 
-                            this.setState({
-                                organizations : response.data.organizations
-                            });
-                            
-                            console.log("The number of the organizations is"+response.data.organizations.length);
-                            var org_names = []
-                            for(let i=0;i<response.data.organizations.length;i++)
-                            {
-                                org_names.push(response.data.organizations[i].name)
-                            }
-                            this.setState({
-                                dataSource: org_names
-                            });
-                            console.log("\nOrganization names : "+org_names)
-                        }
-                        else{
-                            console.log("There was some error fetching list of organization from the backend")
-                        }
-                    });
-    }
+    //             if (response.status === 200) {
+    //                 console.log("Response received from backend");
+    //                 console.log(JSON.stringify(response.data.organizations));
+
+    //                 this.setState({
+    //                     organizations: response.data.organizations
+    //                 });
+
+    //                 console.log("The number of the organizations is" + response.data.organizations.length);
+    //                 var org_names = []
+    //                 for (let i = 0; i < response.data.organizations.length; i++) {
+    //                     org_names.push(response.data.organizations[i].name)
+    //                 }
+    //                 this.setState({
+    //                     dataSource: org_names
+    //                 });
+    //                 console.log("\nOrganization names : " + org_names)
+    //             }
+    //             else {
+    //                 console.log("There was some error fetching list of organization from the backend")
+    //             }
+    //         });
+    // }
 
     render() {
         const { modalVisible, confirmLoading } = this.state;
         const { getFieldDecorator } = this.props.form;
         var leftMenuItems = null;
         var rightMenuItems = null;
-        if (!localStorage.getItem("userId")) {
+        if (localStorage.getItem("userId")) {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
@@ -172,7 +173,7 @@ class NavBar extends Component {
             rightMenuItems = <div>
                 <br></br>
                 <Row type="flex" justify="end">
-                    <Col span={12}>
+                    {/* <Col span={12}>
                         <AutoComplete
                         style={{ width: 200 }}
                         //dataSource = {this.state.dataSource && this.state.dataSource.map(this.renderOption)}
@@ -182,7 +183,7 @@ class NavBar extends Component {
                         onFocus = {this.fetchOrganizations}
                         allowClear={true}
                         ></AutoComplete>
-                    </Col>
+                    </Col> */}
                     <Col span={6}>
                         <Badge count={4} style={{ backgroundColor: '#52c41a' }}>
                             <Link to="/messages">
@@ -193,7 +194,7 @@ class NavBar extends Component {
                     <Col span={6}>
                         <Badge style={{ backgroundColor: '#52c41a' }}>
                             <Link to="/profile">
-                                <Icon type="user" /> Hey xyz
+                                <Icon type="user" /> Hey {username}
                             </Link>
                         </Badge>
                     </Col>
@@ -242,38 +243,38 @@ class NavBar extends Component {
                             confirmLoading={confirmLoading}
                             onCancel={this.handleCancel}
                         >
-                        
-                                      <Form 
-                                      layout="vertical"
-                                      onSubmit={this.createOrganization}
-                                      >
-                                        <Form.Item label="Organization name">
-                                            {getFieldDecorator('organization_name', {
-                                                rules: [{ required: true, message: 'Please input the name of the organization' }],
-                                            })(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="Description">
-                                            {getFieldDecorator('organization_desc')(<Input type="textarea" rows="3" cols="10"/>)}
-                                        </Form.Item>
-                                        <Form.Item label="Street Address">
-                                            {getFieldDecorator('street')(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="City">
-                                            {getFieldDecorator('city')(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="State">
-                                            {getFieldDecorator('state')(<Input />)}
-                                        </Form.Item>
-                                        <Form.Item label="Zip code">
-                                            {getFieldDecorator('zip')(<Input />)} 
-                                        </Form.Item>
-                                        <Form.Item label="Country">
-                                            {getFieldDecorator('country')(<Input />)} 
-                                        </Form.Item>
-                                        <Form.Item>
-                                            <Button type="primary" htmlType="submit">Create</Button>
-                                        </Form.Item>
-                                    </Form>
+
+                            <Form
+                                layout="vertical"
+                                onSubmit={this.createOrganization}
+                            >
+                                <Form.Item label="Organization name">
+                                    {getFieldDecorator('organization_name', {
+                                        rules: [{ required: true, message: 'Please input the name of the organization' }],
+                                    })(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="Description">
+                                    {getFieldDecorator('organization_desc')(<Input type="textarea" rows="3" cols="10" />)}
+                                </Form.Item>
+                                <Form.Item label="Street Address">
+                                    {getFieldDecorator('street')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="City">
+                                    {getFieldDecorator('city')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="State">
+                                    {getFieldDecorator('state')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="Zip code">
+                                    {getFieldDecorator('zip')(<Input />)}
+                                </Form.Item>
+                                <Form.Item label="Country">
+                                    {getFieldDecorator('country')(<Input />)}
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">Create</Button>
+                                </Form.Item>
+                            </Form>
                         </Modal>
                     </Col>
                     <Col span={8} offset={4}>

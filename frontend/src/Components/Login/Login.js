@@ -12,6 +12,7 @@ import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import firebaseui from 'firebaseui';
 import Navbar from '../Navbar/Navbar';
 import firebase_con from '../../Config/firebase';
+import { Link } from 'react-router-dom';
 var swal = require('sweetalert');
 
 // firebase.initializeApp({
@@ -21,7 +22,16 @@ var swal = require('sweetalert');
 
 
 class Login extends Component {
-  state = { isSignedIn: false }
+  constructor(props) {
+    super(props);
+    this.state = {
+      isSignedIn: false,
+      userId: '',
+      userName: '',
+      verified: '',
+    }
+    this.verifyUser = this.verifyUser.bind(this);
+  }
   uiConfig = {
     signInFlow: "popup",
     signInOptions: [
@@ -37,47 +47,66 @@ class Login extends Component {
     //End it here 
   }
 
+  async verifyUser(email) {
+    console.log("user Verified");
+    //values.verified = "Y";
+    axios.defaults.withCredentials = true;
+    const response = await axios.get(`http://localhost:8080/getuser/${email}`)
+    // .then(response => {
+    if (response.status === 200) {
+      localStorage.setItem("userId", response.data.id);
+      localStorage.setItem("userName", response.data.name);
+      
+      if (response.data.verified === "N") {
+        localStorage.setItem("verified", response.data.verified);
+        var data = {
+          verified: "Y"
+        }
+        axios.defaults.withCredentials = true;
+        const response1 = await axios.put(`http://localhost:8080/updateuser/${response.data.id}`, data)
+        // .then(response1 => {
+        console.log("Status Code : ", response1.status);
+        if (response1.status === 200) {
+          console.log("User updated ");
+          localStorage.removeItem("verified");
+        }
+        // });
+        this.props.history.push("/home");
+      }
+
+    }
+    return await response.json;
+    // });
+  }
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
 
         firebase_con.auth().signInWithEmailAndPassword(values.email, values.password).then((user) => {
-          if (user == null) {
+          if (!user) {
             swal("Account not Registered! Please Register", "", "error");
           }
           else if (user.user.emailVerified) {
-            console.log("user Verified");
-            values.verified = "Y";
-            axios.defaults.withCredentials = true;
-            axios.get(`http://localhost:8080/getuser/${values.email}`)
-              .then(response => {
-                if (response.status === 200) {
-                  localStorage.setItem("userId", response.data.id);
-                }
-                var data ={
-                  verified:"Y"
-                }
-                axios.put(`http://localhost:8080/updateuser/${response.data.id}`, data)
-                  .then(response1 => {
-                    console.log("Status Code : ", response1.status);
-                    if (response1.status === 200) {
-                      console.log("User updated ");
-                    }
-                  });
-              });
-
-            this.props.history.push("/home");
+            this.verifyUser(values.email);
+            console.log("this.state.verified" + localStorage.getItem("verified"));
+            if (localStorage.getItem("verified")) {
+              console.log("Not verified first verification");
+            }
+            else {
+              console.log("User is verified before");
+              this.props.history.push("/home");
+            }
           }
           else {
             swal("Please verify your Email before Logging In", "", "error");
           }
         }).catch((error) => {
           console.log("Login Error " + error.message);
-          if (error.message == "There is no user record corresponding to this identifier. The user may have been deleted.") {
+          if (error.message === "There is no user record corresponding to this identifier. The user may have been deleted.") {
             swal("Account not Registered! Please Register", "", "error");
           }
-          if(error.message=="The password is invalid or the user does not have a password."){
+          if (error.message === "The password is invalid or the user does not have a password.") {
             swal("Password is Invalid! Please Try Again", "", "error");
           }
         })
@@ -119,6 +148,10 @@ class Login extends Component {
               firebaseAuth={firebase.auth()}
             />
           )} */}
+        <StyledFirebaseAuth
+          uiConfig={this.uiConfig}
+          firebaseAuth={firebase.auth()}
+        />
         <Form onSubmit={this.handleSubmit} className="login-form">
           <Form.Item>
             {getFieldDecorator('email', {

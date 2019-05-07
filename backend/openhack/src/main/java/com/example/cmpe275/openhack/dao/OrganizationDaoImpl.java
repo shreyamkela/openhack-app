@@ -6,9 +6,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import com.example.cmpe275.openhack.entity.Organization;
+import com.example.cmpe275.openhack.entity.User;
 
 public class OrganizationDaoImpl implements OrganizationDao 
 {
@@ -61,6 +63,32 @@ public class OrganizationDaoImpl implements OrganizationDao
 		catch(RuntimeException e)
 		{
 			tx.rollback();
+			throw e;
+		}
+		finally
+		{
+			em.close();	
+		}
+	}
+	
+	@Override
+	@Transactional
+	public Organization findOrganizationByName(String name) 
+	{
+		EntityManager em = emfactory.createEntityManager();
+		Organization org =null;
+		try
+		{
+			em.getTransaction().begin();
+			 Query query = em.createQuery("SELECT o FROM Organization o WHERE o.name = :name");
+		        query.setParameter("name", name);
+		        org = (Organization) query.getSingleResult();
+			em.getTransaction().commit();
+			return org;
+		}
+		catch(RuntimeException e)
+		{
+			em.getTransaction().rollback();
 			throw e;
 		}
 		finally

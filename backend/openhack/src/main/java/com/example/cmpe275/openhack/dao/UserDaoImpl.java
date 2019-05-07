@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
@@ -23,7 +24,9 @@ public class UserDaoImpl implements UserDao {
 	public UserDaoImpl(){
 		emfactory =Persistence.createEntityManagerFactory("openhack");
 	}
-
+	
+	@Override
+	@Transactional
 	public User createUser(User user) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.createEntityManager();
@@ -45,6 +48,9 @@ public class UserDaoImpl implements UserDao {
 			em.close();	
 		}
 	}
+	
+	@Override
+	@Transactional
 	public User updateUser(User user) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.createEntityManager();
@@ -66,16 +72,17 @@ public class UserDaoImpl implements UserDao {
 			em.close();	
 		}
 	}
-//    @Override
+	
+	@Override
+	@Transactional
 	public User findUserbyEmail(String email) {
 		EntityManager em = emfactory.createEntityManager();
-		User user =null;
 		try
 		{
 			em.getTransaction().begin();
 			 Query query = em.createQuery("SELECT u FROM User u WHERE u.email = :email");
 		        query.setParameter("email", email);
-		        user = (User) query.getSingleResult();
+		        User user = (User) query.getSingleResult();
 			em.getTransaction().commit();
 			return user;
 		}
@@ -90,7 +97,8 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 	
-
+	@Override
+	@Transactional
 	public User findUserbyID(long id) {
 		EntityManager em = emfactory.createEntityManager();
 		try
@@ -110,19 +118,24 @@ public class UserDaoImpl implements UserDao {
 			em.close();	
 		}
 	}
-
+	
+	@Override
+	@Transactional
 	public User deleteUser(long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public Set<User> findAllUsers(){
+	
+	@Override
+	@Transactional
+	public List<User> findAllUsers(){
 		EntityManager em = emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();
-			String usertype="user";
-			return (Set<User>) em.createQuery("select e from User e where e.usertype = :usertype",
-				    User.class).setParameter("usertype",usertype ).getResultList();
+			String verified="Y";
+			return (List<User>) em.createQuery("select e from User e where e.verified = :verified",
+				    User.class).setParameter("verified",verified ).getResultList();
 		}
 		catch(RuntimeException e)
 		{

@@ -11,7 +11,7 @@ import Home from '../Challenges/Home';
 import Login from '../Login/Login';
 var swal = require('sweetalert');
 var userIsVerified = false;
-
+var screenNameUnique = true;
 
 
 class Signup extends Component {
@@ -21,10 +21,13 @@ class Signup extends Component {
             confirmDirty: false,
             user: {},
             values: {},
+            screennames: {},
         }
+        this.verifyScreenNames = this.verifyScreenNames.bind(this);
     }
     componentDidMount() {
         this.authListener();
+        this.verifyScreenNames();
     }
 
     authListener() {
@@ -54,45 +57,76 @@ class Signup extends Component {
         });
     }
 
+    async verifyScreenNames() {
+        axios.default.withCredentials = true;
+        const response = await axios.get('http://localhost:8080/getallscreennames')
+        // .then(response => {
+        if (response.status === 200) {
+            console.log("Lol " + JSON.stringify(response));
+            this.setState({ screennames: response.data });
+        }
+        // });
+        return await response.json;
+    };
+
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 var noerror = true;
+
                 console.log('Received values of form: ', values);
+
+                // async getData(){
+                //     const res = await axios('/data');
+                //     return await res.json();
+                //  }
+
+                console.log(" Screenname " + JSON.stringify(this.state.screennames));
+                if (this.state.screennames.indexOf(values.screenName) > -1) {
+                    screenNameUnique = false;
+                    swal('ScreenName Already exists, Use different Screen Name', "", "error");
+                }
+                else{
+                    screenNameUnique=true;
+                }
+
+
                 // this.setState({ values: values });
-                firebase_con.auth().createUserWithEmailAndPassword(values.email, values.password).catch(function (error) {
-                    if (error.message == "auth/email-already-in-useThe email address is already in use by another account.") {
-                        swal("Email already registered! Kindly use new email to register", "", "error");
+                if (screenNameUnique) {
+                    firebase_con.auth().createUserWithEmailAndPassword(values.email, values.password).catch(function (error) {
+                        if (error.message == "auth/email-already-in-useThe email address is already in use by another account.") {
+                            swal("Email already registered! Kindly use new email to register", "", "error");
+                        }
+                        if (error.message != null) {
+                            swal(error.message, "", "error");
+                            noerror = false;
+                        }
+                        console.log("Error " + error.code + error.message);
+                    });
+                    if (noerror) {
+                        swal("Verification Email sent please verify to create your account", "", "success");
+                        if (values.email.includes("@sjsu.edu")) {
+                            values.usertype = "admin";
+                        }
+                        else {
+                            values.usertype = "user";
+                        }
+                        values.verified = "N";
+                        console.log("Send Axios ");
+                        axios.defaults.withCredentials = true;
+                        axios.post('http://localhost:8080/adduser', values)
+                            .then(response => {
+                                console.log("Status Code : ", response.status);
+                                console.log("Here", JSON.stringify(response));
+                                if (response.status === 200) {
+                                    this.props.history.push("/login");
+                                }
+                                else {
+                                    swal("Kindly Register again with correct data", "", "error");
+                                }
+                            });
                     }
-                    if (error.message != null) {
-                        swal(error.message, "", "error");
-                        noerror = false;
-                    }
-                    console.log("Error " + error.code + error.message);
-                });
-                if (noerror) {
-                    swal("Verification Email sent please verify to create your account", "", "success");
-                    if (values.email.includes("@sjsu.edu")) {
-                        values.usertype = "admin";
-                    }
-                    else {
-                        values.usertype = "user";
-                    }
-                    values.verified = "N";
-                    console.log("Send Axios ");
-                    axios.defaults.withCredentials = true;
-                    axios.post('http://localhost:8080/adduser', values)
-                        .then(response => {
-                            console.log("Status Code : ", response.status);
-                            console.log("Here", JSON.stringify(response));
-                            if (response.status === 200) {
-                                this.props.history.push("/login");
-                            }
-                            else {
-                                swal("Kindly Register again with correct data", "", "error");
-                            }
-                        });
                 }
             }
         });
@@ -125,9 +159,11 @@ class Signup extends Component {
         callback();
     }
     validateLength = (rule, value, callback) => {
+
         if (value.length < 3) {
             callback('Length should be greater than 3');
         }
+
         callback();
     }
 

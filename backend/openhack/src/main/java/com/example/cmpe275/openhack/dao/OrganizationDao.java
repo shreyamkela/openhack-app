@@ -12,6 +12,8 @@ public interface OrganizationDao
 	
 	Organization findOrganizationById(long orgId);
 	
+	Organization findOrganizationByName(String name);
+	
 	List<Organization> findAllOrganization();
 	
 	Organization update(Organization org);

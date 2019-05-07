@@ -53,7 +53,7 @@ public class User {
 	private Set<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
+	@ManyToMany(fetch=FetchType.EAGER,cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
 	@JoinTable(
 			name="User_Teams",
 			joinColumns= {@JoinColumn(name="User",referencedColumnName="id")},
@@ -202,8 +202,6 @@ public class User {
 	public int hashCode() {
 		// TODO Auto-generated method stub
 		int hash = 3;
-	    hash = 7 * hash + this.email.hashCode();
-	    hash = 7 * hash + this.name.hashCode();
 	    return hash;
 	}
 	
