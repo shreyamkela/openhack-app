@@ -56,6 +56,7 @@ class Login extends Component {
     if (response.status === 200) {
       localStorage.setItem("userId", response.data.id);
       localStorage.setItem("userName", response.data.name);
+      localStorage.setItem("userType", response.data.usertype);
       
       if (response.data.verified === "N") {
         localStorage.setItem("verified", response.data.verified);

@@ -30,13 +30,16 @@ import com.example.cmpe275.openhack.entity.User;
 
 @RestController
 public class SubmissionController {
-	private HackathonDao hackathonDao;
-	private SubmissionDao submissionDao;
-
-	public SubmissionController() {
-		hackathonDao = new HackathonDaoImpl();
-		submissionDao = new SubmissionDaoImpl();
-	}
+//	private HackathonDao hackathonDao;
+//	private SubmissionDao submissionDao;
+//
+//	public SubmissionController() {
+//		hackathonDao = new HackathonDaoImpl();
+//		submissionDao = new SubmissionDaoImpl();
+//	}
+	@Autowired
+	HackathonDaoImpl hackathonDao;
+	SubmissionDaoImpl submissionDao;
 
 	@PostMapping("/addSubmission")
 	@ResponseBody

@@ -37,16 +37,21 @@ import com.example.cmpe275.openhack.entity.User;
 @Controller
 public class OrganizationController {
 	
-	private OrganizationDao orgdao;
-	private UserDao userdao;
-	private RequestDaoImpl reqdao;
+//	private OrganizationDao orgdao;
+//	private UserDao userdao;
+//	private RequestDaoImpl reqdao;
+//	
+//	public OrganizationController() 
+//	{
+//		orgdao =  new OrganizationDaoImpl();
+//		userdao = new UserDaoImpl();
+//		reqdao = new RequestDaoImpl();
+//	}
+	@Autowired 
+	OrganizationDaoImpl orgdao;
+	UserDaoImpl userdao;
+	RequestDaoImpl reqdao;
 	
-	public OrganizationController() 
-	{
-		orgdao =  new OrganizationDaoImpl();
-		userdao = new UserDaoImpl();
-		reqdao = new RequestDaoImpl();
-	}
 	
 	
 	@RequestMapping(value = "/hacker/createOrganization", method = RequestMethod.POST, produces = { "application/json"},
@@ -262,7 +267,13 @@ public class OrganizationController {
 	{
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		System.out.println("\nrequestJoinOrganization method called by user "+userId+" for organization "+orgId);
-		User user = userdao.findUserbyID(new Long(userId));
+		User user=null;
+		try{
+		 user= userdao.findUserbyID(new Long(userId));
+		}
+		catch(Exception e){
+			System.out.println("Error findUserbyID "+e);
+		}
 		Organization organization = orgdao.findOrganizationById(new Long(orgId));
 		Request req  = new Request();
 		Set<Request> reqs_owner;
