@@ -39,18 +39,18 @@ import com.example.cmpe275.openhack.entity.User;
 
 @RestController
 public class UserController {
-//	private UserDao userdao;
-//	private OrganizationDao orgdao;
-//
-//	public UserController()
-//	{
-//		userdao = new UserDaoImpl();
-//		orgdao =  new OrganizationDaoImpl();
-//	}
-	@Autowired
-	UserDaoImpl userdao;
-	OrganizationDaoImpl orgdao;
-	
+	private UserDao userdao;
+	private OrganizationDao orgdao;
+
+	public UserController()
+	{
+		userdao = new UserDaoImpl();
+		orgdao =  new OrganizationDaoImpl();
+	}
+//	@Autowired
+//	UserDaoImpl userdao;
+//	OrganizationDaoImpl orgdao;
+//	
 	@GetMapping("/getuser/{email}")
 	@ResponseBody
 	@Transactional

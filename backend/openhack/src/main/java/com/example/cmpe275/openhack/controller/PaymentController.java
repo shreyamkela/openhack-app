@@ -44,26 +44,26 @@ import com.example.cmpe275.openhack.entity.User;
 @Controller
 public class PaymentController {
 	
-//	private UserDao userDao;
-//	private HackathonDao hackathonDao;
-//	private OrganizationDao organizationDao;
-//	private TeamDao teamDao;
-//	private PaymentDao paymentDao;
-//	
-//	public PaymentController() {
-//		// TODO Auto-generated constructor stub
-//		userDao = new UserDaoImpl();
-//		hackathonDao = new HackathonDaoImpl();
-//		organizationDao = new OrganizationDaoImpl();
-//		teamDao = new TeamDaoImpl();
-//		paymentDao = new PaymentDaoImpl();
-//	}
-	@Autowired
-	UserDaoImpl userDao;
-	HackathonDaoImpl hackathonDao;
-	OrganizationDaoImpl organizationDao;
-	TeamDaoImpl teamDao;
-	PaymentDaoImpl paymentDao;
+	private UserDao userDao;
+	private HackathonDao hackathonDao;
+	private OrganizationDao organizationDao;
+	private TeamDao teamDao;
+	private PaymentDao paymentDao;
+	
+	public PaymentController() {
+		// TODO Auto-generated constructor stub
+		userDao = new UserDaoImpl();
+		hackathonDao = new HackathonDaoImpl();
+		organizationDao = new OrganizationDaoImpl();
+		teamDao = new TeamDaoImpl();
+		paymentDao = new PaymentDaoImpl();
+	}
+//	@Autowired
+//	UserDaoImpl userDao;
+//	HackathonDaoImpl hackathonDao;
+//	OrganizationDaoImpl organizationDao;
+//	TeamDaoImpl teamDao;
+//	PaymentDaoImpl paymentDao;
 
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	@ResponseBody

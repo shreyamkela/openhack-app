@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Request;
 
-@Component
+//@Component
 public class RequestDaoImpl 
 {
 	

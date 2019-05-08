@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
 
-@Component
+//@Component
 public class UserDaoImpl implements UserDao {
 	
 	
