@@ -154,8 +154,10 @@ public class HackathonController {
 		System.out.println("\n\ncreateHackathonResponseBody for user : "+user.toString());
 		Map<Object,Object> responseBody = new HashMap<>();
 		String message="";
+		boolean isFinalize = false;
 		Team userTeam = null;
 		String submissionUrl = "";
+		String winnerTeam = "";
 		responseBody.put("id",hackathon.getId());
 		responseBody.put("name",hackathon.getName());
 		responseBody.put("description",hackathon.getDescription());
@@ -224,19 +226,23 @@ public class HackathonController {
 				}
 			}
 		}
-//		if(user.getUsertype()=="admin") {
-//			message="admin";
-//		}
-		if(user.getUsertype().equals("admin")) 
-		{
-			message = "admin";
+		if(user.getUsertype().equals("admin")) {
+			message="admin";
+		}
+		
+		if(hackathon.getIsFinalized()) {
+			isFinalize=true;
+			if(hackathon.getWinner()!=null)
+				winnerTeam = hackathon.getWinner().getTeamName();
+			
 		}
 		responseBody.put("teamDetails", teamDetails);
 		responseBody.put("judgeDetails", judgeDetails);
 		responseBody.put("sponsorDetails", sponsorDetails);
 		responseBody.put("submissionUrl", submissionUrl);
 		responseBody.put("message", message);
-//		System.out.println("\n_______________Printinf the response body for a hackathon \n"+responseBody.toString());
+		responseBody.put("isFinalize", isFinalize);
+		responseBody.put("winnerTeam", winnerTeam);
 		return responseBody;
 	}
 	
@@ -256,6 +262,8 @@ public class HackathonController {
 		Team team = new Team();
 		team.setTeamName(teamName);
 		team.setIdea(idea);
+		team.setGraded(false);
+		team.setSubmitted(false);
 		final Hackathon hackathon = hackathonDao.findById(hackathonId);
 		team.setParticipatedHackathon(hackathon);
 		final User teamLead = userDao.findUserbyID(leadId);
@@ -306,7 +314,7 @@ public class HackathonController {
 			return responseObject;
 		}catch (Exception e) {
 			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
-			responseObject.put("msg",e.getMessage());
+			responseObject.put("msg","Team Name already taken");
 			return responseObject;
 		}
 		

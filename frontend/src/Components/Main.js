@@ -32,6 +32,7 @@ class Main extends Component {
                 <Route exact path="/profile" component={Profile}></Route>
                 <Route exact path="/hackathon_details/:id" component={HackathonDetails}></Route>
                 {/* <Route exact path="/hackathon/create" component={HackathonCreate}></Route> */}
+                <Route exact path="/admin/hackathon/create" component={HackathonCreate}></Route>
                 <Route exact path="/hackathon/register/:id" component={HackathonRegister}></Route>
                 <Route exact path="/hacker_organizations" component={OrganizationsAll}></Route>
                 <Route exact path="/organization_details/:user_id/:org_id" component={OrganizationDetails}></Route>

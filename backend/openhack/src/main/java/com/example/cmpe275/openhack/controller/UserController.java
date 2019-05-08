@@ -90,7 +90,7 @@ public class UserController {
 		User user = new User();
 		try
 		{
-			user = userdao.findUserbyID(id);
+			user = userdao.findUserbyID(new Long(id));
 			if(user==null) 
 			{
 				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );

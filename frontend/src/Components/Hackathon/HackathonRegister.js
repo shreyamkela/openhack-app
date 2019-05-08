@@ -19,8 +19,8 @@ class HackathonRegister extends Component {
         members: [],
         membersErrFlag: true,
         membersErr: "Select atleast 1 member",
-        min: 2,
-        max: 2
+        min: null,
+        max: null
     }
 
     componentDidMount() {
@@ -40,6 +40,18 @@ class HackathonRegister extends Component {
             })
             .catch(err => {
                 console.log(err);
+            })
+
+        let body = {
+            "userId" : localStorage.getItem("userId")
+        } 
+
+        axios.post(`http://localhost:8080/hackathon/${this.props.match.params.id}`,body)
+            .then(response => {
+                this.setState({
+                    min:response.data.teamSizeMin,
+                    max:response.data.teamSizeMax
+                })
             })
     }
 
@@ -86,11 +98,18 @@ class HackathonRegister extends Component {
                 membersErr: "Select more members",
                 membersErrFlag: true
             })
+        }else if(members.length+1 === this.state.min){
+            this.setState({
+                users: users,
+                members: members,
+                membersErr: "",
+                membersErrFlag: false
+            })
         }else if(members.length+1 === this.state.max){
             this.setState({
                 users: users,
                 members: members,
-                membersErr: "Maximum members done! Please dont add now!",
+                membersErr: "Maximum members selected, Dont add now!",
                 membersErrFlag: false
             })
         }
@@ -130,8 +149,11 @@ class HackathonRegister extends Component {
             })
             .catch(err => {
                 console.log(err);
-                swal("Something went wrong","Try again later","error")
-                window.location.reload();
+                swal("Team Name taken","error")
+                    .then(()=>{
+                        window.location.reload();        
+                    })
+                
             })
     }
     render() {

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.example.cmpe275.openhack.EntityManagerSingleton;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Payment;
 import com.example.cmpe275.openhack.entity.User;
@@ -20,16 +21,16 @@ import com.example.cmpe275.openhack.entity.User;
 public class PaymentDaoImpl implements PaymentDao{
 
 	
-	private EntityManagerFactory emfactory;
+	private EntityManagerSingleton emfactory;
 	
 	public PaymentDaoImpl() {
 		// TODO Auto-generated constructor stub
-		emfactory = Persistence.createEntityManagerFactory("openhack");
+		emfactory = emfactory.getInstance();
 	}
 	@Override
 	public Payment createPayment(Payment payment) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -48,7 +49,7 @@ public class PaymentDaoImpl implements PaymentDao{
 	@Override
 	public List<Payment> findPaymentByTeamId(long id) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -66,7 +67,7 @@ public class PaymentDaoImpl implements PaymentDao{
 	@Override
 	public Payment updatePayment(Payment payment) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -84,7 +85,7 @@ public class PaymentDaoImpl implements PaymentDao{
 	@Override
 	public Payment getPaymentById(long id) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -102,7 +103,7 @@ public class PaymentDaoImpl implements PaymentDao{
 	@Override
 	public Payment deletePayment(Payment payment) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
