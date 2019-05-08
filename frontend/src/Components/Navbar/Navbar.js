@@ -114,7 +114,6 @@ class NavBar extends Component {
         firebase_con.auth().signOut();
         localStorage.removeItem("userId");
         localStorage.removeItem("userName");
-        localStorage.removeItem("userType");
         //this.props.history.push('/login');
     }
 
