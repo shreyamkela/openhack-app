@@ -292,6 +292,7 @@ class OrganizationDetails extends Component {
                             
                             <br></br>
                             <center>
+                                <img src = "https://dumielauxepices.net/sites/default/files/mechanical-clipart-engineering-class-679271-5014506.gif" width="300" height="250"></img>
                                 <p style = {{fontSize:"15px", color: "#46535e"}}>There are no pending requests !!</p>
                             </center>
                         </div>
