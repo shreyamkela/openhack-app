@@ -96,6 +96,9 @@ public class OrganizationController {
 		}
 		catch (Exception e) {
 			System.out.println("Exception while creating an organization \n"+e);
+			response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+			map.put("msg", "Some error occured in creating the organization");
+			return map;
 		}
 		map = formOrganizationObject(org);
 		return map;	
@@ -114,6 +117,9 @@ public class OrganizationController {
 		}
 		catch (Exception e) {
 			System.out.println("Exception while fetching all organizations \n"+e);
+			response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+			map.put("msg", "Some error occured in getting all organizations");
+			return map;
 		}
 
 		map.put("organizations", OrganizationsObject(result_organizations));
@@ -148,6 +154,9 @@ public class OrganizationController {
 		}
 		catch (Exception e) {
 			System.out.println("Exception while fetching the organizations \n"+e);
+			response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+			map.put("msg", "Some error occured in getting an organization");
+			return map;
 		}
 		map = formUserOrganizationObject(user,org);
 		return map;
@@ -203,6 +212,9 @@ public class OrganizationController {
 			}
 			catch (Exception e) {
 				System.out.println("\nException while setting the organizations for a user\n"+e);
+				response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+				result_map.put("msg", "Some error occured in creating the organization");
+				return result_map;
 			}
 			
 			result_map.put("user", formUserObject(updated_user));
@@ -233,14 +245,16 @@ public class OrganizationController {
 			}
 			catch (Exception e) {
 				System.out.println("\nException while deleting the join request for a user "+userId+"\n"+e);
-			}
-						
-			
+				response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+				result_map.put("msg", "Some error while deleting the join request for a user");
+				return result_map;
+			}			
 			result_map.put("organization", formUserOrganizationObject(user, organization));
 		}
 		else
 		{
 			result_map.put("msg", "Both the user and the organization should be existing");
+			
 		}
 		return result_map;
 	}
@@ -267,26 +281,26 @@ public class OrganizationController {
 		if(user!=null && organization!=null)
 		{
 			// checking whether the request that just came already exists or not
-						try
-						{
-							List<Request> existing_requests = reqdao.getAllRequests();
-							for(Request r: existing_requests)
-							{
-								if(r.getRequested_by_user().getId() == userId && r.getRequested_for_org().getId() == orgId)
-								{
-									//this request already exists in the database
-									map.put("msg", "This request to join this organization is already registered!");
-									return map;
-								}
-							}
-						}
-						catch(Exception e) 
-						{
-							System.out.println("\nException while getting all join requests for organization "+orgId+"\n"+e);
-							response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
-							map.put("msg", "Some error while getting all join requests to check for restricting duplicate requests");
-							return map;
-						}
+			try
+			{
+				List<Request> existing_requests = reqdao.getAllRequests();
+				for(Request r: existing_requests)
+				{
+					if(r.getRequested_by_user().getId() == userId && r.getRequested_for_org().getId() == orgId)
+					{
+						//this request already exists in the database
+						map.put("msg", "This request to join this organization is already registered!");
+						return map;
+					}
+				}
+			}
+			catch(Exception e) 
+			{
+				System.out.println("\nException while getting all join requests for organization "+orgId+"\n"+e);
+				response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+				map.put("msg", "Some error while getting all join requests to check for restricting duplicate requests");
+				return map;
+			}
 			if(organization.getOwner()!=null)
 			{
 				User owner = organization.getOwner();
@@ -301,8 +315,10 @@ public class OrganizationController {
 				}
 				catch (Exception e) {
 					System.out.println("\nException while creating a new join request for organization "+organization.getId()+"\n"+e);
+					response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+					map.put("msg", "Some error while deleting the join request for a user");
+					return map;
 				}
-				
 
 				map = formUserOrganizationObject(user, organization);
 				return map;
@@ -357,6 +373,9 @@ public class OrganizationController {
 		}
 		catch (Exception e) {
 			System.out.println("Exception while fetching all organizations \n"+e);
+			response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+			map.put("msg", "Some error while fetching all organizations");
+			return map;
 		}
 		map.put("other_organizations", OrganizationsObject(other_organizations));
 		map.put("own_organizations", OrganizationsObject(own_organizations));
