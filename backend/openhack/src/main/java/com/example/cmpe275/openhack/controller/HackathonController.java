@@ -398,10 +398,10 @@ public class HackathonController {
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
 		System.out.println("Hackathon name:" + hackathon.getName());
 		// TODO Check whether submissions for all teams have been received. If all submissions have not been received then cannot close hackathon before the original end date
-		Set<Submission> allSubmissions = hackathon.getSubmissions();
-		for (Submission currentSubmission : allSubmissions) {
-			if (currentSubmission.getTeam().getSubmitted() == false) { // TODO add getSubmitted() and setSubmitted() methods and submitted boolean flag
-				System.out.println("No submission found for team: " + currentSubmission.getTeam().getId()
+		Set<Team> allTeams = hackathon.getTeams();
+		for (Team currentTeam : allTeams) {
+			if (currentTeam.getSubmitted() == false) { // TODO add getSubmitted() and setSubmitted() methods and submitted boolean flag
+				System.out.println("No submission found for team: " + currentTeam.getId()
 						+ ", therefore cannot close hackathon before the original end date!");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
 				return hackathon;
@@ -427,21 +427,20 @@ public class HackathonController {
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
 		System.out.println("Hackathon name:" + hackathon.getName());
 		// TODO Check whether grades for all teams have been assigned. If all grades have not been assigned then cannot finalize hackathon
-		Set<Submission> allSubmissions = hackathon.getSubmissions();
+		Set<Team> allTeams = hackathon.getTeams();
 		Team winner = new Team(); // TODO check this new
 		Float highestGrade = (float) 0;
-		for (Submission currentSubmission : allSubmissions) {
-			if (currentSubmission.getTeam().getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean flag
-				System.out.println("No grade found for team: " + currentSubmission.getTeam().getId()
-						+ ". Cannot finalize hackathon!");
+		for (Team currentTeam : allTeams) {
+			if (currentTeam.getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean flag
+				System.out.println("No grade found for team: " + currentTeam.getId() + ". Cannot finalize hackathon!");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
-				return currentSubmission.getTeam();
+				return currentTeam;
 				// TODO check this 400 response
 			} else {
-				if (highestGrade <= (float) currentSubmission.getGrade()) {
+				if (highestGrade <= (float) currentTeam.getSubmission().getGrade()) {
 					// TODO check for tie? would have to remove equality as well in (highestGrade <= currentSubmission.getGrade())
-					highestGrade = currentSubmission.getGrade();
-					winner = currentSubmission.getTeam();
+					highestGrade = currentTeam.getSubmission().getGrade();
+					winner = currentTeam;
 				}
 			}
 		}
