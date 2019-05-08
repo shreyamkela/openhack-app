@@ -201,36 +201,65 @@ class HackathonDetails extends Component {
             </div>
         } else if (this.state.teamsContentFlag) {
             content = this.state.teamDetails && this.state.teamDetails.map(team => {
+                // return(
+                //     <div>
+                //         <a href="#" id={team.teamId}> 
+                //             <Title level={4}>Team name : {team && team.teamName}</Title>
+                //         </a>
+                //         <p>Members: {team && team.teamSize}</p>
+                //         <Divider></Divider>
+                //     </div>
+                // )
                 return(
-                    <div>
+                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
                         <a href="#" id={team.teamId}> 
-                            <Title level={4}>{team && team.teamName}</Title>
+                            <Title level={4} style = {{marginLeft : "20px"}}>Team name : {team && team.teamName}</Title>
                         </a>
-                        <p>Members: {team && team.teamSize}</p>
+                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Members: {team && team.teamSize}</p>
                         <Divider></Divider>
                     </div>
                 )
             })
         }else if(this.state.judgesContentFlag){
             content = this.state.judgeDetails && this.state.judgeDetails.map(judge => {
+                // return(
+                //     <div>
+                //         <a href="#" id={judge.judgeId}> 
+                //             <Title level={4}>{judge && judge.judgeName}</Title>
+                //         </a>
+                //         <p>{judge && judge.judgeScreenName}, {judge && judge.judgeEmail}</p>
+                //         <Divider></Divider>
+                //     </div>
+                // )
                 return(
-                    <div>
+                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
                         <a href="#" id={judge.judgeId}> 
-                            <Title level={4}>{judge && judge.judgeName}</Title>
+                            <Title level={4} style = {{marginLeft : "20px"}}> Name : {judge && judge.judgeName}</Title>
                         </a>
-                        <p>{judge && judge.judgeScreenName}, {judge && judge.judgeEmail}</p>
+                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Screen name: {judge && judge.judgeScreenName}</p>
+                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Email id: {judge && judge.judgeEmail}</p>
                         <Divider></Divider>
                     </div>
                 )
             })
         }else if(this.state.sponsorsContentFlag){
             content = this.state.sponsorDetails && this.state.sponsorDetails.map(sponsor => {
+                // return(
+                //     <div>
+                //         <a href="#" id={sponsor.sponsorId}> 
+                //             <Title level={4}>{sponsor && sponsor.sponsorName}</Title>
+                //         </a>
+                //         <p>{sponsor && sponsor.sponsorDescription}</p>
+                //         <Divider></Divider>
+                //     </div>
+                // )
                 return(
-                    <div>
+                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
                         <a href="#" id={sponsor.sponsorId}> 
-                            <Title level={4}>{sponsor && sponsor.sponsorName}</Title>
+                            <Title level={4} style = {{marginLeft : "20px"}}> Organization Name : {sponsor && sponsor.sponsorName}</Title>
                         </a>
-                        <p>{sponsor && sponsor.sponsorDescription}</p>
+                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Description : {sponsor && sponsor.sponsorDescription}</p>
+                        
                         <Divider></Divider>
                     </div>
                 )
@@ -348,8 +377,8 @@ class HackathonDetails extends Component {
                     </div>
                 </div>
                 <div>
-                    <Layout>
-                        <Sider style={{ overflow: 'auto', height: '100%', left: 0 }}>
+                    <Layout style = {{minHeight : "330px"}}>
+                        <Sider style={{ overflow: 'auto', height: '100%', left: 0, marginBottom:"20px" }}>
                             <div className="logo" />
                             <Menu mode="inline" defaultSelectedKeys={['1']}>
                                 <Menu.Item key="1"
@@ -377,17 +406,18 @@ class HackathonDetails extends Component {
                                     <Icon type="dollar" />
                                     <span className="nav-text">Sponsors</span>
                                 </Menu.Item>
+                                <br></br>
                             </Menu>
                         </Sider>
-                        <Layout style={{ marginLeft: 10 }}>
-                            <Content style={{ margin: '0px 16px 0', overflow: 'initial' }}>
-                                <div style={{ padding: 14, background: '#fff'}}>
+                        <br></br>
+                        <Layout style={{ marginLeft: 10}} >
+                            <Content style={{ margin: '0px 16px 0', overflow: 'initial'}}>
+                                <div style={{ padding: 14, background: '#fff', minHeight : "300px"}}>
                                     {content}    
                                 </div>
                             </Content>
                         </Layout>
                     </Layout>
-                    );
                 </div>
             </div>
         )

@@ -203,8 +203,8 @@ class OrganizationDetails extends Component {
                             <div>
                                 <p style = {{marginLeft:"10px"}}>Name : {hackathon.name}</p>
                                 <p style = {{marginLeft:"10px"}}>Description : {hackathon.description}</p>
-                                <p style = {{marginLeft:"10px"}}>Start Date : {hackathon.startDate}</p>
-                                <p style = {{marginLeft:"10px"}}>End Date : {hackathon.endDate}</p>
+                                <p style = {{marginLeft:"10px"}}>Start Date : {hackathon.startDate.slice(0, 10)}</p>
+                                <p style = {{marginLeft:"10px"}}>End Date : {hackathon.endDate.slice(0, 10)}</p>
                             </div>
                             </Col>
                            </Row> 
