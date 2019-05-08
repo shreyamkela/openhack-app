@@ -5,6 +5,7 @@ import NavBar from '../Navbar/Navbar';
 import { Layout, Tooltip , Icon, Row, Col, Button, Input, Form } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
+import swal from 'sweetalert';
 const { Content, Sider } = Layout;
 
 // 4 states:
@@ -17,8 +18,8 @@ class ViewSubmission extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            hackathonId: this.props.match.params.hackathonId,
             submissionsData : [],
-
         }
     }
 
@@ -28,141 +29,39 @@ class ViewSubmission extends Component {
 
         // (WRITE THE AXIOS CALL HERE TO FETCH ALL THE SUBMISSIONS FOR THE JUDGE)
 
-        this.setState({
-            submissionsData : [
-                {
-                    "id" : 1,
-                    "submissionLink" : "https://github.com/alice22/OpenHack-using-Spring-Framework",
-                    "team" : {
-                        "id" : 1,
-                        "name" : "Team Stark",
-                        "members" : [
-                            {
-                                "id" : "10",
-                                "name" : "Bob"
-                            },
-                            {
-                                "id" : "11",
-                                "name" : "Alice"
-                            },
-                            {
-                                "id" : "12",
-                                "name" : "Mark"
-                            }
-                        ]
-                    },
-                    "hackathon" : {
-                        "id" : 1,
-                        "name" : "Hackathon XYZ"
-                    },
-                },
-                {
-                    "id" : 2,
-                    "submissionLink" : "https://github.com/alice22/Linkedin-simulation",
-                    "team" : {
-                        "id" : 2,
-                        "name" : "Team Baratheon",
-                        "members" : [
-                            {
-                                "id" : "13",
-                                "name" : "Jessica"
-                            },
-                            {
-                                "id" : "14",
-                                "name" : "Jared"
-                            }
-                        ]
-                    },
-                    "hackathon" : {
-                        "id" : 2,
-                        "name" : "Hackathon ABC"
-                    }
-                },
-                {
-                    "id" : 3,
-                    "submissionLink" : "https://github.com/alice22/WeServe-web-application",
-                    "team" : {
-                        "id" : 3,
-                        "name" : "Team Tyrell",
-                        "members" : [
-                            {
-                                "id" : "10",
-                                "name" : "Bob"
-                            },
-                            {
-                                "id" : "11",
-                                "name" : "Alice"
-                            },
-                            {
-                                "id" : "15",
-                                "name" : "Olivia"
-                            }
-                        ]
-                    },
-                    "hackathon" : {
-                        "id" : 3,
-                        "name" : "Hackathon ABC"
-                    }
-                },
-                {
-                    "id" : 4,
-                    "submissionLink" : "https://github.com/alice22/School-maanagement-app",
-                    "team" : {
-                        "id" : 4,
-                        "name" : "Team Tully",
-                        "members" : [
-                            {
-                                "id" : "16",
-                                "name" : "Harry"
-                            },
-                            {
-                                "id" : "12",
-                                "name" : "Mark"
-                            }
-                        ]
-                    },
-                    "hackathon" : {
-                        "id" : 1,
-                        "name" : "Hackathon XYZ"
-                    }
-                },,
-                {
-                    "id" : 5,
-                    "submissionLink" : "https://github.com/alice22/Game-2048-using-python",
-                    "team" : {
-                        "id" : 5,
-                        "name" : "Team Lannister",
-                        "members" : [
-                            {
-                                "id" : "16",
-                                "name" : "Harry"
-                            },
-                            {
-                                "id" : "15",
-                                "name" : "Olivia"
-                            }
-                        ]
-                    },
-                    "hackathon" : {
-                        "id" : 5,
-                        "name" : "Hackathon XYZ"
-                    }
-                },
-            ]
-        })
+        axios.defaults.withCredentials = true;
+        axios.get(`http://localhost:8080/submission/${this.state.hackathonId}`)
+            .then(response => {
+                if(response.status===200){
+                    this.setState({
+                        submissionsData:response.data.submissionDetails
+                    })
+                }
+            })
+            .catch(err => {
+                console.log("err is:",err)
+            })
     }
 
     gradeSubmit = (e,sub_id) => {
         console.log("Grade submission button pressed")
-        
-
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
             var submission_id = sub_id
             var grade = values.grade
-            console.log("Submission id : "+submission_id)
-            console.log("The grade for this submission id is : "+grade)
+            console.log(typeof grade)
+            let body = {
+                "grade": values.grade
+            }
+            axios.defaults.withCredentials = true
+            axios.post(`http://localhost:8080/gradeSubmission/${submission_id}`,body)
+                .then(response => {
+                    if(response.status === 200){
+                        swal("Successfully graded!","success")
+                        window.location.reload();
+                    }
+                })
 
             // (WRITE THE AXIOS FUNCTION HERE TO STORE THE GRADE ACROSS THE SUBMISSION ID)
 
@@ -191,14 +90,14 @@ class ViewSubmission extends Component {
         else
         {
             submissionDisplay = this.state.submissionsData.map(sub => {
-                if(sub.team.members != null && sub.team.members.length > 0)
+                if(sub.memberDetails != null && sub.memberDetails.length > 0)
                 {
-                    teamMembersDisplay = sub.team.members.map(mem => {
+                    teamMembersDisplay = sub.memberDetails.map(mem => {
                         return(
                             <div style = {{margin : "10px"}}>
                                 <p style = {{marginRight : "10px"}}>
                                 <Icon type="user"></Icon>
-                                {mem.name}
+                                {mem.memberName}
                                 </p>
                             </div>
                         )
@@ -210,10 +109,10 @@ class ViewSubmission extends Component {
                         <Row type="flex">
                             <Col span={17} style={{borderRight : "1px solid gray", marginRight : "10px"}}>
                                 <div style = {{marginLeft : "20px"}}>
-                                    <h4>Submission {sub.id}</h4>
-                                    <h6>Submission link : <u style = {{color : "blue"}}>{sub.submissionLink}</u></h6>
-                                    <h6>Hackathon name : {sub.hackathon.name}</h6>
-                                    <h6>Team name : {sub.team.name}</h6>
+                                    <h4>Submission {sub.submissionId}</h4>
+                                    <h6>Submission link : <u style = {{color : "blue"}}>{sub.submissionUrl}</u></h6>
+                                    <h6>Hackathon name : {sub.hackathonName}</h6>
+                                    <h6>Team name : {sub.teamName}</h6>
                                     <h6>Team members : </h6>
                                     {teamMembersDisplay}
 
@@ -223,12 +122,12 @@ class ViewSubmission extends Component {
                             <Col span={5} style={{marginLeft : "20px"}}>
                             <Form
                                 layout="vertical"
-                                onSubmit={(e)=>this.gradeSubmit(e, sub.id)}
+                                onSubmit={(e)=>this.gradeSubmit(e, sub.submissionId)}
                             >
                                 <Form.Item label="Grades">
                                     {getFieldDecorator('grade')(
                                         <Input
-                                        placeholder="Enter grades here"
+                                        placeholder={sub.grade || "Enter grades here"}
                                         prefix={<Icon type="edit" style={{ color: 'rgba(0,0,0,.25)' }} />}
                                         suffix={
                                             <Tooltip title="The grades should be a float number between 0-10, inclusive.">

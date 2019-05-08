@@ -9,6 +9,7 @@ import javax.persistence.Persistence;
 import javax.transaction.Transactional;
 
 import com.example.cmpe275.openhack.entity.Submission;
+import com.example.cmpe275.openhack.entity.User;
 
 public class SubmissionDaoImpl implements SubmissionDao {
 
@@ -80,9 +81,26 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
+	@Transactional
 	public List<Submission> findAll() {
+		EntityManager em = emfactory.createEntityManager();
+		try
+		{
+			em.getTransaction().begin();
+			return (List<Submission>) em.createQuery("select s from Submission s",Submission.class).getResultList();
+		}
+		catch(RuntimeException e)
+		{
+			em.getTransaction().rollback();
+			throw e;
+		}
+		finally
+		{
+			em.close();	
+		}
+		
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 }

@@ -87,8 +87,8 @@ public class PaymentController {
 			@RequestBody Map<Object,Object> requestBody){
 		
 		Map<Object,Object> responseObject = new HashMap<>();
-		long teamId = new Long((Integer)requestBody.get("teamId"));
-		long memberId = new Long((Integer)requestBody.get("memberId"));
+		final long teamId = new Long((Integer)requestBody.get("teamId"));
+		final long memberId = new Long((Integer)requestBody.get("memberId"));
 
 		Payment payment = paymentDao.getPaymentById(paymentId);
 		payment.setStatus(true);

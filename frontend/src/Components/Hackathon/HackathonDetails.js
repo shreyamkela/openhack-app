@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
+import swal from 'sweetalert';
 const { Content, Sider } = Layout;
 
 // 4 states: nothing means no registration, 
@@ -31,6 +32,7 @@ class HackathonDetails extends Component {
             judgeDetails: [],
             sponsorDetails: [],
             userTeam:[],
+            userTeamId:null,
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
@@ -65,6 +67,7 @@ class HackathonDetails extends Component {
                         teamSizeMin: response.data.teamSizeMin,
                         teamSizeMax: response.data.teamSizeMax,
                         userTeam:response.data.userTeam,
+                        userTeamId:response.data.userTeamId,
                         discount: response.data.discount,
                         message: response.data.message,
                         teamDetails: response.data.teamDetails,
@@ -133,14 +136,24 @@ class HackathonDetails extends Component {
     }
 
     submitWork = (e) => {
-        console.log(this.state.submission)
-        this.setState({
-            visibleSubmissionModal: false
-        })
+        console.log(this.state.submissionUrl)
+        let body = {
+            "hackathonId":this.props.match.params.id,
+            "teamId":this.state.userTeamId,
+            "url":this.state.submissionUrl
+        }
+
+        axios.post("http://localhost:8080/addSubmission",body)
+            .then(response => {
+                if(response.status===200){
+                    swal("Submitted work","success")
+                    window.location.reload();      
+                }
+            })
     }
     handleSubmission = (e) => {
         this.setState({
-            submission: e.target.value
+            submissionUrl: e.target.value
         })
     }
     render() {
@@ -150,6 +163,7 @@ class HackathonDetails extends Component {
         var registerButtonFlag = false
         var submissionButtonFlag = false
         var gradeButtonFlag = false
+        const {getFieldDecorator} = this.props.form
         console.log(new Date(this.state.startDate) >  new Date())
         if(new Date(this.state.startDate) >  new Date() || new Date(this.state.endDate) <  new Date()){
             submissionButtonFlag=true
@@ -232,10 +246,32 @@ class HackathonDetails extends Component {
                 <Modal
                     title="Submission"
                     visible={this.state.visibleSubmissionModal}
-                    onOk={this.submitWork}
                     onCancel={this.handleCancel}
+                    footer={[
+                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
+                    ]}
                 >
-                    <input class="form-control" id="submission" onChange={this.handleSubmission} value={this.state.submission} disabled={submissionButtonFlag}/>
+                <Form>
+                <Form.Item
+                    label="Submission URL"
+                >
+                    {getFieldDecorator('submissionUrl', {
+                        rules: [{ required: true, message: "URL cannot be empty" }],
+                    })(
+                        <input type="text" disabled={submissionButtonFlag} value={this.state.submissionUrl} onChange={this.handleSubmission} placeholder={this.state.submissionUrl}/>
+                    )}
+                </Form.Item>
+                <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                disabled={this.state.teamNameErrFlag || this.state.membersErrFlag}
+                                onClick={this.submitWork}
+                            >
+                                Submit
+                            </Button>
+                </Form.Item>
+                </Form>
                 </Modal>
             </div>
         } else if (this.state.message === "payment pending") {
@@ -341,4 +377,4 @@ class HackathonDetails extends Component {
     }
 }
 
-export default HackathonDetails;
+export default Form.create()(HackathonDetails);
