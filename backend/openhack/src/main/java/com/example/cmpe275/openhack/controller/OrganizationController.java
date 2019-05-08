@@ -37,21 +37,16 @@ import com.example.cmpe275.openhack.entity.User;
 @Controller
 public class OrganizationController {
 	
-//	private OrganizationDao orgdao;
-//	private UserDao userdao;
-//	private RequestDaoImpl reqdao;
-//	
-//	public OrganizationController() 
-//	{
-//		orgdao =  new OrganizationDaoImpl();
-//		userdao = new UserDaoImpl();
-//		reqdao = new RequestDaoImpl();
-//	}
-	@Autowired 
-	OrganizationDaoImpl orgdao;
-	UserDaoImpl userdao;
-	RequestDaoImpl reqdao;
+	private OrganizationDao orgdao;
+	private UserDao userdao;
+	private RequestDaoImpl reqdao;
 	
+	public OrganizationController() 
+	{
+		orgdao =  new OrganizationDaoImpl();
+		userdao = new UserDaoImpl();
+		reqdao = new RequestDaoImpl();
+	}
 	
 	
 	@RequestMapping(value = "/hacker/createOrganization", method = RequestMethod.POST, produces = { "application/json"},
@@ -267,19 +262,14 @@ public class OrganizationController {
 	{
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		System.out.println("\nrequestJoinOrganization method called by user "+userId+" for organization "+orgId);
-		User user=null;
-		try{
-		 user= userdao.findUserbyID(new Long(userId));
-		}
-		catch(Exception e){
-			System.out.println("Error findUserbyID "+e);
-		}
+		User user = userdao.findUserbyID(new Long(userId));
 		Organization organization = orgdao.findOrganizationById(new Long(orgId));
 		Request req  = new Request();
 		Set<Request> reqs_owner;
 		Set<Request> reqs_org;
 		if(user!=null && organization!=null)
 		{
+<<<<<<< HEAD
 			// checking whether the request that just came already exists or not
 			try
 			{
@@ -301,6 +291,8 @@ public class OrganizationController {
 				map.put("msg", "Some error while getting all join requests to check for restricting duplicate requests");
 				return map;
 			}
+=======
+>>>>>>> parent of 423de8f... DI and AOP addition, saving user type in localStorage
 			if(organization.getOwner()!=null)
 			{
 				User owner = organization.getOwner();

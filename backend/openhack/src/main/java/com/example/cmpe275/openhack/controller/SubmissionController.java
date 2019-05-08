@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+<<<<<<< HEAD
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+=======
+>>>>>>> parent of 423de8f... DI and AOP addition, saving user type in localStorage
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,16 +33,13 @@ import com.example.cmpe275.openhack.entity.User;
 
 @RestController
 public class SubmissionController {
-//	private HackathonDao hackathonDao;
-//	private SubmissionDao submissionDao;
-//
-//	public SubmissionController() {
-//		hackathonDao = new HackathonDaoImpl();
-//		submissionDao = new SubmissionDaoImpl();
-//	}
-	@Autowired
-	HackathonDaoImpl hackathonDao;
-	SubmissionDaoImpl submissionDao;
+	private HackathonDao hackathonDao;
+	private SubmissionDao submissionDao;
+
+	public SubmissionController() {
+		hackathonDao = new HackathonDaoImpl();
+		submissionDao = new SubmissionDaoImpl();
+	}
 
 	@PostMapping("/addSubmission")
 	@ResponseBody

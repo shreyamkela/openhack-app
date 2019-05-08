@@ -5,16 +5,11 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Team;
-@Component
+
 public class TeamDaoImpl implements TeamDao{
 
-	
 	private EntityManagerFactory emfactory;
 
 	public TeamDaoImpl()

@@ -20,8 +20,7 @@ class Profile extends Component {
             // owner_id: null,
             organizations: [],
             user: '',
-            address: '',
-            userOrganization:''
+            address: ''
         }
 
         this.fetchOrganizations = this.fetchOrganizations.bind(this);
@@ -33,38 +32,12 @@ class Profile extends Component {
                 if (response.status === 200) {
                     this.setState({
                         user: response.data,
-                        address: response.data.address,
-                        userOrganization: response.data.organization
+                        address: response.data.address
                     })
-                    console.log("User " + JSON.stringify(this.state.user));
+                    console.log("USer " + JSON.stringify(this.state.user));
                     console.log("Address " + JSON.stringify(this.state.address));
                 }
-            });
-        axios.defaults.withCredentials = true;
-        axios.get('http://localhost:8080/hacker/getOrganizations')
-            .then((response) => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Response received from backend");
-                    console.log(JSON.stringify(response.data.organizations));
-                    this.setState({
-                        organizations: response.data.organizations,
-                        // dataSource:response.data.organizations
-                    });
-                    // console.log("The number of the organizations is" + response.data.organizations.length);
-                    // var org_names = []
-                    // for (let i = 0; i < response.data.organizations.length; i++) {
-                    //     org_names.push(response.data.organizations[i].name)
-                    // }
-                    // this.setState({
-                    //     dataSource: org_names
-                    // });
-                    // console.log("\nOrganization names : " + org_names)
-                }
             })
-            .catch(err => {
-                console.log(err);
-            });
     }
 
     handleSubmit = (e) => {
@@ -80,7 +53,7 @@ class Profile extends Component {
                         console.log("Status Code : ", response.status);
                         console.log("Here", JSON.stringify(response));
                         if (response.status === 200) {
-                            swal("Update Successful", "", "success");
+                            swal("Signup Successful", "", "success");
                         }
                         else {
                             swal("Kindly Register again with correct data", "", "error");
@@ -90,54 +63,34 @@ class Profile extends Component {
         });
     }
 
-    fetchOrganizations = (value) => {
+    fetchOrganizations = (e) => {
+        axios.defaults.withCredentials = true;
+        axios.get('http://localhost:8080/hacker/getOrganizations')
+            .then((response) => {
+                console.log("Status Code : ", response.status);
 
-        // if(value===""){
-        //     this.setState({
-        //         filteredUsers:this.state.users
-        //     })
-        // }else{
-        var organizations = this.state.organizations.filter(org => {
-            console.log(org.name, " and ", value)
-            return org.name.startsWith(value)
-        })
-        console.log(organizations)
-        this.setState({
-            organizations: organizations
-        })
-        // }
-    }
-    onOrganizationSelect = (value, option) => {
-        var org = this.state.organizations.filter(user => user.id == option.key)
-        // var members = this.state.members
-        // members.push(member[0].id)
-        console.log("org " + JSON.stringify(org))
-        var users = this.state.organizations.filter(user => {
-            return user.id != option.key
-        })
-        console.log(users)
-        if (this.state.user.organization.id === org[0].id) {
-            swal("You are already a part of this Organization", "", "error");
-        }
-        else {
-            axios.defaults.withCredentials = true;
-            axios.put(`http://localhost:8080/hacker/requestJoinOrganization/${localStorage.getItem("userId")}/${org[0].id}`)
-                .then(response => {
-                    if (response.status === 200) {
-                        swal("Approval request sent to join the organization", "", "success");
+                if (response.status === 200) {
+                    console.log("Response received from backend");
+                    console.log(JSON.stringify(response.data.organizations));
+
+                    this.setState({
+                        organizations: response.data.organizations
+                    });
+
+                    console.log("The number of the organizations is" + response.data.organizations.length);
+                    var org_names = []
+                    for (let i = 0; i < response.data.organizations.length; i++) {
+                        org_names.push(response.data.organizations[i].name)
                     }
-                })
-        }
-
-
-    }
-    renderOption = (item) => {
-        console.log(`renderOption.item`, item);
-        return (
-            <AutoComplete.Option key={item.id} text={item.name}>
-                <span>{item.name}</span>
-            </AutoComplete.Option>
-        );
+                    this.setState({
+                        dataSource: org_names
+                    });
+                    console.log("\nOrganization names : " + org_names)
+                }
+                else {
+                    console.log("There was some error fetching list of organization from the backend")
+                }
+            });
     }
 
 
@@ -194,7 +147,7 @@ class Profile extends Component {
                         {getFieldDecorator('title')(
                             <AutoComplete
                                 onChange={this.handleTitleChange}
-                                placeholder={this.state.user.title}
+                            // placeholder={this.state.user.title}
                             >
                                 <Input />
                             </AutoComplete>
@@ -206,7 +159,7 @@ class Profile extends Component {
                         {getFieldDecorator('aboutMe')(
                             <AutoComplete
                                 onChange={this.handleAboutMeChange}
-                                placeholder={this.state.user.aboutMe}
+                            // placeholder={this.state.user.aboutMe}
                             >
                                 <Input />
                             </AutoComplete>
@@ -217,7 +170,7 @@ class Profile extends Component {
                         {getFieldDecorator('street')(
                             <AutoComplete
                                 onChange={this.handleStreetChange}
-                                placeholder={this.state.address.street}
+                            // placeholder={this.state.address.street}
                             >
                                 <Input />
                             </AutoComplete>
@@ -228,7 +181,7 @@ class Profile extends Component {
                         {getFieldDecorator('zip')(
                             <AutoComplete
                                 onChange={this.handleZipChange}
-                                placeholder={this.state.address.zip}
+                            // placeholder={this.state.address.zip}
                             >
                                 <Input />
                             </AutoComplete>
@@ -239,7 +192,7 @@ class Profile extends Component {
                         {getFieldDecorator('city')(
                             <AutoComplete
                                 onChange={this.handleCityChange}
-                                placeholder={this.state.address.city}
+                            // placeholder={this.state.address.city}
                             >
                                 <Input />
                             </AutoComplete>
@@ -250,7 +203,7 @@ class Profile extends Component {
                         {getFieldDecorator('state')(
                             <AutoComplete
                                 onChange={this.handleStateChange}
-                                placeholder={this.state.address.state}
+                            // placeholder={this.state.address.state}
                             >
                                 <Input />
                             </AutoComplete>
@@ -261,15 +214,16 @@ class Profile extends Component {
                         {getFieldDecorator('country')(
                             <AutoComplete
                                 onChange={this.handleCountryChange}
-                                placeholder={this.state.address.country}
+                            // placeholder={this.state.address.country}
                             >
                                 <Input />
                             </AutoComplete>
                         )}
                     </Form.Item>
                     <Form.Item label="Join Organization">
-
-                        {/* {getFieldDecorator('organization')(
+                        {/* <Row type="flex" justify="end">
+                    <Col span={12}> */}
+                        {getFieldDecorator('organization')(
                             <AutoComplete
                                 //style={{ width: 200 }}
                                 //dataSource = {this.state.dataSource && this.state.dataSource.map(this.renderOption)}
@@ -280,22 +234,12 @@ class Profile extends Component {
                                 onFocus={this.fetchOrganizations}
                                 allowClear={true}
                             ></AutoComplete>
-                        )} */}
-                        {getFieldDecorator('organization', {})(
-                            <AutoComplete
-                                // style={{ width: 200 }}
-                                dataSource={this.state.organizations && this.state.organizations.map(this.renderOption)}
-                                onSelect={this.onOrganizationSelect}
-                                onSearch={this.fetchOrganizations}
-                                placeholder="Select Organization"
-                                allowClear={true}
-                            >
-                            </AutoComplete>
                         )}
-
+                        {/* </Col>
+                </Row> */}
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">Update Profile</Button>
+                        <Button type="primary" htmlType="submit">Register</Button>
                     </Form.Item>
                 </Form>
             </div>
