@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.cmpe275.openhack.dao.HackathonDao;
+import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
 import com.example.cmpe275.openhack.dao.OrganizationDao;
 import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
 import com.example.cmpe275.openhack.dao.UserDao;
@@ -41,11 +43,13 @@ import com.example.cmpe275.openhack.entity.User;
 public class UserController {
 	private UserDao userdao;
 	private OrganizationDao orgdao;
+	private HackathonDao hackathonDao;
 
 	public UserController()
 	{
 		userdao = new UserDaoImpl();
 		orgdao =  new OrganizationDaoImpl();
+		hackathonDao = new HackathonDaoImpl();
 	}
 //	@Autowired
 //	UserDaoImpl userdao;
@@ -195,9 +199,10 @@ public class UserController {
 				List<User> users = userdao.findAllUsers();
 				Map<Object,Object> responseBody = new HashMap<>();
 				List<Map<Object,Object>> userDetails = new ArrayList<>();
+				Hackathon hackathon = hackathonDao.findById(hackathonId);
 				for(User user : users) {
 					boolean flag=true;
-					if(user.getId()!=userId) {
+					if(user.getId()!=userId && !hackathon.getJudges().contains(user)) {
 						Set<Team> teams = user.getTeams();
 						for(Team team : teams) {
 							if(team.getParticipatedHackathon().getId()==hackathonId) {
