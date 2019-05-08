@@ -106,7 +106,7 @@ class HackathonPayment extends Component {
                                         size="large"
                                         onClick={this.doPayment}
                                     >
-                                        Pay ${this.state.fee}
+                                        Pay
                                      </Button>
                         </Form.Item>
                     </Form>

@@ -14,5 +14,4 @@ public interface SubmissionDao {
 	public Submission findById(long id);
 
 	public List<Submission> findAll();
-	
 }

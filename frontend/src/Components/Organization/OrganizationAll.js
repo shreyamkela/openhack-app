@@ -4,8 +4,6 @@ import { Menu, Icon } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input, Card, Pagination } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
-import NavBar from '../Navbar/Navbar';
-import {Redirect} from 'react-router'
 var swal = require('sweetalert');
 
 class organizationAll extends Component {
@@ -22,7 +20,7 @@ class organizationAll extends Component {
             organizationOwnSize : 0, 
             organizationAllPage : 1,
             organizationOwnPage : 1,
-            user_id : localStorage.getItem("userId")
+            user_id : 4
         }
     }
 
@@ -52,9 +50,6 @@ class organizationAll extends Component {
                         else{
                             console.log("There was some error fetching list of organization from the backend")
                         }
-                    })
-                    .catch(err => {
-                        console.log(err)
                     });
 
     }
@@ -84,10 +79,6 @@ class organizationAll extends Component {
 
     render(){
 
-        var redirect = null
-        if(!localStorage.getItem("userId")){
-            redirect = <Redirect to="/login"/>
-        }
         var organizationAllCards = this.state.viewOrganizationAll && this.state.viewOrganizationAll.map(card => {
             return(
                 <div class="px-3 py-5">
@@ -113,7 +104,6 @@ class organizationAll extends Component {
         var organizationOwnCards = this.state.viewOrganizationOwn && this.state.viewOrganizationOwn.map(card => {
             return(
                 <div class="px-3 py-5">
-                {redirect}
                 <Col span={6}>
                     <a href="#">
                         <Card
@@ -136,8 +126,6 @@ class organizationAll extends Component {
 
         return(
             <div>
-                {redirect}
-                <NavBar></NavBar>
                 <div class="px-4 py-4">
                     <h2>Organizations</h2>
                 </div>

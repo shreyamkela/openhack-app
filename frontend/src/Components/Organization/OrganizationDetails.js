@@ -5,7 +5,6 @@ import NavBar from '../Navbar/Navbar';
 import { Layout, Menu, Icon, Row, Col, Button, Tag } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
-import {Redirect} from 'react-router'
 const { Content, Sider } = Layout;
 
 // 4 states:
@@ -118,10 +117,6 @@ class OrganizationDetails extends Component {
         let titleDisplay = null;
         let requestTitleDisplay = null;
         let pendingrequestTitle = null;
-        let redirect = null
-        if(!localStorage.getItem("userId")){
-            redirect = <Redirect to="/login"/>
-        }
         if(this.state.organizationData==null || this.state.organizationData.length==0)
         {
             orgDataDisplay = (
@@ -297,8 +292,7 @@ class OrganizationDetails extends Component {
                             
                             <br></br>
                             <center>
-                                <img src = "https://dumielauxepices.net/sites/default/files/mechanical-clipart-engineering-class-679271-5014506.gif" width="300" height="250"></img>
-                                <p style = {{fontSize:"15px", color: "#46535e"}}>There are no pending requests !!</p>
+                                <p style = {{fontSize:"15px", color: "#46535e"}}>There are no sponsored hackathons yet!!</p>
                             </center>
                         </div>
                     )
@@ -312,6 +306,8 @@ class OrganizationDetails extends Component {
                                 <h2 style={{ color: "#46535e", paddingTop: "4%" }}>  {this.state.organizationData.name} </h2>
                                 <p style={{ color: "#46535e", fontSize: "20px" }}> {this.state.organizationData.description} </p>
                                 {address}
+                                {/* <p style={{ color: "#46535e", fontSize: "20px" }}> Address : {this.state.organizationData.address} </p> */}
+                                {/* <p style={{ color: "#46535e", fontSize: "20px" }}> Owner of the organization : {this.state.organizationData.owner.name} </p> */}
                                 {ownerName}
                                 <hr/>
                                 <p style={{ color: "#46535e", fontSize: "20px" }}> Members of the organization :  </p>
@@ -326,6 +322,7 @@ class OrganizationDetails extends Component {
                             </Col>
                             <Col span={6}>
                                 {buttons}
+                                {/* <Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal}>Request to join</Button><br />                             */}
                             </Col>
                         </Row>
                     </div>
@@ -334,8 +331,6 @@ class OrganizationDetails extends Component {
         }
         return (
             <div>
-                {redirect}
-                <NavBar></NavBar>
                 <div style={{ backgroundImage: "url(" + this.state.cover_image + ")", height: "300px", position: "relative" }}>
                 </div>
                 {orgDataDisplay}

@@ -13,7 +13,6 @@ import HackathonRegister from './Hackathon/HackathonRegister';
 import OrganizationsAll from './Organization/OrganizationAll';
 import OrganizationDetails from './Organization/OrganizationDetails'
 import HackathonPayment from './Hackathon/HackathonPayment';
-import ViewSubmissions from './Submission/ViewSubmissions';
 
 
 class Main extends Component {
@@ -32,7 +31,6 @@ class Main extends Component {
                 <Route exact path="/hacker_organizations" component={OrganizationsAll}></Route>
                 <Route exact path="/organization_details/:user_id/:org_id" component={OrganizationDetails}></Route>
                 <Route exact path="/hackathon/payment/:paymentId" component={HackathonPayment}></Route>
-                <Route exact path="/hacker/gradeSubmissions/:hackathonId" component={ViewSubmissions}></Route>
             </div>
         )
     }

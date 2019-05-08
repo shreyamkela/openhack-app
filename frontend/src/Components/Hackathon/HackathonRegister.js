@@ -5,9 +5,8 @@ import { Row, Col, AutoComplete, Badge, Steps, Button, message } from 'antd';
 import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
-import axios from 'axios';
+import axios from 'axios'
 import swal from 'sweetalert';
-import {Redirect} from 'react-router'
 class HackathonRegister extends Component {
 
     state = {
@@ -29,9 +28,6 @@ class HackathonRegister extends Component {
             .then(response => {
                 if(response.status===200){
                     console.log(response.data)
-                    let users = response.data.userDetails.filter(user => {
-                        return user.id != localStorage.getItem("userId")
-                    })
                     this.setState({
                         users:response.data.userDetails,
                         filteredUsers:response.data.userDetails,
@@ -138,10 +134,6 @@ class HackathonRegister extends Component {
 
         const { getFieldDecorator } = this.props.form
         var teamAvatars = null
-        var redirect = null
-        if(!localStorage.getItem("userId")){
-            redirect = <Redirect to="/login"/>
-        }
         if(this.state.members){
             teamAvatars = this.state.members.map(member => {
                 return(
@@ -155,11 +147,8 @@ class HackathonRegister extends Component {
             })
         }
         return (
-            <div>
-            <NavBar></NavBar>
-            <div style={{ "width": "100%", "height": "750px" }}>
-                
-                {redirect}
+
+            <div style={{ "width": "100%", "height": "610px" }} class="blur-bg">
                 <div class="hackathon-create p-5" style={{ "backgroundColor": "white" }}>
                     <Title style={3}>Register to Hackathon</Title>
                     <Divider></Divider>
@@ -208,15 +197,12 @@ class HackathonRegister extends Component {
                                 htmlType="submit"
                                 disabled={this.state.teamNameErrFlag || this.state.membersErrFlag}
                                 onClick={this.registerHackathon}
-                                block
-                                size="large"
                             >
                                 Join Hackathon
                             </Button>
                         </Form.Item>
                     </Form>
                 </div>
-            </div>
             </div>
         )
     }

@@ -6,74 +6,77 @@ import { Row, Col, AutoComplete, Button } from 'antd';
 import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
-import {Redirect} from 'react-router'
 import axios from 'axios';
 import swal from 'sweetalert'
 
 class HackathonCreate extends Component {
 
-  constructor(props){
-    super(props);
-    this.state = {
-      name: "dar",
-      startDate: null,
-      endDate: null,
-      description: null,
-      fee: null,
-      teamSizeMin: null,
-      teamSizeMax: null,
-      discount: null,
-      nameErrFlag: true,
-      dateErr: "",
-      dateErrFlag: true,
-      descErr: "",
-      descErrFlag: true,
-      minErr: "",
-      minErrFlag: true,
-      maxErr: "",
-      maxErrFlag: true,
-      feeErrFlag: true,
-      feeErr:"",
-      disErrFlag:false,
-      disErr:"",
-      current: 0,
-      users:[],
-      judges:[],
-      judgesErr:"You need atleast one judge",
-      judgesErrFlag:true,
-      organisations:[],
-      sponsors:[]
-    }
+  state = {
+    name: "dar",
+    startDate: null,
+    endDate: null,
+    description: null,
+    fee: null,
+    teamSizeMin: null,
+    teamSizeMax: null,
+    discount: null,
+    nameErrFlag: true,
+    dateErr: "",
+    dateErrFlag: true,
+    descErr: "",
+    descErrFlag: true,
+    minErr: "",
+    minErrFlag: true,
+    maxErr: "",
+    maxErrFlag: true,
+    feeErrFlag: true,
+    current: 0,
+    users:[],
+    judges:[],
+    judgesErr:"You need atleast one judge",
+    judgesErrFlag:true,
+    organisations:[],
+    sponsors:[]
   }
-  
 
   componentDidMount(){
-
-    axios.defaults.withCredentials = true;
-    axios.get("http://localhost:8080/hacker/getOrganizations")
-      .then(response => {
-        if(response.status === 200){
-          this.setState({
-            organisations:response.data.organizations
-          })
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    
-    axios.get("http://localhost:8080/getalluser")
-      .then(response => {
-        if(response.status === 200){
-          console.log(response.data)
-          this.setState({
-            users:response.data.userDetails
-          })
-        }
-      })
+    this.setState({
+      users:[
+        {
+          "id":1,
+          "firstname":"Darshil",
+          "lastname":"Kapadia"
+        },
+        {
+          "id":2,
+          "firstname":"Kavina",
+          "lastname":"Desai"
+        },
+        {
+          "id":3,
+          "firstname":"Disha",
+          "lastname":"Kapadia"
+        },
+      ],
+      organisations:[
+        {
+          "id":1,
+          "firstname":"Darshil",
+          "lastname":"Kapadia"
+        },
+        {
+          "id":2,
+          "firstname":"Kavina",
+          "lastname":"Desai"
+        },
+        {
+          "id":3,
+          "firstname":"Disha",
+          "lastname":"Kapadia"
+        },
+      ],
+    })
   }
-
-
   onChangeName = (e) => {
     if (e.target.value) {
       this.setState({
@@ -129,13 +132,7 @@ class HackathonCreate extends Component {
         minErr: "Minimum size should be less than maximum size",
         minErrFlag: true
       })
-    } else if(e<2){
-      this.setState({
-        minErr: "Cannot be less than 2",
-        minErrFlag: true
-      })
-    }
-    else {
+    } else {
       this.setState({
         teamSizeMin: e,
         minErr: "",
@@ -164,41 +161,25 @@ class HackathonCreate extends Component {
       this.setState({
         feeErrFlag: true
       })
-    } else if(e<0){
-      this.setState({
-        feeErrFlag: true,
-        feeErr:" Cannot be negative"
-      })
     } else {
       this.setState({
         fee: e,
-        feeErrFlag: false,
-        feeErr:""
+        feeErrFlag: false
       })
     }
   }
 
   onChangeDis = (e) => {
-    if(e<0){
-      this.setState({
-        disErrFlag: true,
-        disErr:"Cannot be negative"
-      })
-    } else{
-      this.setState({
-        disErrFlag: false,
-        disErr:"",
-        discount: e
-      })
-    }
-    
+    this.setState({
+      discount: e
+    })
   }
 
   renderOption = (item) => {
     console.log(`renderOption.item`, item);
     return (
-      <AutoComplete.Option key={item.id} text={item.name}>
-        <span>{item.name}</span>
+      <AutoComplete.Option key={item.id} text={item.firstname}>
+        <span>{item.firstname}</span>
       </AutoComplete.Option>
     );
   }
@@ -249,8 +230,8 @@ class HackathonCreate extends Component {
       "description":this.state.description,
       "teamSizeMin":this.state.teamSizeMin,
       "teamSizeMax":this.state.teamSizeMax,
-      "fee":this.state.fee.toString(),
-      "discount":this.state.discount.toString(),
+      "fee":this.state.fee,
+      "discount":this.state.discount,
       "judgesId":this.state.judges,
       "sponsorsId":this.state.sponsors
     }
@@ -276,10 +257,6 @@ class HackathonCreate extends Component {
     const { getFieldDecorator } = this.props.form;
     var judgeAvatars=null
     var sponsorAvatars=null
-    var redirect = null
-    if(!localStorage.getItem("userId")){
-      redirect = <Redirect to="/login"/>
-    }
     if(this.state.judges){
       judgeAvatars = this.state.judges.map(judge => {
         return(
@@ -301,8 +278,8 @@ class HackathonCreate extends Component {
       })
     }
     return (
-      <div style={{ "width": "100%", "height": "730px" }}>
-        {redirect}
+      <div>
+        <div class="blur-bg"></div>
         <NavBar></NavBar>
         <div class="hackathon-create p-5">
           <Title level={3}>Create a Hackathon Event</Title>
@@ -323,7 +300,7 @@ class HackathonCreate extends Component {
               {getFieldDecorator('dates', {
                 rules: [{ type: 'array', required: true }],
               })(
-                <DatePicker.RangePicker 
+                <DatePicker.RangePicker showTime format="MM-DD-YYYY HH:mm:ss"
                   onChange={this.onChangeDates}
                 />
               )}
@@ -378,18 +355,17 @@ class HackathonCreate extends Component {
                     <InputNumber onChange={this.onChangeFee} />
                   )}
                 </Form.Item>
-                <p class="text-danger">{this.state.feeErr}</p>
               </Col>
               <Col span={12}>
                 <Form.Item
                   label="Sponsor's Discount"
                 >
-                  {getFieldDecorator('dis')
-                  (
+                  {getFieldDecorator('dis', {
+                    rules: [{ message: 'Max Size Required!' }],
+                  })(
                     <InputNumber onChange={this.onChangeDis} />
                   )}
                 </Form.Item>
-                <p class="text-danger">{this.state.disErr}</p>
               </Col>
             </Row>
             <Divider></Divider>
@@ -441,7 +417,7 @@ class HackathonCreate extends Component {
                 size="large"
                 onClick={this.createHackathon}
               >
-                Create Hackathon
+                Log in
           </Button>
             </Form.Item>
           </Form>

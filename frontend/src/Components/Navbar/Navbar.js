@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import '../../App.css'
-import { Menu, Icon, Divider } from 'antd';
+import { Menu, Icon } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
@@ -43,7 +43,7 @@ class NavBar extends Component {
 
         this.setState({
             dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
-            owner_id : localStorage.getItem("userId")
+            owner_id : "1"
         })
     }
 
@@ -97,15 +97,11 @@ class NavBar extends Component {
 
                         if (response.status === 200) {
                             swal("Organization created successfully", "", "success");
-                            console.log(JSON.stringify(response.data)); 
+                            console.log(JSON.stringify(response.data));
                         }
                         else {
                             swal("There was some error creating the organization", "", "error");
                         }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        swal("bad request for creating the organization", "", "error");
                     });
             }
         });
@@ -163,13 +159,13 @@ class NavBar extends Component {
                     OpenHack
                 </Menu.Item>
                 <Menu.Item key="Challenges">
-                    <Link to="/home">
+                    <Link to="/challenges">
                         <Icon type="snippets" />Challenges
                 </Link>
                 </Menu.Item>
                 {/* <Menu.Item key="Organisations"> */}
                 {/* <Link to="/organisation"> */}
-                <Button style = {{marginLeft : "10px"}} onClick={this.createOrgModal}> <Icon type="home" /> Create Organization</Button>
+                <Button onClick={this.createOrgModal}> <Icon type="home" /> Create Organisations</Button>
 
                 {/* </Link> */}
                 {/* </Menu.Item> */}
@@ -189,12 +185,12 @@ class NavBar extends Component {
                         allowClear={true}
                         ></AutoComplete>
                     </Col> */}
-                    <Col span={8}>
-                        {/* <Badge style={{ backgroundColor: '#52c41a' }}> */}
-                            <Link to="/hacker_organizations">
-                                <Icon type="home" /> Organizations
+                    <Col span={6}>
+                        <Badge count={4} style={{ backgroundColor: '#52c41a' }}>
+                            <Link to="/messages">
+                                <Icon type="message" /> Messages
                             </Link>
-                        {/* </Badge> */}
+                        </Badge>
                     </Col>
                     <Col span={6}>
                         <Badge style={{ backgroundColor: '#52c41a' }}>
