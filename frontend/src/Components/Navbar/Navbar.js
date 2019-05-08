@@ -40,10 +40,8 @@ class NavBar extends Component {
     // }
 
     componentDidMount() {
-
         this.setState({
-            dataSource: ["Organisation 1","Organisation 2","Organisation 3"],
-            owner_id : localStorage.getItem("userId")
+            owner_id: localStorage.getItem("userId")
         })
     }
 
@@ -60,9 +58,9 @@ class NavBar extends Component {
         });
         console.log("\nCreate organization button clicked!!");
     }
-    createHackathon =()=>{
-        this.props.history.push("/hackathon/create")
-    }
+    // createHackathon =()=>{
+    //     this.props.history.push("/hackathon/create")
+    // }
 
     handleOk = () => {
         this.setState({
@@ -100,7 +98,7 @@ class NavBar extends Component {
 
                         if (response.status === 200) {
                             swal("Organization created successfully", "", "success");
-                            console.log(JSON.stringify(response.data)); 
+                            console.log(JSON.stringify(response.data));
                         }
                         else {
                             swal("There was some error creating the organization", "", "error");
@@ -156,14 +154,14 @@ class NavBar extends Component {
         const { getFieldDecorator } = this.props.form;
         var leftMenuItems = null;
         var rightMenuItems = null;
-        if (localStorage.getItem("userId") && localStorage.getItem("userType")=="user") {
+        if (localStorage.getItem("userId") && localStorage.getItem("userType") === "user") {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
                 mode="horizontal"
             >
                 <Menu.Item>
-                <Link to="/home">
+                    <Link to="/home">
                         OpenHack
                 </Link>
                 </Menu.Item>
@@ -172,11 +170,9 @@ class NavBar extends Component {
                         <Icon type="snippets" />Challenges
                 </Link>
                 </Menu.Item>
-            
-                <Button style = {{marginLeft : "10px"}} onClick={this.createOrgModal}> <Icon type="home" /> Create Organization</Button>
-            
-                <Button style = {{marginLeft : "10px"}} onClick={this.createHackathon}> Create Hackathon</Button>
-                
+
+                <Button style={{ marginLeft: "10px" }} onClick={this.createOrgModal}> <Icon type="home" /> Create Organization</Button>
+
             </Menu>
 
             rightMenuItems = <div>
@@ -195,8 +191,8 @@ class NavBar extends Component {
                     </Col> */}
                     <Col span={8}>
                         {/* <Badge style={{ backgroundColor: '#52c41a' }}> */}
-                            <Link to="/hacker_organizations">
-                                <Icon type="home" /> Organizations
+                        <Link to="/hacker_organizations">
+                            <Icon type="home" /> Organizations
                             </Link>
                         {/* </Badge> */}
                     </Col>
@@ -225,14 +221,14 @@ class NavBar extends Component {
                 </Row>
             </div>
         }
-        else if(localStorage.getItem("userId") && localStorage.getItem("userType")=="admin"){
+        else if (localStorage.getItem("userId") && localStorage.getItem("userType") == "admin") {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
                 mode="horizontal"
             >
                 <Menu.Item>
-                <Link to="/home">
+                    <Link to="/home">
                         OpenHack
                 </Link>
                 </Menu.Item>
@@ -240,9 +236,9 @@ class NavBar extends Component {
                     <Link to="/home">
                         <Icon type="snippets" />Challenges
                 </Link>
-                </Menu.Item>            
-                <Button style = {{marginLeft : "10px"}} onClick={this.createHackathon}> Create Hackathon</Button>
-                
+                </Menu.Item>
+                <Button style={{ marginLeft: "10px" }} >  <Link to="/admin/hackathon/create">Create Hackathon</Link></Button>
+
             </Menu>
 
             rightMenuItems = <div>
@@ -259,11 +255,11 @@ class NavBar extends Component {
                         allowClear={true}
                         ></AutoComplete>
                     </Col> */}
-                    <Col span={8}>
-                            <Link to="/">
-                                <Icon type="home" /> Hackathons
+                    {/* <Col span={8}>
+                        <Link to="/">
+                            <Icon type="home" /> Hackathons
                             </Link>
-                    </Col>
+                    </Col> */}
                     <Col span={6}>
                         <Badge style={{ backgroundColor: '#52c41a' }}>
                             <Link to="/profile">
@@ -281,7 +277,7 @@ class NavBar extends Component {
                 </Row>
             </div>
         }
-         else {
+        else {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}

@@ -137,8 +137,9 @@ public class UserDaoImpl implements UserDao {
 		{
 			em.getTransaction().begin();
 			String verified="Y";
-			return (List<User>) em.createQuery("select e from User e where e.verified = :verified",
-				    User.class).setParameter("verified",verified ).getResultList();
+			String usertype="user";
+			return (List<User>) em.createQuery("select e from User e where e.verified = :verified and e.usertype= :usertype ",
+				    User.class).setParameter("verified",verified ).setParameter("usertype",usertype ).getResultList();
 		}
 		catch(RuntimeException e)
 		{

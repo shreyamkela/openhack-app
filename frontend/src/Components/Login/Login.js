@@ -12,7 +12,7 @@ import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import firebaseui from 'firebaseui';
 import Navbar from '../Navbar/Navbar';
 import firebase_con from '../../Config/firebase';
-import {Redirect} from 'react-router'
+import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom';
 var swal = require('sweetalert');
 
@@ -58,7 +58,7 @@ class Login extends Component {
       localStorage.setItem("userId", response.data.id);
       localStorage.setItem("userName", response.data.name);
       localStorage.setItem("userType", response.data.usertype);
-      
+
       if (response.data.verified === "N") {
         localStorage.setItem("verified", response.data.verified);
         var data = {
@@ -124,6 +124,7 @@ class Login extends Component {
         //     });
       }
     });
+    // window.location.reload();
 
 
   }
@@ -131,8 +132,8 @@ class Login extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     let redirect = null
-    if(localStorage.getItem("userId")){
-        redirect = <Redirect to="/home"/>
+    if (localStorage.getItem("userId")) {
+      redirect = <Redirect to="/home" />
     }
     return (<div>
       {redirect}
