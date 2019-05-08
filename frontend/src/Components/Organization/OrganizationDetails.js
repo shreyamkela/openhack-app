@@ -5,6 +5,7 @@ import NavBar from '../Navbar/Navbar';
 import { Layout, Menu, Icon, Row, Col, Button, Tag } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
+import {Redirect} from 'react-router'
 const { Content, Sider } = Layout;
 
 // 4 states:
@@ -117,6 +118,10 @@ class OrganizationDetails extends Component {
         let titleDisplay = null;
         let requestTitleDisplay = null;
         let pendingrequestTitle = null;
+        let redirect = null
+        if(!localStorage.getItem("userId")){
+            redirect = <Redirect to="/login"/>
+        }
         if(this.state.organizationData==null || this.state.organizationData.length==0)
         {
             orgDataDisplay = (
@@ -329,6 +334,7 @@ class OrganizationDetails extends Component {
         }
         return (
             <div>
+                {redirect}
                 <NavBar></NavBar>
                 <div style={{ backgroundImage: "url(" + this.state.cover_image + ")", height: "300px", position: "relative" }}>
                 </div>

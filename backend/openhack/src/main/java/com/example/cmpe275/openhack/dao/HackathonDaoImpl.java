@@ -10,6 +10,7 @@ import javax.persistence.Persistence;
 import javax.transaction.Transactional;
 
 import com.example.cmpe275.openhack.entity.Hackathon;
+import com.example.cmpe275.openhack.entity.User;
 
 public class HackathonDaoImpl implements HackathonDao{
 
@@ -76,7 +77,22 @@ public class HackathonDaoImpl implements HackathonDao{
 	@Override
 	public List<Hackathon> findAll() {
 		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = emfactory.createEntityManager();
+		try
+		{
+			em.getTransaction().begin();
+			return (List<Hackathon>) em.createQuery("select h from Hackathon h",
+				    Hackathon.class).getResultList();
+		}
+		catch(RuntimeException e)
+		{
+			em.getTransaction().rollback();
+			throw e;
+		}
+		finally
+		{
+			em.close();	
+		}
 	}
 
 }

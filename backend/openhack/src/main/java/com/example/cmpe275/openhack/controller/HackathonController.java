@@ -84,7 +84,7 @@ public class HackathonController {
 		String description = (String)map.get("description");
 		int teamSizeMin = (int) map.get("teamSizeMin");
 		int teamSizeMax = (int) map.get("teamSizeMax");
-		double fee = new Double((int)map.get("fee"));
+		double fee = new Double((String)map.get("fee"));
 		List<Integer> judgesId = (List<Integer>) map.get("judgesId");
 		Hackathon hackathon = new Hackathon();
 		hackathon.setName(name);
@@ -98,7 +98,7 @@ public class HackathonController {
 			double discount = new Double((String)map.get("discount"));
 			hackathon.setDiscount(discount);
 		}else {
-			hackathon.setDiscount(new Long(0));
+			hackathon.setDiscount(new Double(0));
 		}
 		Set<User> judges = new HashSet<>();
 		for(int i=0;i<judgesId.size();i++) {
@@ -295,6 +295,30 @@ public class HackathonController {
 		
 	}
 	
+	@RequestMapping(value="/getAllHackathons/{userId}",method=RequestMethod.GET)
+	@ResponseBody
+	public Map<Object,Object> getAllHackathons(HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(name="userId") long userId) {
+		
+		Map<Object,Object> responseBody = new HashMap<>();
+		try {
+			List<Hackathon> hackathons = hackathonDao.findAll();
+			User user = userDao.findUserbyID(userId);
+			List<Map<Object,Object>> hackathonDetails = new ArrayList<>();
+			for(Hackathon hackathon : hackathons) {
+				hackathonDetails.add(createSmallHackathonResponseBody(hackathon, user));
+			}
+			responseBody.put("hackathonDetails", hackathonDetails);
+			return responseBody;
+		}catch(Exception e) {
+			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
+			responseBody.put("msg",e);
+			return responseBody;
+		}
+	}
+	
+	
 	public void sendPaymentEmail(String userEmail,Hackathon hackathon,User teamLead, long paymentId, long teamId) {
 		
 		final String username = "openhackservice@gmail.com";
@@ -329,7 +353,7 @@ public class HackathonController {
                 		+ "\n Hackathon Start Date: "+hackathon.getStartDate()
                 		+ "\n Hackathon End Date: "+hackathon.getEndDate()
                 		+ "\n Hackathon Fee: $"+hackathon.getFee()
-                		+ "\n\n Go to http://localhost:3000/payment/"+paymentId+"/"+hackathon.getId()+" for payment and confirm your seat."
+                		+ "\n\n Go to http://localhost:3000/hackathon/payment/"+paymentId+" for payment and confirm your seat."
                         +"\n\n Happy Hacking,"
                 		+"\n OpenHack Service");
 
@@ -338,5 +362,25 @@ public class HackathonController {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+	}
+	
+	
+	public Map<Object,Object> createSmallHackathonResponseBody(Hackathon hackathon,User user){
+		Map<Object,Object> responseBody = new HashMap<>();
+		String message="";
+		responseBody.put("id",hackathon.getId());
+		responseBody.put("name",hackathon.getName());
+		responseBody.put("description",hackathon.getDescription());
+		responseBody.put("startDate",hackathon.getStartDate());
+		responseBody.put("endDate",hackathon.getEndDate());
+		responseBody.put("fee",hackathon.getFee());
+		responseBody.put("teamSizeMin", hackathon.getTeamSizeMin());
+		responseBody.put("teamSizeMax", hackathon.getTeamSizeMax());
+		responseBody.put("discount",hackathon.getDiscount());
+		if(hackathon.getJudges().contains(user)) {
+			message="judge";
+		}
+		responseBody.put("message", message);
+		return responseBody;
 	}
 }
