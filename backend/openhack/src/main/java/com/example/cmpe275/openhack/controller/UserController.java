@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,14 +39,17 @@ import com.example.cmpe275.openhack.entity.User;
 
 @RestController
 public class UserController {
-	private UserDao userdao;
-	private OrganizationDao orgdao;
-
-	public UserController()
-	{
-		userdao = new UserDaoImpl();
-		orgdao =  new OrganizationDaoImpl();
-	}
+//	private UserDao userdao;
+//	private OrganizationDao orgdao;
+//
+//	public UserController()
+//	{
+//		userdao = new UserDaoImpl();
+//		orgdao =  new OrganizationDaoImpl();
+//	}
+	@Autowired
+	UserDaoImpl userdao;
+	OrganizationDaoImpl orgdao;
 	
 	@GetMapping("/getuser/{email}")
 	@ResponseBody
@@ -152,11 +156,11 @@ public class UserController {
 				address.setCountry(map.get("country"));
 			user.setAddress(address);
 		}
-		if(map.get("organization")!=null){
-			Organization org = null;
-			org = orgdao.findOrganizationByName("organization");
-			user.setOrganization(org);
-		}
+//		if(map.get("organization")!=null){
+//			Organization org = null;
+//			org = orgdao.findOrganizationById(Integer.parseInt(map.get("organization")));
+//			user.setOrganization(org);
+//		}
 		if(map.get("aboutMe")!=null)
 			user.setAboutMe(map.get("aboutMe"));
 		if(map.get("password")!=null)
@@ -215,27 +219,21 @@ public class UserController {
 			}
 	@GetMapping("/getalluser")
 	@ResponseBody
-	public List<User> getAllUser(){
+	public Map<Object, Object> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
+		Map<Object,Object> map = new HashMap<>();
 		List<User> listusers =new ArrayList<>();
 		try
 		{
 			listusers = userdao.findAllUsers();
-			if(listusers==null) 
-			{
-				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
-				return listusers;
-			}
 		}
 		catch(Exception e)
 		{
-			if(e.getMessage()!=null)
-			{
-				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
-				return listusers;
-			}
+				System.out.println("Exception while fetching all users \n"+e);
+			
 		}
-		return listusers;
+		 map.put("user",UsersObject(listusers));
+		 return map;
 	}
 	
 	@GetMapping("/getallscreennames")
@@ -327,5 +325,32 @@ public class UserController {
 		hmap.put("judged_hackathons", hackathonDetails);
 		
 		return hmap;
+	}
+	public List<Map<Object, Object>> UsersObject(List<User> users)
+	{
+		List<Map<Object, Object>> outerlist = new ArrayList<Map<Object, Object>>();
+		for(User user : users) 
+		{
+			Map<Object, Object> innermap = new HashMap<Object, Object>();
+			innermap.put("id", user.getId());
+			innermap.put("aboutMe", user.getAboutMe());
+			innermap.put("email", user.getEmail());
+			innermap.put("imageurl", user.getImageurl());
+			innermap.put("lastname", user.getLastname());
+			innermap.put("name", user.getName());
+			innermap.put("screeName", user.getScreenName());
+			innermap.put("title", user.getTitle());
+			innermap.put("usertype", user.getUsertype());
+			innermap.put("verified", user.getVerified());
+		    innermap.put("address", user.getAddress());
+			
+			Organization org = user.getOrganization();
+			if(org!=null)
+				innermap.put("organization", org.getId());
+			else
+				innermap.put("organization", null);
+			outerlist.add(innermap );
+		}
+		return outerlist;
 	}
 }

@@ -3,6 +3,7 @@ package com.example.cmpe275.openhack.controller;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,13 +19,16 @@ import com.example.cmpe275.openhack.entity.Team;
 
 @RestController
 public class SubmissionController {
-	private HackathonDao hackathonDao;
-	private SubmissionDao submissionDao;
-
-	public SubmissionController() {
-		hackathonDao = new HackathonDaoImpl();
-		submissionDao = new SubmissionDaoImpl();
-	}
+//	private HackathonDao hackathonDao;
+//	private SubmissionDao submissionDao;
+//
+//	public SubmissionController() {
+//		hackathonDao = new HackathonDaoImpl();
+//		submissionDao = new SubmissionDaoImpl();
+//	}
+	@Autowired
+	HackathonDaoImpl hackathonDao;
+	SubmissionDaoImpl submissionDao;
 
 	@PostMapping("/addSubmission")
 	@ResponseBody

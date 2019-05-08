@@ -23,6 +23,7 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,20 +55,27 @@ import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 public class HackathonController {
 
 
-	private UserDao userDao;
-	private HackathonDao hackathonDao;
-	private OrganizationDao organizationDao;
-	private TeamDao teamDao;
-	private PaymentDao paymentDao;
+//	private UserDao userDao;
+//	private HackathonDao hackathonDao;
+//	private OrganizationDao organizationDao;
+//	private TeamDao teamDao;
+//	private PaymentDao paymentDao;
+//	
+//	public HackathonController() {
+//		// TODO Auto-generated constructor stub
+//		userDao = new UserDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
+//		organizationDao = new OrganizationDaoImpl();
+//		teamDao = new TeamDaoImpl();
+//		paymentDao = new PaymentDaoImpl();
+//	}
+	@Autowired
+	UserDaoImpl userDao;
+	HackathonDaoImpl hackathonDao;
+	OrganizationDaoImpl organizationDao;
+	TeamDaoImpl teamDao;
+	PaymentDaoImpl paymentDao;
 	
-	public HackathonController() {
-		// TODO Auto-generated constructor stub
-		userDao = new UserDaoImpl();
-		hackathonDao = new HackathonDaoImpl();
-		organizationDao = new OrganizationDaoImpl();
-		teamDao = new TeamDaoImpl();
-		paymentDao = new PaymentDaoImpl();
-	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	@ResponseBody
@@ -232,15 +240,15 @@ public class HackathonController {
 		Map<Object,Object> responseObject = new HashMap<>();
 		String teamName = (String) requestBody.get("teamName");
 		String idea = (String)requestBody.get("idea");
-		List<Integer> userIds = (List<Integer>)requestBody.get("userIds");
+		final List<Integer> userIds = (List<Integer>)requestBody.get("userIds");
 		long leadId = new Long((String)requestBody.get("leadId"));
 		
 		Team team = new Team();
 		team.setTeamName(teamName);
 		team.setIdea(idea);
-		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		final Hackathon hackathon = hackathonDao.findById(hackathonId);
 		team.setParticipatedHackathon(hackathon);
-		User teamLead = userDao.findUserbyID(leadId);
+		final User teamLead = userDao.findUserbyID(leadId);
 		team.setTeamLead(teamLead);		
 		Set<User> members = new HashSet<>();
 		List<String> userEmails = new ArrayList<>();
@@ -251,7 +259,7 @@ public class HackathonController {
 		}
 		team.setMembers(members);
 		try {
-			Team createdTeam = teamDao.createTeam(team);
+			final Team createdTeam = teamDao.createTeam(team);
 			responseObject.put("msg","Successfully registered");
 			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
 	        emailExecutor.execute(new Runnable() {

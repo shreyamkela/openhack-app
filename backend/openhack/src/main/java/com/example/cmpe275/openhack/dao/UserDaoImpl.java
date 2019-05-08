@@ -12,15 +12,18 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
 
-
+@Component
 public class UserDaoImpl implements UserDao {
 	
-	private EntityManagerFactory emfactory;
 	
+	private EntityManagerFactory emfactory;
 	public UserDaoImpl(){
 		emfactory =Persistence.createEntityManagerFactory("openhack");
 	}
