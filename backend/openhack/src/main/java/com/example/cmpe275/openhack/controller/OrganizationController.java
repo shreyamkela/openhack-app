@@ -37,20 +37,20 @@ import com.example.cmpe275.openhack.entity.User;
 @Controller
 public class OrganizationController {
 	
-//	private OrganizationDao orgdao;
-//	private UserDao userdao;
-//	private RequestDaoImpl reqdao;
-//	
-//	public OrganizationController() 
-//	{
-//		orgdao =  new OrganizationDaoImpl();
-//		userdao = new UserDaoImpl();
-//		reqdao = new RequestDaoImpl();
-//	}
-	@Autowired 
-	OrganizationDaoImpl orgdao;
-	UserDaoImpl userdao;
-	RequestDaoImpl reqdao;
+	private OrganizationDao orgdao;
+	private UserDao userdao;
+	private RequestDaoImpl reqdao;
+	
+	public OrganizationController() 
+	{
+		orgdao =  new OrganizationDaoImpl();
+		userdao = new UserDaoImpl();
+		reqdao = new RequestDaoImpl();
+	}
+//	@Autowired 
+//	OrganizationDaoImpl orgdao;
+//	UserDaoImpl userdao;
+//	RequestDaoImpl reqdao;
 	
 	
 	

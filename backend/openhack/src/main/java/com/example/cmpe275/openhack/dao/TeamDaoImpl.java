@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Team;
-@Component
+//@Component
 public class TeamDaoImpl implements TeamDao{
 
 	
