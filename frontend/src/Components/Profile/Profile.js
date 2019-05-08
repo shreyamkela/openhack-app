@@ -4,6 +4,7 @@ import {
 import React, { Component } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
+import {Redirect} from 'react-router'
 var swal = require('sweetalert');
 
 const { Option } = Select;
@@ -143,7 +144,10 @@ class Profile extends Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         const { autoCompleteResult } = this.state;
-
+        let redirect = null
+        if(!localStorage.getItem("userId")){
+            redirect = <Redirect to="/login"/>
+        }
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -178,7 +182,9 @@ class Profile extends Component {
         //     </Select>
         // );
 
-        return (<div>
+        return (
+            <div>
+            {redirect}
             <Navbar></Navbar>
             <h3 align="center"> Update Profile</h3>
             <div className='signup-center'>

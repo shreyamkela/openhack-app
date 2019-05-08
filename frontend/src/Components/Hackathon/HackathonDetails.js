@@ -2,10 +2,13 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
+import swal from 'sweetalert';
+import {Redirect} from 'react-router'
 const { Content, Sider } = Layout;
+
 
 // 4 states: nothing means no registration, 
 // "payment pending" means payment is yet to be completed,
@@ -31,6 +34,7 @@ class HackathonDetails extends Component {
             judgeDetails: [],
             sponsorDetails: [],
             userTeam:[],
+            userTeamId:null,
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
@@ -65,6 +69,7 @@ class HackathonDetails extends Component {
                         teamSizeMin: response.data.teamSizeMin,
                         teamSizeMax: response.data.teamSizeMax,
                         userTeam:response.data.userTeam,
+                        userTeamId:response.data.userTeamId,
                         discount: response.data.discount,
                         message: response.data.message,
                         teamDetails: response.data.teamDetails,
@@ -77,7 +82,6 @@ class HackathonDetails extends Component {
             .catch(err => {
                 console.log(err)
             })
-            
     }
 
     loadAboutContent = (e) => {
@@ -133,14 +137,24 @@ class HackathonDetails extends Component {
     }
 
     submitWork = (e) => {
-        console.log(this.state.submission)
-        this.setState({
-            visibleSubmissionModal: false
-        })
+        console.log(this.state.submissionUrl)
+        let body = {
+            "hackathonId":this.props.match.params.id,
+            "teamId":this.state.userTeamId,
+            "url":this.state.submissionUrl
+        }
+
+        axios.post("http://localhost:8080/addSubmission",body)
+            .then(response => {
+                if(response.status===200){
+                    swal("Submitted work","success")
+                    window.location.reload();      
+                }
+            })
     }
     handleSubmission = (e) => {
         this.setState({
-            submission: e.target.value
+            submissionUrl: e.target.value
         })
     }
     render() {
@@ -150,6 +164,11 @@ class HackathonDetails extends Component {
         var registerButtonFlag = false
         var submissionButtonFlag = false
         var gradeButtonFlag = false
+        var redirect = null
+        if(!localStorage.getItem("userId")){
+            redirect = <Redirect to="/login"/>
+        }
+        const {getFieldDecorator} = this.props.form
         console.log(new Date(this.state.startDate) >  new Date())
         if(new Date(this.state.startDate) >  new Date() || new Date(this.state.endDate) <  new Date()){
             submissionButtonFlag=true
@@ -163,8 +182,8 @@ class HackathonDetails extends Component {
         if (this.state.aboutContentFlag) {
             content = <div>
                 <p><b>Overview</b>: {this.state.description}</p>
-                <p><b>Fee</b>: {this.state.fee}</p>
-                <p><b>Sponsor Discount</b>: {this.state.discount}</p>
+                <p><b>Fee</b>: ${this.state.fee}</p>
+                <p><b>Sponsor Discount</b>: {this.state.discount}%</p>
             </div>
         } else if (this.state.teamsContentFlag) {
             content = this.state.teamDetails && this.state.teamDetails.map(team => {
@@ -232,10 +251,32 @@ class HackathonDetails extends Component {
                 <Modal
                     title="Submission"
                     visible={this.state.visibleSubmissionModal}
-                    onOk={this.submitWork}
                     onCancel={this.handleCancel}
+                    footer={[
+                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
+                    ]}
                 >
-                    <input class="form-control" id="submission" onChange={this.handleSubmission} value={this.state.submission} disabled={submissionButtonFlag}/>
+                <Form>
+                <Form.Item
+                    label="Submission URL"
+                >
+                    {getFieldDecorator('submissionUrl', {
+                        rules: [{ required: true, message: "URL cannot be empty" }],
+                    })(
+                        <input type="text" disabled={submissionButtonFlag} value={this.state.submissionUrl} onChange={this.handleSubmission} placeholder={this.state.submissionUrl}/>
+                    )}
+                </Form.Item>
+                <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                disabled={this.state.teamNameErrFlag || this.state.membersErrFlag}
+                                onClick={this.submitWork}
+                            >
+                                Submit
+                            </Button>
+                </Form.Item>
+                </Form>
                 </Modal>
             </div>
         } else if (this.state.message === "payment pending") {
@@ -271,6 +312,7 @@ class HackathonDetails extends Component {
         }
         return (
             <div>
+                {redirect}
                 <NavBar></NavBar>
                 <div style={{ backgroundImage: "url(" + this.state.cover_image + ")", height: "300px", position: "relative" }}>
                     <h3 class="hackathon-name"><b>{this.state.name}</b></h3>
@@ -279,9 +321,9 @@ class HackathonDetails extends Component {
                     <div style={{ marginLeft: "10%" }}>
                         <Row type="flex">
                             <Col span={18}>
-                                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMin}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {this.state.startDate}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {this.state.endDate}</p>
+                                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
+                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
+                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
                             </Col>
                             <Col span={6}>
                                 {buttons}
@@ -320,10 +362,6 @@ class HackathonDetails extends Component {
                                     <Icon type="dollar" />
                                     <span className="nav-text">Sponsors</span>
                                 </Menu.Item>
-                                <Menu.Item key="5">
-                                    <Icon type="cloud-o" />
-                                    <span className="nav-text">Discussions</span>
-                                </Menu.Item>
                             </Menu>
                         </Sider>
                         <Layout style={{ marginLeft: 10 }}>
@@ -341,4 +379,4 @@ class HackathonDetails extends Component {
     }
 }
 
-export default HackathonDetails;
+export default Form.create()(HackathonDetails);
