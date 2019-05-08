@@ -17,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,20 +44,26 @@ import com.example.cmpe275.openhack.entity.User;
 @Controller
 public class PaymentController {
 	
-	private UserDao userDao;
-	private HackathonDao hackathonDao;
-	private OrganizationDao organizationDao;
-	private TeamDao teamDao;
-	private PaymentDao paymentDao;
-	
-	public PaymentController() {
-		// TODO Auto-generated constructor stub
-		userDao = new UserDaoImpl();
-		hackathonDao = new HackathonDaoImpl();
-		organizationDao = new OrganizationDaoImpl();
-		teamDao = new TeamDaoImpl();
-		paymentDao = new PaymentDaoImpl();
-	}
+//	private UserDao userDao;
+//	private HackathonDao hackathonDao;
+//	private OrganizationDao organizationDao;
+//	private TeamDao teamDao;
+//	private PaymentDao paymentDao;
+//	
+//	public PaymentController() {
+//		// TODO Auto-generated constructor stub
+//		userDao = new UserDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
+//		organizationDao = new OrganizationDaoImpl();
+//		teamDao = new TeamDaoImpl();
+//		paymentDao = new PaymentDaoImpl();
+//	}
+	@Autowired
+	UserDaoImpl userDao;
+	HackathonDaoImpl hackathonDao;
+	OrganizationDaoImpl organizationDao;
+	TeamDaoImpl teamDao;
+	PaymentDaoImpl paymentDao;
 
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	@ResponseBody

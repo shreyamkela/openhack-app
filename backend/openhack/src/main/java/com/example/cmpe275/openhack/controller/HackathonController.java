@@ -23,6 +23,7 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,20 +55,27 @@ import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 public class HackathonController {
 
 
-	private UserDao userDao;
-	private HackathonDao hackathonDao;
-	private OrganizationDao organizationDao;
-	private TeamDao teamDao;
-	private PaymentDao paymentDao;
+//	private UserDao userDao;
+//	private HackathonDao hackathonDao;
+//	private OrganizationDao organizationDao;
+//	private TeamDao teamDao;
+//	private PaymentDao paymentDao;
+//	
+//	public HackathonController() {
+//		// TODO Auto-generated constructor stub
+//		userDao = new UserDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
+//		organizationDao = new OrganizationDaoImpl();
+//		teamDao = new TeamDaoImpl();
+//		paymentDao = new PaymentDaoImpl();
+//	}
+	@Autowired
+	UserDaoImpl userDao;
+	HackathonDaoImpl hackathonDao;
+	OrganizationDaoImpl organizationDao;
+	TeamDaoImpl teamDao;
+	PaymentDaoImpl paymentDao;
 	
-	public HackathonController() {
-		// TODO Auto-generated constructor stub
-		userDao = new UserDaoImpl();
-		hackathonDao = new HackathonDaoImpl();
-		organizationDao = new OrganizationDaoImpl();
-		teamDao = new TeamDaoImpl();
-		paymentDao = new PaymentDaoImpl();
-	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	@ResponseBody
@@ -252,7 +260,7 @@ public class HackathonController {
 		}
 		team.setMembers(members);
 		try {
-			Team createdTeam = teamDao.createTeam(team);
+			final Team createdTeam = teamDao.createTeam(team);
 			responseObject.put("msg","Successfully registered");
 			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
 	        emailExecutor.execute(new Runnable() {
