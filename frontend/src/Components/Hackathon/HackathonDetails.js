@@ -6,7 +6,9 @@ import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Inp
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
+import {Redirect} from 'react-router'
 const { Content, Sider } = Layout;
+
 
 // 4 states: nothing means no registration, 
 // "payment pending" means payment is yet to be completed,
@@ -80,7 +82,6 @@ class HackathonDetails extends Component {
             .catch(err => {
                 console.log(err)
             })
-            
     }
 
     loadAboutContent = (e) => {
@@ -163,6 +164,10 @@ class HackathonDetails extends Component {
         var registerButtonFlag = false
         var submissionButtonFlag = false
         var gradeButtonFlag = false
+        var redirect = null
+        if(!localStorage.getItem("userId")){
+            redirect = <Redirect to="/login"/>
+        }
         const {getFieldDecorator} = this.props.form
         console.log(new Date(this.state.startDate) >  new Date())
         if(new Date(this.state.startDate) >  new Date() || new Date(this.state.endDate) <  new Date()){
@@ -177,8 +182,8 @@ class HackathonDetails extends Component {
         if (this.state.aboutContentFlag) {
             content = <div>
                 <p><b>Overview</b>: {this.state.description}</p>
-                <p><b>Fee</b>: {this.state.fee}</p>
-                <p><b>Sponsor Discount</b>: {this.state.discount}</p>
+                <p><b>Fee</b>: ${this.state.fee}</p>
+                <p><b>Sponsor Discount</b>: {this.state.discount}%</p>
             </div>
         } else if (this.state.teamsContentFlag) {
             content = this.state.teamDetails && this.state.teamDetails.map(team => {
@@ -307,6 +312,7 @@ class HackathonDetails extends Component {
         }
         return (
             <div>
+                {redirect}
                 <NavBar></NavBar>
                 <div style={{ backgroundImage: "url(" + this.state.cover_image + ")", height: "300px", position: "relative" }}>
                     <h3 class="hackathon-name"><b>{this.state.name}</b></h3>
@@ -315,9 +321,9 @@ class HackathonDetails extends Component {
                     <div style={{ marginLeft: "10%" }}>
                         <Row type="flex">
                             <Col span={18}>
-                                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMin}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {this.state.startDate}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {this.state.endDate}</p>
+                                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
+                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
+                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
                             </Col>
                             <Col span={6}>
                                 {buttons}
@@ -355,10 +361,6 @@ class HackathonDetails extends Component {
                                 >
                                     <Icon type="dollar" />
                                     <span className="nav-text">Sponsors</span>
-                                </Menu.Item>
-                                <Menu.Item key="5">
-                                    <Icon type="cloud-o" />
-                                    <span className="nav-text">Discussions</span>
                                 </Menu.Item>
                             </Menu>
                         </Sider>

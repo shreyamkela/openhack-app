@@ -6,6 +6,7 @@ import { Layout, Tooltip , Icon, Row, Col, Button, Input, Form } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
+import {Redirect} from 'react-router'
 const { Content, Sider } = Layout;
 
 // 4 states:
@@ -73,6 +74,10 @@ class ViewSubmission extends Component {
         const { getFieldDecorator } = this.props.form;
         let submissionDisplay = null
         let teamMembersDisplay = null
+        let redirect = null
+        if(!localStorage.getItem("userId")){
+            redirect = <Redirect to="/login"/>
+        }
         if(this.state.submissionsData == null || this.state.submissionsData.length == 0)
         {
             submissionDisplay = (

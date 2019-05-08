@@ -215,27 +215,34 @@ public class UserController {
 			}
 	@GetMapping("/getalluser")
 	@ResponseBody
-	public List<User> getAllUser(){
+	public Map<Object,Object> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
 		List<User> listusers =new ArrayList<>();
+		Map<Object,Object> responseBody = new HashMap<>();
 		try
 		{
 			listusers = userdao.findAllUsers();
-			if(listusers==null) 
-			{
-				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
-				return listusers;
+			
+			List<Map<Object,Object>> userDetails = new ArrayList<>();
+			for(User user : listusers) {
+				Map<Object,Object> temp = new HashMap<>();
+				temp.put("id", user.getId());
+				temp.put("name", user.getName());
+				userDetails.add(temp);
 			}
+			responseBody.put("userDetails", userDetails);
+			return responseBody;
 		}
 		catch(Exception e)
 		{
 			if(e.getMessage()!=null)
 			{
 				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
-				return listusers;
+				responseBody.put("err", e);
+				return responseBody;
 			}
 		}
-		return listusers;
+		return responseBody;
 	}
 	
 	@GetMapping("/getallscreennames")

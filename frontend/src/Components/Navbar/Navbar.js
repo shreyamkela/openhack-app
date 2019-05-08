@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import '../../App.css'
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, Divider } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
@@ -158,7 +158,7 @@ class NavBar extends Component {
                     OpenHack
                 </Menu.Item>
                 <Menu.Item key="Challenges">
-                    <Link to="/challenges">
+                    <Link to="/home">
                         <Icon type="snippets" />Challenges
                 </Link>
                 </Menu.Item>

@@ -99,7 +99,7 @@ public class SubmissionController {
 		try {
 			
 			Submission submission = submissionDao.findById(submissionId);
-			submission.setGrade(new Long((String)map.get("grade")));
+			submission.setGrade(Float.parseFloat((String)map.get("grade")));
 			Submission updatedSubmission = submissionDao.updateById(submissionId, submission);
 			return 1l;
 //			Long hackathonId = new Long((String) map.get("hackathonId"));

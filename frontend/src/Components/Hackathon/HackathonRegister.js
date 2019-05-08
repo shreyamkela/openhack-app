@@ -7,6 +7,7 @@ import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
 import axios from 'axios';
 import swal from 'sweetalert';
+import {Redirect} from 'react-router'
 class HackathonRegister extends Component {
 
     state = {
@@ -137,6 +138,10 @@ class HackathonRegister extends Component {
 
         const { getFieldDecorator } = this.props.form
         var teamAvatars = null
+        var redirect = null
+        if(!localStorage.getItem("userId")){
+            redirect = <Redirect to="/login"/>
+        }
         if(this.state.members){
             teamAvatars = this.state.members.map(member => {
                 return(
@@ -150,8 +155,11 @@ class HackathonRegister extends Component {
             })
         }
         return (
-
-            <div style={{ "width": "100%", "height": "610px" }} class="blur-bg">
+            <div>
+            <NavBar></NavBar>
+            <div style={{ "width": "100%", "height": "750px" }}>
+                
+                {redirect}
                 <div class="hackathon-create p-5" style={{ "backgroundColor": "white" }}>
                     <Title style={3}>Register to Hackathon</Title>
                     <Divider></Divider>
@@ -200,12 +208,15 @@ class HackathonRegister extends Component {
                                 htmlType="submit"
                                 disabled={this.state.teamNameErrFlag || this.state.membersErrFlag}
                                 onClick={this.registerHackathon}
+                                block
+                                size="large"
                             >
                                 Join Hackathon
                             </Button>
                         </Form.Item>
                     </Form>
                 </div>
+            </div>
             </div>
         )
     }
