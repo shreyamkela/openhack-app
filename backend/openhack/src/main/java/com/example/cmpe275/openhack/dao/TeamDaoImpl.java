@@ -9,23 +9,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.example.cmpe275.openhack.EntityManagerSingleton;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Team;
 //@Component
 public class TeamDaoImpl implements TeamDao{
 
 	
-	private EntityManagerFactory emfactory;
+	private EntityManagerSingleton emfactory;
 
 	public TeamDaoImpl()
 	{
-		emfactory = Persistence.createEntityManagerFactory("openhack");
+		emfactory = emfactory.getInstance();
 	}
 
 	@Override
 	public Team createTeam(Team team) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -44,11 +45,12 @@ public class TeamDaoImpl implements TeamDao{
 
 	@Override
 	public Team updateTeam(Team team) {
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
 			Team updatedTeam = em.merge(team);
+			System.out.println("Team updated"+updatedTeam);
 			tx.commit();
 			return updatedTeam;
 		}catch (Exception e) {
@@ -63,7 +65,7 @@ public class TeamDaoImpl implements TeamDao{
 	@Override
 	public Team getTeamById(long id) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();

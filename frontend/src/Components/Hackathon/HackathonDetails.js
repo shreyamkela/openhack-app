@@ -35,6 +35,8 @@ class HackathonDetails extends Component {
             sponsorDetails: [],
             userTeam:[],
             userTeamId:null,
+            isFinalize:false,
+            winnerTeam:null,
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
@@ -75,7 +77,9 @@ class HackathonDetails extends Component {
                         teamDetails: response.data.teamDetails,
                         judgeDetails: response.data.judgeDetails,
                         sponsorDetails: response.data.sponsorDetails,
-                        submissionUrl: response.data.submissionUrl
+                        submissionUrl: response.data.submissionUrl,
+                        isFinalize:response.data.isFinalize,
+                        winnerTeam:response.data.winnerTeam
                     })
                 }
             })
@@ -165,8 +169,13 @@ class HackathonDetails extends Component {
         var submissionButtonFlag = false
         var gradeButtonFlag = false
         var redirect = null
+        var winnerTeam = null
         if(!localStorage.getItem("userId")){
             redirect = <Redirect to="/login"/>
+        }
+
+        if(this.state.winnerTeam!=null){
+            winnerTeam=`${this.state.winnerTeam}`
         }
         const {getFieldDecorator} = this.props.form
         console.log(new Date(this.state.startDate) >  new Date())
@@ -177,6 +186,11 @@ class HackathonDetails extends Component {
             registerButtonFlag = true
         }
         if(new Date(this.state.endDate) > Date.now()){
+            gradeButtonFlag=true
+        }
+        if(this.state.isFinalize){
+            submissionButtonFlag=true
+            registerButtonFlag=true
             gradeButtonFlag=true
         }
         if (this.state.aboutContentFlag) {
@@ -301,7 +315,7 @@ class HackathonDetails extends Component {
             </div>
         }else if(this.state.message === "judge"){
             buttons = <div>
-                <Link to="/hackathon/grade">
+                <Link to={`/hacker/gradeSubmissions/${this.props.match.params.id}`}>
                     <Button type="primary" size="large" style={{ marginTop: "25%" }} disabled={gradeButtonFlag}>Grade Submission</Button>
                 </Link>
             </div>
@@ -324,6 +338,7 @@ class HackathonDetails extends Component {
                                 <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
                                 <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
                                 <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
+                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : {winnerTeam}</p>
                             </Col>
                             <Col span={6}>
                                 {buttons}

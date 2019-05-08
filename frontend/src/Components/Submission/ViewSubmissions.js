@@ -60,7 +60,10 @@ class ViewSubmission extends Component {
                 .then(response => {
                     if(response.status === 200){
                         swal("Successfully graded!","success")
-                        window.location.reload();
+                        .then(() => {
+                            window.location.reload()
+                        })
+                        
                     }
                 })
 

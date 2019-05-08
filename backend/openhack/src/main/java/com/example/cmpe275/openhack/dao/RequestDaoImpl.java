@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.example.cmpe275.openhack.EntityManagerSingleton;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Request;
 
@@ -20,17 +21,17 @@ import com.example.cmpe275.openhack.entity.Request;
 public class RequestDaoImpl 
 {
 	
-    private EntityManagerFactory emfactory;
+    private EntityManagerSingleton emfactory;
 	
 	public RequestDaoImpl()
 	{
-		emfactory = Persistence.createEntityManagerFactory("openhack");
+		emfactory = emfactory.getInstance();
 	}
 
 	@Transactional
 	public Request addRequest(Request request) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -54,7 +55,7 @@ public class RequestDaoImpl
 	@Transactional
 	public Request findRequestById(long requestId) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -77,7 +78,7 @@ public class RequestDaoImpl
 	@Transactional
 	public List<Request> getAllRequests() 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -98,7 +99,7 @@ public class RequestDaoImpl
 	@Transactional
 	public Request deleteRequest(long reqId) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{

@@ -23,6 +23,8 @@ import com.example.cmpe275.openhack.dao.HackathonDao;
 import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
 import com.example.cmpe275.openhack.dao.SubmissionDao;
 import com.example.cmpe275.openhack.dao.SubmissionDaoImpl;
+import com.example.cmpe275.openhack.dao.TeamDao;
+import com.example.cmpe275.openhack.dao.TeamDaoImpl;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
@@ -32,10 +34,12 @@ import com.example.cmpe275.openhack.entity.User;
 public class SubmissionController {
 	private HackathonDao hackathonDao;
 	private SubmissionDao submissionDao;
+	private TeamDao teamDao;
 
 	public SubmissionController() {
 		hackathonDao = new HackathonDaoImpl();
 		submissionDao = new SubmissionDaoImpl();
+		teamDao = new TeamDaoImpl();
 	}
 //	@Autowired
 //	HackathonDaoImpl hackathonDao;
@@ -80,6 +84,10 @@ public class SubmissionController {
 					if (team.getId() == teamId) {
 						System.out.println("Team found:" + team.getTeamName());
 						submission.setTeam(team);
+						team.setSubmitted(true);
+						team.setGraded(false);
+						Team updatedTeam = teamDao.updateTeam(team);
+						
 					}
 				}
 				submission = submissionDao.create(submission);
@@ -105,6 +113,9 @@ public class SubmissionController {
 			Submission submission = submissionDao.findById(submissionId);
 			submission.setGrade(Float.parseFloat((String)map.get("grade")));
 			Submission updatedSubmission = submissionDao.updateById(submissionId, submission);
+			Team team = updatedSubmission.getTeam();
+			team.setGraded(true);
+			teamDao.updateTeam(team);
 			return 1l;
 //			Long hackathonId = new Long((String) map.get("hackathonId"));
 //			Hackathon hackathon = hackathonDao.findById(hackathonId);

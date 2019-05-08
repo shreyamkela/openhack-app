@@ -130,8 +130,11 @@ class HackathonRegister extends Component {
             })
             .catch(err => {
                 console.log(err);
-                swal("Something went wrong","Try again later","error")
-                window.location.reload();
+                swal("Team Name taken","error")
+                    .then(()=>{
+                        window.location.reload();        
+                    })
+                
             })
     }
     render() {

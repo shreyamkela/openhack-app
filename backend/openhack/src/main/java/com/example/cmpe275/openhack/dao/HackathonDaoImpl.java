@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.example.cmpe275.openhack.EntityManagerSingleton;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.User;
 
@@ -20,11 +21,11 @@ import com.example.cmpe275.openhack.entity.User;
 public class HackathonDaoImpl implements HackathonDao{
 
 	
-	private EntityManagerFactory emfactory;
+	private EntityManagerSingleton emfactory;
 
 	public HackathonDaoImpl()
 	{
-		emfactory = Persistence.createEntityManagerFactory("openhack");
+		emfactory = EntityManagerSingleton.getInstance();
 	}
 	
 	
@@ -32,7 +33,7 @@ public class HackathonDaoImpl implements HackathonDao{
 	@Transactional
 	public Hackathon create(Hackathon hackathon) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -64,7 +65,7 @@ public class HackathonDaoImpl implements HackathonDao{
 	@Transactional
 	public Hackathon findById(long id) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -83,7 +84,7 @@ public class HackathonDaoImpl implements HackathonDao{
 	@Override
 	public List<Hackathon> findAll() {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();

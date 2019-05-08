@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.example.cmpe275.openhack.EntityManagerSingleton;
 import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.User;
 
@@ -19,16 +20,16 @@ import com.example.cmpe275.openhack.entity.User;
 public class SubmissionDaoImpl implements SubmissionDao {
 
 
-	private EntityManagerFactory emfactory;
+	private EntityManagerSingleton emfactory;
 
 	public SubmissionDaoImpl() {
-		emfactory = Persistence.createEntityManagerFactory("openhack");
+		emfactory = emfactory.getInstance();
 	}
 
 	@Override
 	@Transactional
 	public Submission create(Submission submission) {
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -46,7 +47,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	@Override
 	@Transactional
 	public Submission updateById(long id, Submission submission) {
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try {
 			em.getTransaction().begin();
 			Submission updatedSubmission = em.merge(submission);
@@ -71,7 +72,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	@Override
 	@Transactional
 	public Submission findById(long id) {
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -89,7 +90,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	@Override
 	@Transactional
 	public List<Submission> findAll() {
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();
