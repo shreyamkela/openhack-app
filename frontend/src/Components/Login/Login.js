@@ -129,8 +129,12 @@ class Login extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-
+    let redirect = null
+    if(localStorage.getItem("userId")){
+        redirect = <Redirect to="/home"/>
+    }
     return (<div>
+      {redirect}
       <Navbar />
       <div className='login-center'>
         {/* {this.state.isSignedIn ? (
