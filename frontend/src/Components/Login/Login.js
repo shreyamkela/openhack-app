@@ -12,6 +12,7 @@ import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import firebaseui from 'firebaseui';
 import Navbar from '../Navbar/Navbar';
 import firebase_con from '../../Config/firebase';
+import {Redirect} from 'react-router'
 import { Link } from 'react-router-dom';
 var swal = require('sweetalert');
 

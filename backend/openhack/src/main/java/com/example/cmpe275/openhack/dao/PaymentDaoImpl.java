@@ -16,7 +16,7 @@ import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Payment;
 import com.example.cmpe275.openhack.entity.User;
 
-@Component
+//@Component
 public class PaymentDaoImpl implements PaymentDao{
 
 	
