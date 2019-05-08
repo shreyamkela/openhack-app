@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,6 @@ import com.example.cmpe275.openhack.entity.User;
 
 @RestController
 public class UserController {
-<<<<<<< HEAD
 //	private UserDao userdao;
 //	private OrganizationDao orgdao;
 //
@@ -53,16 +53,6 @@ public class UserController {
 	UserDaoImpl userdao;
 	OrganizationDaoImpl orgdao;
 	HackathonDaoImpl hackathonDao;
-=======
-	private UserDao userdao;
-	private OrganizationDao orgdao;
-
-	public UserController()
-	{
-		userdao = new UserDaoImpl();
-		orgdao =  new OrganizationDaoImpl();
-	}
->>>>>>> parent of 423de8f... DI and AOP addition, saving user type in localStorage
 	
 	@GetMapping("/getuser/{email}")
 	@ResponseBody
@@ -169,11 +159,11 @@ public class UserController {
 				address.setCountry(map.get("country"));
 			user.setAddress(address);
 		}
-		if(map.get("organization")!=null){
-			Organization org = null;
-			org = orgdao.findOrganizationByName("organization");
-			user.setOrganization(org);
-		}
+//		if(map.get("organization")!=null){
+//			Organization org = null;
+//			org = orgdao.findOrganizationById(Integer.parseInt(map.get("organization")));
+//			user.setOrganization(org);
+//		}
 		if(map.get("aboutMe")!=null)
 			user.setAboutMe(map.get("aboutMe"));
 		if(map.get("password")!=null)
@@ -233,18 +223,14 @@ public class UserController {
 			}
 	@GetMapping("/getalluser")
 	@ResponseBody
-<<<<<<< HEAD
 	public Map<Object,Object> getAllUser(){
-=======
-	public List<User> getAllUser(){
->>>>>>> parent of 423de8f... DI and AOP addition, saving user type in localStorage
 		System.out.println("\ngetAllUser method called for the User");	
+		Map<Object,Object> map = new HashMap<>();
 		List<User> listusers =new ArrayList<>();
 		Map<Object,Object> responseBody = new HashMap<>();
 		try
 		{
 			listusers = userdao.findAllUsers();
-<<<<<<< HEAD
 			
 			List<Map<Object,Object>> userDetails = new ArrayList<>();
 			for(User user : listusers) {
@@ -255,31 +241,17 @@ public class UserController {
 			}
 			responseBody.put("userDetails", userDetails);
 			return responseBody;
-=======
-			if(listusers==null) 
-			{
-				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
-				return listusers;
-			}
->>>>>>> parent of 423de8f... DI and AOP addition, saving user type in localStorage
 		}
 		catch(Exception e)
 		{
 			if(e.getMessage()!=null)
 			{
 				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
-<<<<<<< HEAD
 				responseBody.put("err", e);
 				return responseBody;
 			}
 		}
 		return responseBody;
-=======
-				return listusers;
-			}
-		}
-		return listusers;
->>>>>>> parent of 423de8f... DI and AOP addition, saving user type in localStorage
 	}
 	
 	@GetMapping("/getallscreennames")
@@ -371,5 +343,32 @@ public class UserController {
 		hmap.put("judged_hackathons", hackathonDetails);
 		
 		return hmap;
+	}
+	public List<Map<Object, Object>> UsersObject(List<User> users)
+	{
+		List<Map<Object, Object>> outerlist = new ArrayList<Map<Object, Object>>();
+		for(User user : users) 
+		{
+			Map<Object, Object> innermap = new HashMap<Object, Object>();
+			innermap.put("id", user.getId());
+			innermap.put("aboutMe", user.getAboutMe());
+			innermap.put("email", user.getEmail());
+			innermap.put("imageurl", user.getImageurl());
+			innermap.put("lastname", user.getLastname());
+			innermap.put("name", user.getName());
+			innermap.put("screeName", user.getScreenName());
+			innermap.put("title", user.getTitle());
+			innermap.put("usertype", user.getUsertype());
+			innermap.put("verified", user.getVerified());
+		    innermap.put("address", user.getAddress());
+			
+			Organization org = user.getOrganization();
+			if(org!=null)
+				innermap.put("organization", org.getId());
+			else
+				innermap.put("organization", null);
+			outerlist.add(innermap );
+		}
+		return outerlist;
 	}
 }

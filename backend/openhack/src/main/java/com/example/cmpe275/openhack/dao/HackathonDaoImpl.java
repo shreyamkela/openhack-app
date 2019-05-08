@@ -9,11 +9,17 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.transaction.Transactional;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.User;
 
+@Component
 public class HackathonDaoImpl implements HackathonDao{
 
+	
 	private EntityManagerFactory emfactory;
 
 	public HackathonDaoImpl()
