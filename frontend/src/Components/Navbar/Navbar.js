@@ -60,6 +60,9 @@ class NavBar extends Component {
         });
         console.log("\nCreate organization button clicked!!");
     }
+    createHackathon =()=>{
+        this.props.history.push("/hackathon/create")
+    }
 
     handleOk = () => {
         this.setState({
@@ -153,26 +156,27 @@ class NavBar extends Component {
         const { getFieldDecorator } = this.props.form;
         var leftMenuItems = null;
         var rightMenuItems = null;
-        if (localStorage.getItem("userId")) {
+        if (localStorage.getItem("userId") && localStorage.getItem("userType")=="user") {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
                 mode="horizontal"
             >
                 <Menu.Item>
-                    OpenHack
+                <Link to="/home">
+                        OpenHack
+                </Link>
                 </Menu.Item>
                 <Menu.Item key="Challenges">
                     <Link to="/home">
                         <Icon type="snippets" />Challenges
                 </Link>
                 </Menu.Item>
-                {/* <Menu.Item key="Organisations"> */}
-                {/* <Link to="/organisation"> */}
+            
                 <Button style = {{marginLeft : "10px"}} onClick={this.createOrgModal}> <Icon type="home" /> Create Organization</Button>
-
-                {/* </Link> */}
-                {/* </Menu.Item> */}
+            
+                <Button style = {{marginLeft : "10px"}} onClick={this.createHackathon}> Create Hackathon</Button>
+                
             </Menu>
 
             rightMenuItems = <div>
@@ -196,6 +200,14 @@ class NavBar extends Component {
                             </Link>
                         {/* </Badge> */}
                     </Col>
+                    {/* }
+                    else{
+                        <Col span={8}>
+                            <Link to="/">
+                                <Icon type="home" /> Hackathons
+                            </Link>
+                    </Col>
+                    } */}
                     <Col span={6}>
                         <Badge style={{ backgroundColor: '#52c41a' }}>
                             <Link to="/profile">
@@ -212,7 +224,64 @@ class NavBar extends Component {
                     </Col>
                 </Row>
             </div>
-        } else {
+        }
+        else if(localStorage.getItem("userId") && localStorage.getItem("userType")=="admin"){
+            leftMenuItems = <Menu
+                onClick={this.handleClick}
+                selectedKeys={[this.state.current]}
+                mode="horizontal"
+            >
+                <Menu.Item>
+                <Link to="/home">
+                        OpenHack
+                </Link>
+                </Menu.Item>
+                <Menu.Item key="Challenges">
+                    <Link to="/home">
+                        <Icon type="snippets" />Challenges
+                </Link>
+                </Menu.Item>            
+                <Button style = {{marginLeft : "10px"}} onClick={this.createHackathon}> Create Hackathon</Button>
+                
+            </Menu>
+
+            rightMenuItems = <div>
+                <br></br>
+                <Row type="flex" justify="end">
+                    {/* <Col span={12}>
+                        <AutoComplete
+                        style={{ width: 200 }}
+                        //dataSource = {this.state.dataSource && this.state.dataSource.map(this.renderOption)}
+                        dataSource = {this.state.dataSource && this.state.dataSource}
+                        //onSelect = {this.onOrganisationSelect}
+                        placeholder="Find Organizations"
+                        onFocus = {this.fetchOrganizations}
+                        allowClear={true}
+                        ></AutoComplete>
+                    </Col> */}
+                    <Col span={8}>
+                            <Link to="/">
+                                <Icon type="home" /> Hackathons
+                            </Link>
+                    </Col>
+                    <Col span={6}>
+                        <Badge style={{ backgroundColor: '#52c41a' }}>
+                            <Link to="/profile">
+                                <Icon type="user" /> Hey {username}
+                            </Link>
+                        </Badge>
+                    </Col>
+                    <Col span={6}>
+                        <Badge style={{ backgroundColor: '#52c41a' }}>
+                            <Button onClick={this.logout}><Link to='/login'>
+                                <Icon type="logout" /> Logout </Link>
+                            </Button>
+                        </Badge>
+                    </Col>
+                </Row>
+            </div>
+        }
+         else {
             leftMenuItems = <Menu
                 onClick={this.handleClick}
                 selectedKeys={[this.state.current]}
