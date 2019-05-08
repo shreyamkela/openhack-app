@@ -51,6 +51,9 @@ class organizationAll extends Component {
                         else{
                             console.log("There was some error fetching list of organization from the backend")
                         }
+                    })
+                    .catch(err => {
+                        console.log(err)
                     });
 
     }
