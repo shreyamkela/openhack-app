@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.example.cmpe275.openhack.EntityManagerSingleton;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
 
@@ -23,16 +24,17 @@ import com.example.cmpe275.openhack.entity.User;
 public class UserDaoImpl implements UserDao {
 	
 	
-	private EntityManagerFactory emfactory;
+	private EntityManagerSingleton emfactory;
+	
 	public UserDaoImpl(){
-		emfactory =Persistence.createEntityManagerFactory("openhack");
+		emfactory = emfactory.getInstance();
 	}
 	
 	@Override
 	@Transactional
 	public User createUser(User user) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try
 		{			
 			em.getTransaction().begin();
@@ -56,7 +58,7 @@ public class UserDaoImpl implements UserDao {
 	@Transactional
 	public User updateUser(User user) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try
 		{			
 			em.getTransaction().begin();
@@ -79,7 +81,7 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	@Transactional
 	public User findUserbyEmail(String email) {
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();
@@ -103,7 +105,7 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	@Transactional
 	public User findUserbyID(long id) {
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();
@@ -132,7 +134,7 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	@Transactional
 	public List<User> findAllUsers(){
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		try
 		{
 			em.getTransaction().begin();

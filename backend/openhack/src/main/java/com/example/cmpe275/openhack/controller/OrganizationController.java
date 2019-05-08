@@ -513,6 +513,8 @@ public class OrganizationController {
 				innermap.put("id", hck.getId());
 				innermap.put("name", hck.getName());
 				innermap.put("description", hck.getDescription());
+				innermap.put("startDate", hck.getStartDate());
+				innermap.put("endDate", hck.getEndDate());
 				outerlist.add(innermap);
 			}	
 		}
