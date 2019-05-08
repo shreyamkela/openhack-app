@@ -247,7 +247,7 @@ class HackathonDetails extends Component {
                 >
                     <p>{teamModalContent}</p>
                 </Modal>
-                <Button type="primary" size="large" style={{ marginTop: "10px" }} onClick={this.showSubmissionModal}>Submit/Edit Work</Button>
+                <Button type="primary" size="large" style={{ marginTop: "10px" }} onClick={this.showSubmissionModal} disabled={submissionButtonFlag}>Submit/Edit Work</Button>
                 <Modal
                     title="Submission"
                     visible={this.state.visibleSubmissionModal}
@@ -270,7 +270,7 @@ class HackathonDetails extends Component {
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                disabled={this.state.teamNameErrFlag || this.state.membersErrFlag}
+                                disabled={submissionButtonFlag}
                                 onClick={this.submitWork}
                             >
                                 Submit
