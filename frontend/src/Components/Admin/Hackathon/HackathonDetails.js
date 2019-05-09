@@ -279,7 +279,7 @@ class HackathonDetails extends Component {
                     "userId": localStorage.getItem("userId")
                 }
                 try {
-                    let response = await API.get(`hackathon/finalize`, { params }) // TODO check params
+                    let response = await API.post(`hackathon/finalize`, params ) // TODO check params
                     console.log("Response: ", response.data);
                     message.success("Hackathon finalized! The winner is Team:", response.data.teamName, "!")
                     this.setState({ winner: response.data })

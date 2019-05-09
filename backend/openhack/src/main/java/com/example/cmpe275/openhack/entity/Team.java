@@ -123,7 +123,7 @@ public class Team {
 		this.paymentStatus = paymentStatus;
 	}
 
-	public boolean isSubmitted() {
+	public boolean getSubmitted() {
 		return submitted;
 	}
 
@@ -131,7 +131,7 @@ public class Team {
 		this.submitted = submitted;
 	}
 
-	public boolean isGraded() {
+	public boolean getGraded() {
 		return graded;
 	}
 

@@ -52,7 +52,7 @@ public class HackathonDaoImpl implements HackathonDao{
 	@Override
 	public Hackathon updateById(long id, Hackathon hackathon) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
