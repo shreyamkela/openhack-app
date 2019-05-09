@@ -103,7 +103,7 @@ class HackathonCreate extends Component {
     }
   }
   onChangeDates = (e) => {
-    if (e && e[0] && new Date(e[0]._d) < Date.now()) {
+    if (e && new Date(e[0]._d) < new Date()) {
       console.log("Invalid Date")
       this.setState({
         startDate: null,
@@ -113,8 +113,8 @@ class HackathonCreate extends Component {
       })
     } else {
       this.setState({
-        startDate: "",
-        endDate: "",
+        startDate: e[0]._d,
+        endDate: e[1]._d,
         dateErr: "",
         dateErrFlag: false
       })
@@ -254,6 +254,7 @@ class HackathonCreate extends Component {
       "judgesId":this.state.judges,
       "sponsorsId":this.state.sponsors
     }
+    console.log(body)
     axios.defaults.withCredentials = true;
     axios.post("http://localhost:8080/hackathon/",body)
       .then( response => {
@@ -323,7 +324,7 @@ class HackathonCreate extends Component {
               {getFieldDecorator('dates', {
                 rules: [{ type: 'array', required: true }],
               })(
-                <DatePicker.RangePicker 
+                <DatePicker.RangePicker showTime
                   onChange={this.onChangeDates}
                 />
               )}
