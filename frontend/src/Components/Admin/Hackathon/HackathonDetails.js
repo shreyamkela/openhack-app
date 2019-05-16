@@ -102,7 +102,7 @@ class HackathonDetails extends Component {
 
     handleHackathonOpen = async () => {// TODO
         console.log("Open hackathon: ", this.state.hackathonId)
-        console.log("Start date, end date: ".this.state.startDate, this.state.endDate)
+        console.log("Start date, end date: ", this.state.startDate, this.state.endDate)
 
         if (this.state.startDate === undefined || this.state.endDate === undefined) {
             message.error("Unable to open hackathon at the moment. Please refresh the page and try again.")
@@ -150,6 +150,7 @@ class HackathonDetails extends Component {
                 console.log("Close hackathon for submission - change end date to current date: ", this.state.hackathonId)
                 // NOTE Grade can only be assigned after the end date/close for submission date
                 // NOTE Check whether submissions for all teams have been received. If all submissions have not been received then cannot close hackathon before the original end date
+                // TODO - In requirement "An admin can close the submission after it is open, even before the end date. Once a hackathon is closed and any grade has been given by any judge to any submission, the hackathon cannot be re-opened for submission again" - DOES THIS MEAN THAT IF AFTER CLOSING A HACKATHON, NO GRADE HAS BEEN ASSIGNED YET, THEN IT CAN BE MADE OPEN AGAIN?
                 // Change end date at the backend
                 let body = {
                     "hackathonId": this.state.hackathonId,

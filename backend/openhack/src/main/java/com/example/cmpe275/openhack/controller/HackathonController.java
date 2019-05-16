@@ -425,6 +425,8 @@ public class HackathonController {
 		System.out.println("GET /hackathon/finalize - Finalize hackathon - Request Params: " + map);
 		Long hackathonId = new Long((String) map.get("hackathonId"));
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		Set<Submission> allSubmissions = hackathon.getSubmissions();
+
 		System.out.println("Hackathon name:" + hackathon.getName());
 		// TODO Check whether grades for all teams have been assigned. If all grades have not been assigned then cannot finalize hackathon
 		Set<Team> allTeams = hackathon.getTeams();
@@ -437,10 +439,14 @@ public class HackathonController {
 				return currentTeam;
 				// TODO check this 400 response
 			} else {
-				if (highestGrade <= (float) currentTeam.getSubmission().getGrade()) {
-					// TODO check for tie? would have to remove equality as well in (highestGrade <= currentSubmission.getGrade())
-					highestGrade = currentTeam.getSubmission().getGrade();
-					winner = currentTeam;
+				for (Submission submission : allSubmissions) {
+					if (currentTeam == submission.getTeam() && highestGrade <= (float) submission.getGrade()) {
+						// TODO check for tie? would have to remove equality as well in (highestGrade <= currentSubmission.getGrade())
+						highestGrade = submission.getGrade();
+						winner = currentTeam;
+						hackathon.setWinner(currentTeam);
+						hackathon.setIsFinalized(true);
+					}
 				}
 			}
 		}

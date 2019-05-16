@@ -4,8 +4,8 @@ import Navbar from './Navbar/Navbar'
 import Home from './Challenges/Home'
 import adminHackathonDetails from './Admin/Hackathon/HackathonDetails'
 import HackathonDetails from './Hackathon/HackathonDetails'
-import HackathonCreate from './Admin/Hackathon/HackathonCreate';
-//import HackathonCreate from './Hackathon/HackathonCreate';
+//import HackathonCreate from './Admin/Hackathon/HackathonCreate';
+import HackathonCreate from './Hackathon/HackathonCreate';
 import '../App.css'
 import Signup from './Signup/Signup';
 import Login from './Login/Login';
