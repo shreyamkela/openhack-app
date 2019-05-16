@@ -1,8 +1,11 @@
 package com.example.cmpe275.openhack.controller;
 
+import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,12 +69,12 @@ public class HackathonController {
 		teamDao = new TeamDaoImpl();
 		paymentDao = new PaymentDaoImpl();
 	}
-//	@Autowired
-//	UserDaoImpl userDao;
-//	HackathonDaoImpl hackathonDao;
-//	OrganizationDaoImpl organizationDao;
-//	TeamDaoImpl teamDao;
-//	PaymentDaoImpl paymentDao;
+	// @Autowired
+	// UserDaoImpl userDao;
+	// HackathonDaoImpl hackathonDao;
+	// OrganizationDaoImpl organizationDao;
+	// TeamDaoImpl teamDao;
+	// PaymentDaoImpl paymentDao;
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	@ResponseBody
@@ -139,10 +142,13 @@ public class HackathonController {
 	}
 
 	public Map<Object, Object> createHackathonResponseBody(Hackathon hackathon, User user) {
+		System.out.println("\n\ncreateHackathonResponseBody for user : " + user.toString());
 		Map<Object, Object> responseBody = new HashMap<>();
 		String message = "";
+		boolean isFinalize = false;
 		Team userTeam = null;
 		String submissionUrl = "";
+		String winnerTeam = "";
 		responseBody.put("id", hackathon.getId());
 		responseBody.put("name", hackathon.getName());
 		responseBody.put("description", hackathon.getDescription());
@@ -211,14 +217,23 @@ public class HackathonController {
 				}
 			}
 		}
-		if (user.getUsertype() == "admin") {
+		if (user.getUsertype().equals("admin")) {
 			message = "admin";
+		}
+
+		if (hackathon.getIsFinalized()) {
+			isFinalize = true;
+			if (hackathon.getWinner() != null)
+				winnerTeam = hackathon.getWinner().getTeamName();
+
 		}
 		responseBody.put("teamDetails", teamDetails);
 		responseBody.put("judgeDetails", judgeDetails);
 		responseBody.put("sponsorDetails", sponsorDetails);
 		responseBody.put("submissionUrl", submissionUrl);
 		responseBody.put("message", message);
+		responseBody.put("isFinalize", isFinalize);
+		responseBody.put("winnerTeam", winnerTeam);
 		return responseBody;
 	}
 
@@ -236,6 +251,8 @@ public class HackathonController {
 		Team team = new Team();
 		team.setTeamName(teamName);
 		team.setIdea(idea);
+		team.setGraded(false);
+		team.setSubmitted(false);
 		final Hackathon hackathon = hackathonDao.findById(hackathonId);
 		team.setParticipatedHackathon(hackathon);
 		final User teamLead = userDao.findUserbyID(leadId);
@@ -287,7 +304,7 @@ public class HackathonController {
 			return responseObject;
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			responseObject.put("msg", e.getMessage());
+			responseObject.put("msg", "Team Name already taken");
 			return responseObject;
 		}
 
@@ -372,6 +389,8 @@ public class HackathonController {
 		return responseBody;
 	}
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	@RequestMapping(value = "open", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
 	@ResponseBody
@@ -381,11 +400,28 @@ public class HackathonController {
 		Long hackathonId = new Long((String) map.get("hackathonId"));
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
 		System.out.println("Hackathon name:" + hackathon.getName());
-		Date newStartDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse((String) map.get("currentDate")); // TODO test the conversion
-		hackathon.setStartDate(newStartDate);
-		Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
-		System.out.println("New start date: " + updatedHackathon.getStartDate());
-		return updatedHackathon;
+		System.out.println(
+				"\n - - - - - Priting the current date obtained from the frontend" + map.get("currentDate") + "\n");
+		long new_miliseconds = Long.parseLong((String) String.valueOf(map.get("currentDate")));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(new_miliseconds);
+		System.out.println();
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // TODO test the conversion
+
+		Date final_new_date = formatter.parse(formatter.format(cal.getTime()));
+		System.out.println(" <<<<<<<<<<<<<<<<<<< The new date being set is " + final_new_date);
+		// Hackathon updatedHackathon = new Hackathon();
+		hackathon.setStartDate(final_new_date);
+		try {
+			Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
+			System.out.println("New start date: " + updatedHackathon.getStartDate());
+			return null;
+		} catch (Exception e) {
+			System.out.println("Some EXCEPTION");
+		}
+
+		// return updatedHackathon;
+		return null;
 	}
 
 	@RequestMapping(value = "close", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
@@ -397,51 +433,77 @@ public class HackathonController {
 		Long hackathonId = new Long((String) map.get("hackathonId"));
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
 		System.out.println("Hackathon name:" + hackathon.getName());
-		// TODO Check whether submissions for all teams have been received. If all submissions have not been received then cannot close hackathon before the original end date
+
+		System.out.println(
+				"\n - - - - - Priting the current date obtained from the frontend" + map.get("currentDate") + "\n");
+		long new_miliseconds = Long.parseLong((String) String.valueOf(map.get("currentDate")));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(new_miliseconds);
+		System.out.println();
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // TODO test the conversion
+
+		Date final_new_date = formatter.parse(formatter.format(cal.getTime()));
+
+		// TODO Check whether submissions for all teams have been received. If all
+		// submissions have not been received then cannot close hackathon before the
+		// original end date
 		Set<Team> allTeams = hackathon.getTeams();
 		for (Team currentTeam : allTeams) {
-			if (currentTeam.getSubmitted() == false) { // TODO add getSubmitted() and setSubmitted() methods and submitted boolean flag
+			if (currentTeam.getSubmitted() == false) { // TODO add getSubmitted() and setSubmitted() methods and
+														// submitted boolean flag
 				System.out.println("No submission found for team: " + currentTeam.getId()
 						+ ", therefore cannot close hackathon before the original end date!");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
-				return hackathon;
+				return null;
 				// TODO check this 400 response
 			}
 		}
 
 		// If all submissions have been received
-		Date newEndDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse((String) map.get("currentDate")); // TODO test the conversion
-		hackathon.setEndDate(newEndDate);
-		Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
-		System.out.println("New end date: " + updatedHackathon.getEndDate());
-		return updatedHackathon;
+		// Date newEndDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse((String)
+		// map.get("currentDate")); // TODO test the conversion
+		hackathon.setEndDate(final_new_date);
+
+		try {
+			Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
+			System.out.println("New end date: " + updatedHackathon.getEndDate());
+			return null;
+		} catch (Exception e) {
+			System.out.println("Some EXCEPTION");
+		}
+
+		// Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
+		return null;
 	}
 
-	@RequestMapping(value = "finalize", method = RequestMethod.GET, produces = { "application/json" }, consumes = {
-			"application/JSON" }, params = { "hackathonId", "userId" }) // TODO check params
+	@RequestMapping(value = "/finalize", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
+			"application/JSON" }) // TODO check params
 	@ResponseBody
-	public Team finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam HashMap<Object, Object> map) {
-		System.out.println("GET /hackathon/finalize - Finalize hackathon - Request Params: " + map);
+	public String finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody HashMap<Object, Object> map) {
+		System.out.println("\nGET /hackathon/finalize - Finalize hackathon - Request Params: " + map);
 		Long hackathonId = new Long((String) map.get("hackathonId"));
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
 		Set<Submission> allSubmissions = hackathon.getSubmissions();
 
 		System.out.println("Hackathon name:" + hackathon.getName());
-		// TODO Check whether grades for all teams have been assigned. If all grades have not been assigned then cannot finalize hackathon
+		// TODO Check whether grades for all teams have been assigned. If all grades
+		// have not been assigned then cannot finalize hackathon
 		Set<Team> allTeams = hackathon.getTeams();
 		Team winner = new Team(); // TODO check this new
 		Float highestGrade = (float) 0;
 		for (Team currentTeam : allTeams) {
-			if (currentTeam.getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean flag
+			if (currentTeam.getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean
+													// flag
 				System.out.println("No grade found for team: " + currentTeam.getId() + ". Cannot finalize hackathon!");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
-				return currentTeam;
+				return null;
 				// TODO check this 400 response
 			} else {
 				for (Submission submission : allSubmissions) {
 					if (currentTeam == submission.getTeam() && highestGrade <= (float) submission.getGrade()) {
-						// TODO check for tie? would have to remove equality as well in (highestGrade <= currentSubmission.getGrade())
+						// TODO check for tie? would have to remove equality as well in (highestGrade <=
+						// currentSubmission.getGrade())
 						highestGrade = submission.getGrade();
 						winner = currentTeam;
 						hackathon.setWinner(currentTeam);
@@ -453,7 +515,9 @@ public class HackathonController {
 
 		// If all grades have been assigned
 		System.out.println("Winner Team: " + winner);
-		return winner;
+		System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
+		return winner.getTeamName();
+		// return null;
 	}
 
 }

@@ -103,7 +103,7 @@ class HackathonCreate extends Component {
     }
   }
   onChangeDates = (e) => {
-    if (e && new Date(e[0]._d) < Date.now()) {
+    if (e && e[0] && new Date(e[0]._d) < Date.now()) {
       console.log("Invalid Date")
       this.setState({
         startDate: null,
@@ -113,8 +113,8 @@ class HackathonCreate extends Component {
       })
     } else {
       this.setState({
-        startDate: new Date(e[0]._d),
-        endDate: new Date(e[1]._d),
+        startDate: "",
+        endDate: "",
         dateErr: "",
         dateErrFlag: false
       })
@@ -268,7 +268,7 @@ class HackathonCreate extends Component {
         }
       })
       .catch(err => {
-        swal(err,"", "error");
+        swal("Hackathon Name already Taken","", "error");
       })
   }
 

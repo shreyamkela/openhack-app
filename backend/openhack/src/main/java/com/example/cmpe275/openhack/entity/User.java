@@ -232,6 +232,15 @@ public class User {
 		else
 			return false;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", screenName="
+				+ screenName + ", address=" + address + ", aboutMe=" + aboutMe + ", title=" + title + ", imageurl="
+				+ imageurl + ", verified=" + verified + ", usertype=" + usertype + ", lastname=" + lastname + "]";
+	}
+	
+	
 }
 
 

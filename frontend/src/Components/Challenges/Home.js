@@ -3,7 +3,7 @@ import '../../App.css'
 import { Menu, Icon } from 'antd';
 import { Row, Col, Pagination } from 'antd';
 import { Link } from 'react-router-dom'
-import {Redirect} from 'react-router'
+import { Redirect } from 'react-router'
 import NavBar from '../Navbar/Navbar';
 import { Badge } from 'antd';
 import ChallengeCard from './ChallengeCard';
@@ -117,9 +117,9 @@ class Home extends Component {
     render() {
 
         var redirect = null
-        if(!localStorage.getItem("userId")){
-            redirect = <Redirect to="/login"></Redirect>
-        }
+        // if(!localStorage.getItem("userId")){
+        //     redirect = <Redirect to="/login"></Redirect>
+        // }
         var onGoingCards = this.state.currentOngoingHackathons && this.state.currentOngoingHackathons.map(card => {
             return (
                 <ChallengeCard card={card}></ChallengeCard>
@@ -140,7 +140,7 @@ class Home extends Component {
 
         var judgedCards = this.state.currentJudgedHackathons && this.state.currentJudgedHackathons.map(card => {
             return (
-                
+
                 <ChallengeCard card={card}></ChallengeCard>
             )
         })

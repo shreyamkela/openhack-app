@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import com.example.cmpe275.openhack.EntityManagerSingleton;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
 
@@ -20,18 +21,18 @@ import com.example.cmpe275.openhack.entity.User;
 public class OrganizationDaoImpl implements OrganizationDao 
 {
 	
-	private EntityManagerFactory emfactory;
+	private EntityManagerSingleton emfactory;
 	
 	public OrganizationDaoImpl()
 	{
-		emfactory = Persistence.createEntityManagerFactory("openhack");
+		emfactory = emfactory.getInstance();
 	}
 
 	@Override
 	@Transactional
 	public Organization create(Organization org) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -56,7 +57,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	@Transactional
 	public Organization findOrganizationById(long orgId) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -80,7 +81,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	@Transactional
 	public Organization findOrganizationByName(String name) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		Organization org =null;
 		try
 		{
@@ -106,7 +107,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	@Transactional
 	public List<Organization> findAllOrganization() 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -128,7 +129,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	@Transactional
 	public Organization update(Organization org) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -153,7 +154,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	@Transactional
 	public Organization delete(long orgId) 
 	{
-		EntityManager em = emfactory.createEntityManager();
+		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try
 		{

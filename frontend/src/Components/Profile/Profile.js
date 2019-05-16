@@ -38,6 +38,7 @@ class Profile extends Component {
                     })
                     console.log("User " + JSON.stringify(this.state.user));
                     console.log("Address " + JSON.stringify(this.state.address));
+                    console.log("Organization  "+JSON.stringify(this.state.userOrganization));
                 }
             });
         axios.defaults.withCredentials = true;
@@ -287,7 +288,7 @@ class Profile extends Component {
                                 dataSource={this.state.organizations && this.state.organizations.map(this.renderOption)}
                                 onSelect={this.onOrganizationSelect}
                                 onSearch={this.fetchOrganizations}
-                                placeholder="Select Organization"
+                                placeholder={this.state.userOrganization.name}//"Select Organization"
                                 allowClear={true}
                             >
                             </AutoComplete>

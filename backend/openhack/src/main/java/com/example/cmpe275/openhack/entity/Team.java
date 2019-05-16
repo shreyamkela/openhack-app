@@ -61,6 +61,12 @@ public class Team {
 	@ColumnDefault(value="false")
 	private boolean paymentStatus;
 	
+	@ColumnDefault(value="false")
+	private boolean submitted;
+	
+	@ColumnDefault(value="false")
+	private boolean graded;
+	
 	public long getId() {
 		return id;
 	}
@@ -116,4 +122,22 @@ public class Team {
 	public void setPaymentStatus(boolean paymentStatus) {
 		this.paymentStatus = paymentStatus;
 	}
+
+	public boolean getSubmitted() {
+		return submitted;
+	}
+
+	public void setSubmitted(boolean submitted) {
+		this.submitted = submitted;
+	}
+
+	public boolean getGraded() {
+		return graded;
+	}
+
+	public void setGraded(boolean graded) {
+		this.graded = graded;
+	}
+	
+	
 }

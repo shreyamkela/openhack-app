@@ -15,8 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 
 import com.example.cmpe275.openhack.entity.*;
@@ -64,6 +66,12 @@ public class Hackathon {
 	@OneToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
 	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<Team> teams;
+	
+	@ColumnDefault(value="false")
+	private boolean isFinalized;
+	
+	@OneToOne(fetch=FetchType.EAGER,cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+	private Team winner;
 	
 	public Hackathon() 
 	{}
@@ -183,6 +191,22 @@ public class Hackathon {
 
 	public void setTeams(Set<Team> teams) {
 		this.teams = teams;
-	}	
+	}
 
+	public boolean getIsFinalized() {
+		return isFinalized;
+	}
+
+	public void setIsFinalized(boolean isFinalized) {
+		this.isFinalized = isFinalized;
+	}
+
+	public Team getWinner() {
+		return winner;
+	}
+
+	public void setWinner(Team winner) {
+		this.winner = winner;
+	}	
+	
 }
