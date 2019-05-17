@@ -514,6 +514,7 @@ public class HackathonController {
 		}
 
 		// If all grades have been assigned
+		Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
 		System.out.println("Winner Team: " + winner);
 		System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
 		return winner.getTeamName();

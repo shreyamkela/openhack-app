@@ -47,7 +47,7 @@ class HackathonDetails extends Component {
             gradeButtonFlag: false,
             registerButtonFlag: false,
             hackathonId: this.props.match.params.id,
-            winner: ""
+            winnerTeam:null
         }
     }
 
@@ -83,7 +83,8 @@ class HackathonDetails extends Component {
                         teamDetails: response.data.teamDetails,
                         judgeDetails: response.data.judgeDetails,
                         sponsorDetails: response.data.sponsorDetails,
-                        submissionUrl: response.data.submissionUrl
+                        submissionUrl: response.data.submissionUrl,
+                        winnerTeam:response.data.winnerTeam
                     })
                 }
             })
@@ -198,7 +199,7 @@ class HackathonDetails extends Component {
                     let response = await API.post(`hackathon/open`, body);
                     console.log("Response: ", response.data);
                     message.success("Hackathon open for submission!")
-                    setTimeout(1500)
+                    setTimeout(2000)
                     window.location.reload();
                 } catch (error) {
                     console.log(error.response);
@@ -230,7 +231,7 @@ class HackathonDetails extends Component {
                 console.log("Close hackathon for submission - change end date to current date: ", this.state.hackathonId)
                 // NOTE if no teams have participated yet, then cannot close hackathon before the end date
                 if (this.state.teamDetails[0] == undefined) {
-                    message.warning("Cannot close hackathon before the original end date as no teams have participated yet.")
+                    message.warning("No teams have participated yet! Please wait until the original end date.")
                     return
                 }
 
@@ -247,13 +248,13 @@ class HackathonDetails extends Component {
                     let response = await API.post(`hackathon/close`, body);
                     console.log("Response: ", response.data);
                     message.success("Hackathon closed for submission!")
-                    setTimeout(1500)
+                    setTimeout(2000)
                     window.location.reload();
                 } catch (error) {
                     console.log(error.response);
-                    console.log("Error status code: ", error.status);
-                    if (error.status === 400) {
-                        message.warning("All team submissions not received, therefore unable to close hackathon before the original end date.")
+                    console.log("Error status code: ", error.response.status);
+                    if (error.response.status === 400) {
+                        message.warning("All team submissions not received yet! Please wait until the original end date.")
                     } else {
                         message.error("Unable to close hackathon at the moment. Please refresh the page and try again.")
                     }
@@ -291,12 +292,12 @@ class HackathonDetails extends Component {
                     let response = await API.post(`hackathon/finalize`, params)
                     console.log("Response: ", response.data);
                     message.success("Hackathon finalized! The winner is Team: " + response.data + "!")
-                    this.setState({ winner: response.data })
+                    this.setState({ winnerTeam: response.data })
                 } catch (error) {
                     console.log(error.response);
-                    console.log("Error status code: ", error.status);
-                    if (error.status === 400) {
-                        message.warning("All team grades not received, therefore unable to finalize hackathon.")
+                    console.log("Error status code: ", error.response.status);
+                    if (error.response.status === 400) {
+                        message.warning("All submission grades not received yet! Cannot finalize hackathon.")
                     } else {
                         message.error("Unable to finalize hackathon at the moment. Please refresh the page and try again.")
                     }
@@ -507,9 +508,9 @@ class HackathonDetails extends Component {
         //     </div>
         // }
 
-        let winner = null;
-        if (this.state.winner !== "" && this.state.winner !== undefined) {
-            winner = <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="team" /><b> Winner : {this.state.winner}</b></p>
+        let winnerTeam = null;
+        if (this.state.winnerTeam !== "" && this.state.winnerTeam !== undefined) {
+            winnerTeam = <b>{this.state.winnerTeam}</b>
         }
 
 
@@ -527,7 +528,9 @@ class HackathonDetails extends Component {
                                 <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
                                 <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
                                 <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
-                                {winner}
+                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : {winnerTeam}</p>
+
+
                             </Col>
                             <Col span={6}>
                                 {buttons}
