@@ -40,9 +40,9 @@ class ChallengeCard extends Component {
             loginBasedCards = <Link to={`/hackathon_details/${this.props.card.id}`}>
                 <Card
                     cover={<img alt="example" src="https://cdn-images-1.medium.com/max/1600/1*supQ92uykNElEfyYf7UgHw.png" />}
-                    title={this.props.card && this.props.card.title}
+                    title={this.props.card && this.props.card.name}
                     bordered={true}
-                    style={{ width: 300, height: 450 }}>
+                    style={{ width: 270, height: 470 }}>
                     <center>{this.props.card && this.props.card.description}</center>
                     <hr></hr>
                     <b>Start:</b> {this.props.card && new Date(this.props.card.startDate).toDateString()}<br />

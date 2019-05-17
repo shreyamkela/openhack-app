@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import '../../App.css'
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, Skeleton } from 'antd';
 import { Row, Col, Pagination } from 'antd';
 import { Link } from 'react-router-dom'
 import { Redirect } from 'react-router'
@@ -117,9 +117,16 @@ class Home extends Component {
     render() {
 
         var redirect = null
+        var loader = null
+
         // if(!localStorage.getItem("userId")){
         //     redirect = <Redirect to="/login"></Redirect>
         // }
+        if((!this.state.currentOngoingHackathons || this.state.currentOngoingHackathons.length<1) && (!this.state.currentJudgedHackathons || this.state.currentJudgedHackathons.length<1) && (!this.state.currentPreviousHackathons || this.state.currentPreviousHackathons.length<1) && (!this.state.currentUpcomingHackathons || this.state.currentUpcomingHackathons.length<1)){
+            loader = <Skeleton active/>
+        }else{
+            loader=null
+        }
         var onGoingCards = this.state.currentOngoingHackathons && this.state.currentOngoingHackathons.map(card => {
             return (
                 <ChallengeCard card={card}></ChallengeCard>
@@ -177,6 +184,7 @@ class Home extends Component {
                 </div>
                 <div class="px-4 py-3" id="live">
                     <h6 class="px-4">On-going  Hackathons</h6>
+                    {loader}
                     <Row type="flex">
                         {onGoingCards}
                     </Row>
@@ -184,6 +192,7 @@ class Home extends Component {
                 </div>
                 <div class="px-4 py-3" id="upcoming">
                     <h6 class="px-4">Upcoming Hackathons</h6>
+                    {loader}
                     <Row type="flex">
                         {upComingCards}
                     </Row>
@@ -191,6 +200,7 @@ class Home extends Component {
                 </div>
                 <div class="px-4 py-3" id="previous">
                     <h6 class="px-4">Previous Hackathons</h6>
+                    {loader}
                     <Row type="flex">
                         {previousCards}
                     </Row>
@@ -198,6 +208,7 @@ class Home extends Component {
                 </div>
                 <div class="px-4 py-3" id="judged">
                     <h6 class="px-4">Judged Hackathons</h6>
+                    {loader}
                     <Row type="flex">
                         {judgedCards}
                     </Row>
