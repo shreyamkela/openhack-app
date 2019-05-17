@@ -4,9 +4,7 @@ import Navbar from "./Navbar/Navbar";
 import Home from "./Challenges/Home";
 import adminHackathonDetails from "./Admin/Hackathon/HackathonDetails";
 import HackathonDetails from "./Hackathon/HackathonDetails";
-//import HackathonCreate from './Admin/Hackathon/HackathonCreate';
 import HackathonCreate from "./Hackathon/HackathonCreate";
-// import HackathonCreate from './Admin/Hackathon/HackathonCreate';
 //import adminHackathonDetails from "./Admin/Hackathon/HackathonDetails";
 import "../App.css";
 import Signup from "./Signup/Signup";
@@ -39,7 +37,6 @@ class Main extends Component {
         <Route exact path="/hackathon/payment/:paymentId" component={HackathonPayment} />
         <Route exact path="/hacker/gradeSubmissions/:hackathonId" component={ViewSubmissions} />
         <Route exact path="/admin/hackathon_details/:id" component={adminHackathonDetails} />
-        {/* <Route exact path="/admin/hackathon/create" component={HackathonCreate}></Route> */}
       </div>
     );
   }

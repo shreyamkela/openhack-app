@@ -389,7 +389,6 @@ public class HackathonController {
 		return responseBody;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	@RequestMapping(value = "open", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
@@ -406,11 +405,10 @@ public class HackathonController {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(new_miliseconds);
 		System.out.println();
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // TODO test the conversion
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 
 		Date final_new_date = formatter.parse(formatter.format(cal.getTime()));
 		System.out.println(" <<<<<<<<<<<<<<<<<<< The new date being set is " + final_new_date);
-		// Hackathon updatedHackathon = new Hackathon();
 		hackathon.setStartDate(final_new_date);
 		try {
 			Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
@@ -420,7 +418,6 @@ public class HackathonController {
 			System.out.println("Some EXCEPTION");
 		}
 
-		// return updatedHackathon;
 		return null;
 	}
 
@@ -440,28 +437,24 @@ public class HackathonController {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(new_miliseconds);
 		System.out.println();
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // TODO test the conversion
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		Date final_new_date = formatter.parse(formatter.format(cal.getTime()));
 
-		// TODO Check whether submissions for all teams have been received. If all
+		// Check whether submissions for all teams have been received. If all
 		// submissions have not been received then cannot close hackathon before the
 		// original end date
 		Set<Team> allTeams = hackathon.getTeams();
 		for (Team currentTeam : allTeams) {
-			if (currentTeam.getSubmitted() == false) { // TODO add getSubmitted() and setSubmitted() methods and
-														// submitted boolean flag
+			if (currentTeam.getSubmitted() == false) { 
 				System.out.println("No submission found for team: " + currentTeam.getId()
 						+ ", therefore cannot close hackathon before the original end date!");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
 				return null;
-				// TODO check this 400 response
 			}
 		}
 
 		// If all submissions have been received
-		// Date newEndDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse((String)
-		// map.get("currentDate")); // TODO test the conversion
 		hackathon.setEndDate(final_new_date);
 
 		try {
@@ -472,12 +465,11 @@ public class HackathonController {
 			System.out.println("Some EXCEPTION");
 		}
 
-		// Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
 		return null;
 	}
 
 	@RequestMapping(value = "/finalize", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
-			"application/JSON" }) // TODO check params
+			"application/JSON" }) 
 	@ResponseBody
 	public String finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) {
@@ -487,18 +479,16 @@ public class HackathonController {
 		Set<Submission> allSubmissions = hackathon.getSubmissions();
 
 		System.out.println("Hackathon name:" + hackathon.getName());
-		// TODO Check whether grades for all teams have been assigned. If all grades
+		// Check whether grades for all teams have been assigned. If all grades
 		// have not been assigned then cannot finalize hackathon
 		Set<Team> allTeams = hackathon.getTeams();
-		Team winner = new Team(); // TODO check this new
+		Team winner = new Team(); // 
 		Float highestGrade = (float) 0;
 		for (Team currentTeam : allTeams) {
-			if (currentTeam.getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean
-													// flag
+			if (currentTeam.getGraded() == false) { 
 				System.out.println("No grade found for team: " + currentTeam.getId() + ". Cannot finalize hackathon!");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
 				return null;
-				// TODO check this 400 response
 			} else {
 				for (Submission submission : allSubmissions) {
 					if (currentTeam == submission.getTeam() && highestGrade <= (float) submission.getGrade()) {
@@ -518,7 +508,6 @@ public class HackathonController {
 		System.out.println("Winner Team: " + winner);
 		System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
 		return winner.getTeamName();
-		// return null;
 	}
 
 }
