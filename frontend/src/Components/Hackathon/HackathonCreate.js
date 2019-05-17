@@ -6,13 +6,13 @@ import { Row, Col, AutoComplete, Button } from 'antd';
 import { Link } from 'react-router-dom'
 import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
-import {Redirect} from 'react-router'
+import { Redirect } from 'react-router'
 import axios from 'axios';
 import swal from 'sweetalert'
 
 class HackathonCreate extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       name: "dar",
@@ -33,41 +33,41 @@ class HackathonCreate extends Component {
       maxErr: "",
       maxErrFlag: true,
       feeErrFlag: true,
-      feeErr:"",
-      disErrFlag:false,
-      disErr:"",
+      feeErr: "",
+      disErrFlag: false,
+      disErr: "",
       current: 0,
-      users:[],
-      judges:[],
-      judgesErr:"You need atleast one judge",
-      judgesErrFlag:true,
-      organisations:[],
-      sponsors:[]
+      users: [],
+      judges: [],
+      judgesErr: "You need atleast one judge",
+      judgesErrFlag: true,
+      organisations: [],
+      sponsors: []
     }
   }
-  
 
-  componentDidMount(){
+
+  componentDidMount() {
 
     axios.defaults.withCredentials = true;
     axios.get("http://localhost:8080/hacker/getOrganizations")
       .then(response => {
-        if(response.status === 200){
+        if (response.status === 200) {
           this.setState({
-            organisations:response.data.organizations
+            organisations: response.data.organizations
           })
         }
       })
       .catch(err => {
         console.log(err)
       })
-    
+
     axios.get("http://localhost:8080/getalluser")
       .then(response => {
-        if(response.status === 200){
+        if (response.status === 200) {
           console.log(response.data)
           this.setState({
-            users:response.data.userDetails
+            users: response.data.userDetails
           })
         }
       })
@@ -103,6 +103,7 @@ class HackathonCreate extends Component {
     }
   }
   onChangeDates = (e) => {
+
     if (e && e[0] && new Date(e[0]._d) < Date.now()) {
       console.log("Invalid Date")
       this.setState({
@@ -113,8 +114,8 @@ class HackathonCreate extends Component {
       })
     } else {
       this.setState({
-        startDate: "",
-        endDate: "",
+        startDate: e[0]._d,
+        endDate: e[1]._d,
         dateErr: "",
         dateErrFlag: false
       })
@@ -129,7 +130,7 @@ class HackathonCreate extends Component {
         minErr: "Minimum size should be less than maximum size",
         minErrFlag: true
       })
-    } else if(e<2){
+    } else if (e < 2) {
       this.setState({
         minErr: "Cannot be less than 2",
         minErrFlag: true
@@ -164,38 +165,38 @@ class HackathonCreate extends Component {
       this.setState({
         feeErrFlag: true
       })
-    } else if(e<0){
+    } else if (e < 0) {
       this.setState({
         feeErrFlag: true,
-        feeErr:" Cannot be negative"
+        feeErr: " Cannot be negative"
       })
     } else {
       this.setState({
         fee: e,
         feeErrFlag: false,
-        feeErr:""
+        feeErr: ""
       })
     }
   }
 
   onChangeDis = (e) => {
-    if(e<0){
+    if (e < 0) {
       this.setState({
         disErrFlag: true,
-        disErr:"Cannot be negative"
+        disErr: "Cannot be negative"
       })
-    } else{
+    } else {
       this.setState({
         disErrFlag: false,
-        disErr:"",
+        disErr: "",
         discount: e
       })
     }
-    
+
   }
 
   renderOption = (item) => {
-    console.log(`renderOption.item`, item);
+    //console.log(`renderOption.item`, item);
     return (
       <AutoComplete.Option key={item.id} text={item.name}>
         <span>{item.name}</span>
@@ -203,7 +204,7 @@ class HackathonCreate extends Component {
     );
   }
 
-  onJudgeSelect = (value,option) => {
+  onJudgeSelect = (value, option) => {
     var judge = this.state.users.filter(user => user.id == option.key)
     // console.log(judge[0])
     var judges = this.state.judges
@@ -215,15 +216,15 @@ class HackathonCreate extends Component {
     })
     this.setState({
       judges: judges,
-      users:users,
-      judgesErrFlag:false,
-      judgesErr:""
-    },() => {
+      users: users,
+      judgesErrFlag: false,
+      judgesErr: ""
+    }, () => {
       console.log(this.state.judges)
     })
   }
 
-  onSponsorSelect = (value,option) => {
+  onSponsorSelect = (value, option) => {
     var sponsor = this.state.organisations.filter(organisation => organisation.id == option.key)
     // console.log(sponsor[0])
     var sponsors = this.state.sponsors
@@ -235,54 +236,54 @@ class HackathonCreate extends Component {
     })
     this.setState({
       sponsors: sponsors,
-      organisations:organisations,
-    },() => {
+      organisations: organisations,
+    }, () => {
       console.log(this.state.sponsors)
     })
   }
-  
+
   createHackathon = (e) => {
     let body = {
-      "name":this.state.name,
-      "startDate":this.state.startDate,
-      "endDate":this.state.endDate,
-      "description":this.state.description,
-      "teamSizeMin":this.state.teamSizeMin,
-      "teamSizeMax":this.state.teamSizeMax,
-      "fee":this.state.fee.toString(),
-      "discount":this.state.discount.toString(),
-      "judgesId":this.state.judges,
-      "sponsorsId":this.state.sponsors
+      "name": this.state.name,
+      "startDate": this.state.startDate,
+      "endDate": this.state.endDate,
+      "description": this.state.description,
+      "teamSizeMin": this.state.teamSizeMin,
+      "teamSizeMax": this.state.teamSizeMax,
+      "fee": this.state.fee.toString(),
+      "discount": this.state.discount.toString(),
+      "judgesId": this.state.judges,
+      "sponsorsId": this.state.sponsors
     }
     axios.defaults.withCredentials = true;
-    axios.post("http://localhost:8080/hackathon/",body)
-      .then( response => {
+    axios.post("http://localhost:8080/hackathon/", body)
+      .then(response => {
         console.log(response)
-        if(response.status===200){
+        if (response.status === 200) {
           console.log("Inside response status 200")
-          swal("Hackathon Created!","", "success");
-          setTimeout(()=>{
+          swal("Hackathon Created!", "", "success");
+          setTimeout(() => {
 
-          },5000);
+          }, 5000);
           this.props.history.push("/home")
         }
       })
       .catch(err => {
-        swal("Hackathon Name already Taken","", "error");
+        swal("Hackathon Name already Taken", "", "error");
       })
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    var judgeAvatars=null
-    var sponsorAvatars=null
+    var judgeAvatars = null
+    var sponsorAvatars = null
     var redirect = null
-    if(!localStorage.getItem("userId")){
-      redirect = <Redirect to="/login"/>
+    if (!localStorage.getItem("userId")) {
+      redirect = <Redirect to="/login" />
     }
-    if(this.state.judges){
+    if (this.state.judges) {
       judgeAvatars = this.state.judges.map(judge => {
-        return(
+        return (
           <Col span={4}>
             <Avatar shape="square" size="large" icon="user" />
             <p>{judge.firstname}</p>
@@ -290,9 +291,9 @@ class HackathonCreate extends Component {
         )
       })
     }
-    if(this.state.sponsors){
+    if (this.state.sponsors) {
       sponsorAvatars = this.state.sponsors.map(sponsor => {
-        return(
+        return (
           <Col span={4}>
             <Avatar shape="square" size="large" icon="home" />
             <p>{sponsor.firstname}</p>
@@ -323,7 +324,7 @@ class HackathonCreate extends Component {
               {getFieldDecorator('dates', {
                 rules: [{ type: 'array', required: true }],
               })(
-                <DatePicker.RangePicker 
+                <DatePicker.RangePicker
                   onChange={this.onChangeDates}
                 />
               )}
@@ -385,9 +386,9 @@ class HackathonCreate extends Component {
                   label="Sponsor's Discount"
                 >
                   {getFieldDecorator('dis')
-                  (
-                    <InputNumber onChange={this.onChangeDis} />
-                  )}
+                    (
+                      <InputNumber onChange={this.onChangeDis} />
+                    )}
                 </Form.Item>
                 <p class="text-danger">{this.state.disErr}</p>
               </Col>
@@ -401,15 +402,15 @@ class HackathonCreate extends Component {
             >
               {getFieldDecorator('judges', {})(
                 <AutoComplete
-                style={{ width: 300 }}
-                dataSource = {this.state.users && this.state.users.map(this.renderOption)}
-                //dataSource = {this.state.dataSource && this.state.dataSource}
-                onSelect = {this.onJudgeSelect}
-                placeholder="Select Judges"
-                value={""}
-                allowClear={true}
+                  style={{ width: 300 }}
+                  dataSource={this.state.users && this.state.users.map(this.renderOption)}
+                  //dataSource = {this.state.dataSource && this.state.dataSource}
+                  onSelect={this.onJudgeSelect}
+                  placeholder="Select Judges"
+                  value={""}
+                  allowClear={true}
                 >
-                </AutoComplete>  
+                </AutoComplete>
               )}
             </Form.Item>
             <p class="text-danger">{this.state.judgesErr}</p>
@@ -422,14 +423,14 @@ class HackathonCreate extends Component {
             >
               {getFieldDecorator('sponsors', {})(
                 <AutoComplete
-                style={{ width: 300 }}
-                dataSource = {this.state.organisations && this.state.organisations.map(this.renderOption)}
-                //dataSource = {this.state.dataSource && this.state.dataSource}
-                onSelect = {this.onSponsorSelect}
-                placeholder="Select Sponsors"
-                allowClear={true}
+                  style={{ width: 300 }}
+                  dataSource={this.state.organisations && this.state.organisations.map(this.renderOption)}
+                  //dataSource = {this.state.dataSource && this.state.dataSource}
+                  onSelect={this.onSponsorSelect}
+                  placeholder="Select Sponsors"
+                  allowClear={true}
                 >
-                </AutoComplete>  
+                </AutoComplete>
               )}
             </Form.Item>
             <Form.Item>

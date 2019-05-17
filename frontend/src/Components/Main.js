@@ -7,7 +7,7 @@ import HackathonDetails from "./Hackathon/HackathonDetails";
 //import HackathonCreate from './Admin/Hackathon/HackathonCreate';
 import HackathonCreate from "./Hackathon/HackathonCreate";
 // import HackathonCreate from './Admin/Hackathon/HackathonCreate';
-import adminHackathonDetails from "./Admin/Hackathon/HackathonDetails";
+//import adminHackathonDetails from "./Admin/Hackathon/HackathonDetails";
 import "../App.css";
 import Signup from "./Signup/Signup";
 import Login from "./Login/Login";
