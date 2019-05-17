@@ -6,6 +6,7 @@ import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Inp
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
+import Swal from 'sweetalert2'
 import { Redirect } from 'react-router'
 import API from '../../../utils/API'
 const { Content, Sider } = Layout;
@@ -15,6 +16,7 @@ const { Content, Sider } = Layout;
 // "payment pending" means payment is yet to be completed,
 // "registred" means registered and paid.
 // "closed" means cannot edit submission
+
 
 class HackathonDetails extends Component {
     constructor(props) {
@@ -47,7 +49,7 @@ class HackathonDetails extends Component {
             gradeButtonFlag: false,
             registerButtonFlag: false,
             hackathonId: this.props.match.params.id,
-            winnerTeam:null
+            winnerTeam: null
         }
     }
 
@@ -84,7 +86,7 @@ class HackathonDetails extends Component {
                         judgeDetails: response.data.judgeDetails,
                         sponsorDetails: response.data.sponsorDetails,
                         submissionUrl: response.data.submissionUrl,
-                        winnerTeam:response.data.winnerTeam
+                        winnerTeam: response.data.winnerTeam
                     })
                 }
             })
@@ -196,8 +198,15 @@ class HackathonDetails extends Component {
                     "userId": localStorage.getItem("userId")
                 }
                 try {
+
+                    Swal.fire({
+                        title: 'Opening Hackathon',
+                        text: 'In progress...',
+                        showConfirmButton: false
+                    })
                     let response = await API.post(`hackathon/open`, body);
                     console.log("Response: ", response.data);
+                    Swal.close(); // Close the Swal when reponse has been fetched
                     message.success("Hackathon open for submission!")
                     setTimeout(2000)
                     window.location.reload();
@@ -245,8 +254,14 @@ class HackathonDetails extends Component {
                     "userId": localStorage.getItem("userId")
                 }
                 try {
+                    Swal.fire({
+                        title: 'Closing Hackathon',
+                        text: 'In progress...',
+                        showConfirmButton: false
+                    })
                     let response = await API.post(`hackathon/close`, body);
                     console.log("Response: ", response.data);
+                    Swal.close(); // Close the Swal when reponse has been fetched
                     message.success("Hackathon closed for submission!")
                     setTimeout(2000)
                     window.location.reload();
@@ -289,8 +304,14 @@ class HackathonDetails extends Component {
                     "userId": localStorage.getItem("userId")
                 }
                 try {
+                    Swal.fire({
+                        title: 'Finalizing Hackathon',
+                        text: 'In progress...',
+                        showConfirmButton: false
+                    })
                     let response = await API.post(`hackathon/finalize`, params)
                     console.log("Response: ", response.data);
+                    Swal.close();
                     message.success("Hackathon finalized! The winner is Team: " + response.data + "!")
                     this.setState({ winnerTeam: response.data })
                 } catch (error) {
