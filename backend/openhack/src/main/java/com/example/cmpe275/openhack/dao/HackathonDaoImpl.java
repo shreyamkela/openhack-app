@@ -34,11 +34,13 @@ public class HackathonDaoImpl implements HackathonDao{
 	public Hackathon create(Hackathon hackathon) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
 			Hackathon createdHackathon = em.merge(hackathon);
 			tx.commit();
+			System.out.println("Successfull creation inside DAO");
 			return createdHackathon;
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -50,9 +52,11 @@ public class HackathonDaoImpl implements HackathonDao{
 	}
 
 	@Override
+	@Transactional
 	public Hackathon updateById(long id, Hackathon hackathon) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -69,6 +73,7 @@ public class HackathonDaoImpl implements HackathonDao{
 	}
 
 	@Override
+	@Transactional
 	public Hackathon deleteById(long Id) {
 		// TODO Auto-generated method stub
 		return null;
@@ -79,25 +84,28 @@ public class HackathonDaoImpl implements HackathonDao{
 	public Hackathon findById(long id) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
+//		EntityManager em = emfactory.em;
 		try {
-			tx.begin();
+			
+			
 			Hackathon hackathon = em.find(Hackathon.class, id);
-			tx.commit();
+			
 			return hackathon;
 		}catch (Exception e) {
 			// TODO: handle exception
-			tx.rollback();
+			
 			throw e;
 		}finally {
-			em.close();
+//			em.close();
 		}
 	}
 
 	@Override
+	@Transactional
 	public List<Hackathon> findAll() {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		try
 		{
 			em.getTransaction().begin();
@@ -111,7 +119,7 @@ public class HackathonDaoImpl implements HackathonDao{
 		}
 		finally
 		{
-			em.close();	
+//			em.close();	
 		}
 	}
 

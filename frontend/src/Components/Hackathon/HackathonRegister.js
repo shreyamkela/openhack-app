@@ -21,7 +21,7 @@ class HackathonRegister extends Component {
         filteredUsers: [],
         members: [],
         membersErrFlag: true,
-        membersErr: "Select atleast 1 member",
+        membersErr: "",
         min: null,
         max: null
     }
@@ -54,6 +54,13 @@ class HackathonRegister extends Component {
                 this.setState({
                     min: response.data.teamSizeMin,
                     max: response.data.teamSizeMax
+                }, () => {
+                    if (this.state.min === 1) {
+                        this.setState({
+                            membersErrFlag: false
+                        })
+                    }
+
                 })
             })
     }
@@ -105,7 +112,7 @@ class HackathonRegister extends Component {
             this.setState({
                 users: users,
                 members: members,
-                membersErr: "",
+                membersErr: "Minimum members done",
                 membersErrFlag: false
             })
         } else if (members.length + 1 === this.state.max) {

@@ -39,17 +39,16 @@ public class Organization {
 	//No mapping, manipulation needs to be done manually
 //	@Column
 	@OneToOne(fetch=FetchType.EAGER)
-	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private User owner;
 	
-	@OneToMany(mappedBy="organization",fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="organization",fetch=FetchType.LAZY)
 	private Set<User> members;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany(mappedBy="sponsors",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@ManyToMany(mappedBy="sponsors",fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	private Set<Hackathon> sponsoredHackathons;
 	
-	@OneToMany(mappedBy="requested_for_org", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="requested_for_org",fetch=FetchType.LAZY)
 	private Set<Request> join_requests;
 	
 //	@OneToMany(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})

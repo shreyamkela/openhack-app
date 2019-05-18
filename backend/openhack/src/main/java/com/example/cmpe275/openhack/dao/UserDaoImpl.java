@@ -27,7 +27,7 @@ public class UserDaoImpl implements UserDao {
 	private EntityManagerSingleton emfactory;
 	
 	public UserDaoImpl(){
-		emfactory = emfactory.getInstance();
+		emfactory = EntityManagerSingleton.getInstance();
 	}
 	
 	@Override
@@ -35,6 +35,7 @@ public class UserDaoImpl implements UserDao {
 	public User createUser(User user) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		try
 		{			
 			em.getTransaction().begin();
@@ -59,6 +60,7 @@ public class UserDaoImpl implements UserDao {
 	public User updateUser(User user) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		try
 		{			
 			em.getTransaction().begin();
@@ -81,46 +83,48 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	@Transactional
 	public User findUserbyEmail(String email) {
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		try
 		{
-			em.getTransaction().begin();
+//			em.getTransaction().begin();
 			 Query query = em.createQuery("SELECT u FROM User u WHERE u.email = :email");
 		        query.setParameter("email", email);
 		        User user = (User) query.getSingleResult();
-			em.getTransaction().commit();
+//			em.getTransaction().commit();
 			return user;
 		}
 		catch(RuntimeException e)
 		{
-			em.getTransaction().rollback();
+//			em.getTransaction().rollback();
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+			//em.close();	
 		}
 	}
 	
 	@Override
 	@Transactional
 	public User findUserbyID(long id) {
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		try
 		{
-			em.getTransaction().begin();
+//			em.getTransaction().begin();
 			User user = em.find(User.class, id);
-			em.getTransaction().commit();
+//			em.getTransaction().commit();
 			return user;
 		}
 		catch(RuntimeException e)
 		{
-			em.getTransaction().rollback();
+//			em.getTransaction().rollback();
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+			//em.close();	
 		}
 	}
 	
@@ -134,10 +138,11 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	@Transactional
 	public List<User> findAllUsers(){
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		try
 		{
-			em.getTransaction().begin();
+			
 			String verified="Y";
 			String usertype="user";
 			return (List<User>) em.createQuery("select e from User e where e.verified = :verified and e.usertype= :usertype ",
@@ -145,12 +150,12 @@ public class UserDaoImpl implements UserDao {
 		}
 		catch(RuntimeException e)
 		{
-			em.getTransaction().rollback();
+			
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+			//em.close();	
 		}
 		
 	}

@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.transaction.Transactional;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,13 +21,15 @@ public class TeamDaoImpl implements TeamDao{
 
 	public TeamDaoImpl()
 	{
-		emfactory = emfactory.getInstance();
+		emfactory = EntityManagerSingleton.getInstance();
 	}
 
 	@Override
+	@Transactional
 	public Team createTeam(Team team) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -44,8 +47,10 @@ public class TeamDaoImpl implements TeamDao{
 	}
 
 	@Override
+	@Transactional
 	public Team updateTeam(Team team) {
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -63,9 +68,11 @@ public class TeamDaoImpl implements TeamDao{
 	}
 
 	@Override
+	@Transactional
 	public Team getTeamById(long id) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -77,11 +84,12 @@ public class TeamDaoImpl implements TeamDao{
 			tx.rollback();
 			throw e;
 		}finally {
-			em.close();
+//			em.close();
 		}
 	}
 
 	@Override
+	@Transactional
 	public Team deleteTeamById(long id) {
 		// TODO Auto-generated method stub
 		return null;

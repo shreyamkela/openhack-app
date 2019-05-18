@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input, Skeleton } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
@@ -46,7 +46,8 @@ class HackathonDetails extends Component {
             submissionUrl: null, // IDK right now
             submissionButtonFlag:false,
             gradeButtonFlag:false,
-            registerButtonFlag:false
+            registerButtonFlag:false,
+            isLoaded:false
         }
     }
 
@@ -79,7 +80,8 @@ class HackathonDetails extends Component {
                         sponsorDetails: response.data.sponsorDetails,
                         submissionUrl: response.data.submissionUrl,
                         isFinalize:response.data.isFinalize,
-                        winnerTeam:response.data.winnerTeam
+                        winnerTeam:response.data.winnerTeam,
+                        isLoaded:true
                     })
                 }
             })
@@ -170,6 +172,20 @@ class HackathonDetails extends Component {
         var gradeButtonFlag = false
         var redirect = null
         var winnerTeam = null
+        var loaded = null
+        var detailsContent = null
+        if(!this.state.isLoaded){
+            loaded = <Skeleton active/>
+            detailsContent = null
+        }else{
+            loaded = null
+            detailsContent = <Col span={18}>
+            <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
+            <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
+            <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
+            <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : {winnerTeam}</p>
+        </Col>
+        }
         if(!localStorage.getItem("userId")){
             redirect = <Redirect to="/login"/>
         }
@@ -201,15 +217,6 @@ class HackathonDetails extends Component {
             </div>
         } else if (this.state.teamsContentFlag) {
             content = this.state.teamDetails && this.state.teamDetails.map(team => {
-                // return(
-                //     <div>
-                //         <a href="#" id={team.teamId}> 
-                //             <Title level={4}>Team name : {team && team.teamName}</Title>
-                //         </a>
-                //         <p>Members: {team && team.teamSize}</p>
-                //         <Divider></Divider>
-                //     </div>
-                // )
                 return(
                     <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
                         <a href="#" id={team.teamId}> 
@@ -222,15 +229,6 @@ class HackathonDetails extends Component {
             })
         }else if(this.state.judgesContentFlag){
             content = this.state.judgeDetails && this.state.judgeDetails.map(judge => {
-                // return(
-                //     <div>
-                //         <a href="#" id={judge.judgeId}> 
-                //             <Title level={4}>{judge && judge.judgeName}</Title>
-                //         </a>
-                //         <p>{judge && judge.judgeScreenName}, {judge && judge.judgeEmail}</p>
-                //         <Divider></Divider>
-                //     </div>
-                // )
                 return(
                     <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
                         <a href="#" id={judge.judgeId}> 
@@ -244,15 +242,6 @@ class HackathonDetails extends Component {
             })
         }else if(this.state.sponsorsContentFlag){
             content = this.state.sponsorDetails && this.state.sponsorDetails.map(sponsor => {
-                // return(
-                //     <div>
-                //         <a href="#" id={sponsor.sponsorId}> 
-                //             <Title level={4}>{sponsor && sponsor.sponsorName}</Title>
-                //         </a>
-                //         <p>{sponsor && sponsor.sponsorDescription}</p>
-                //         <Divider></Divider>
-                //     </div>
-                // )
                 return(
                     <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
                         <a href="#" id={sponsor.sponsorId}> 
@@ -362,13 +351,10 @@ class HackathonDetails extends Component {
                 </div>
                 <div style={{ backgroundColor: "#EAECEE", height: "200px" }}>
                     <div style={{ marginLeft: "10%" }}>
+                        
                         <Row type="flex">
-                            <Col span={18}>
-                                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : {winnerTeam}</p>
-                            </Col>
+                            {loaded}
+                            {detailsContent}
                             <Col span={6}>
                                 {buttons}
                             </Col>
@@ -413,7 +399,8 @@ class HackathonDetails extends Component {
                         <Layout style={{ marginLeft: 10}} >
                             <Content style={{ margin: '0px 16px 0', overflow: 'initial'}}>
                                 <div style={{ padding: 14, background: '#fff', minHeight : "300px"}}>
-                                    {content}    
+                                {loaded}    
+                                {content}    
                                 </div>
                             </Content>
                         </Layout>

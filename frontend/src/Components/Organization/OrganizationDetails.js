@@ -68,7 +68,7 @@ class OrganizationDetails extends Component {
                         if (response.status === 200) {
                             console.log("\nResponse received from backend after decliing the join request");
                             console.log("\n"+JSON.stringify(response.data));
-                            window.location.reload()
+                            this.props.history.push("/hacker_organizations")
                         }
                         else{
                             console.log("\nThere was some error fetching organization info from the backend after request approval")

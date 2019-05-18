@@ -9,6 +9,7 @@ import NavBar from '../Navbar/Navbar';
 import { Redirect } from 'react-router'
 import axios from 'axios';
 import swal from 'sweetalert'
+import Swal from 'sweetalert2'
 
 class HackathonCreate extends Component {
 
@@ -103,8 +104,7 @@ class HackathonCreate extends Component {
     }
   }
   onChangeDates = (e) => {
-
-    if (e && e[0] && new Date(e[0]._d) < Date.now()) {
+    if (e && new Date(e[0]._d) < new Date()) {
       console.log("Invalid Date")
       this.setState({
         startDate: null,
@@ -130,9 +130,9 @@ class HackathonCreate extends Component {
         minErr: "Minimum size should be less than maximum size",
         minErrFlag: true
       })
-    } else if (e < 2) {
+    } else if (e < 1) {
       this.setState({
-        minErr: "Cannot be less than 2",
+        minErr: "Cannot be less than 1",
         minErrFlag: true
       })
     }
@@ -243,6 +243,14 @@ class HackathonCreate extends Component {
   }
 
   createHackathon = (e) => {
+    Swal.fire("Creation in Progress", "Please Wait...", "info")
+    Swal.fire({
+      title: 'Creation in Progress',
+      text: 'Please Wait...',
+      showCancelButton: false,
+      showConfirmButton: false,
+      type: 'info'
+    })
     let body = {
       "name": this.state.name,
       "startDate": this.state.startDate,
@@ -261,17 +269,27 @@ class HackathonCreate extends Component {
         console.log(response)
         if (response.status === 200) {
           console.log("Inside response status 200")
-          swal("Hackathon Created!", "", "success");
-          setTimeout(() => {
-
-          }, 5000);
+          Swal.fire({
+            title: 'Hackathon Created',
+            text: 'Success!!!',
+            timer: 2000,
+            type: 'success',
+            showCancelButton: false,
+          })
           this.props.history.push("/home")
         }
       })
       .catch(err => {
-        swal("Hackathon Name already Taken", "", "error");
+        Swal.fire({
+          title: 'Hackathon Name already taken',
+          text: '',
+          timer: 2000,
+          type: 'error',
+          showCancelButton: false,
+        })
       })
   }
+
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -324,7 +342,7 @@ class HackathonCreate extends Component {
               {getFieldDecorator('dates', {
                 rules: [{ type: 'array', required: true }],
               })(
-                <DatePicker.RangePicker
+                <DatePicker.RangePicker showTime
                   onChange={this.onChangeDates}
                 />
               )}
