@@ -22,7 +22,7 @@ public class Request {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade= {CascadeType.MERGE,CascadeType.PERSIST})
+	@ManyToOne(fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	@JoinColumn(name="requested_by_user_id")
 	private User requested_by_user;
 	
@@ -30,7 +30,7 @@ public class Request {
 //	@JoinColumn(name="requested_by_user_id")
 //	private User requested_by_user;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	@JoinColumn(name="requested_for_org_id")
 	private Organization requested_for_org;
 

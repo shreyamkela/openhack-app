@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Tooltip , Icon, Row, Col, Button, Input, Form } from 'antd';
+import { Layout, Tooltip , Icon, Row, Col, Button, Input, Form, Skeleton } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
@@ -77,6 +77,7 @@ class ViewSubmission extends Component {
         const { getFieldDecorator } = this.props.form;
         let submissionDisplay = null
         let teamMembersDisplay = null
+        
         let redirect = null
         if(!localStorage.getItem("userId")){
             redirect = <Redirect to="/login"/>

@@ -25,13 +25,14 @@ public class RequestDaoImpl
 	
 	public RequestDaoImpl()
 	{
-		emfactory = emfactory.getInstance();
+		emfactory = EntityManagerSingleton.getInstance();
 	}
 
 	@Transactional
 	public Request addRequest(Request request) 
 	{
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -55,7 +56,8 @@ public class RequestDaoImpl
 	@Transactional
 	public Request findRequestById(long requestId) 
 	{
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -71,15 +73,16 @@ public class RequestDaoImpl
 		}
 		finally
 		{
-			em.close();	
+//			em.close();	
 		}
 	}
 	
 	@Transactional
 	public List<Request> getAllRequests() 
 	{
-		EntityManager em = emfactory.emfactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
+		
 		try
 		{
 			List<Request> requests = (List<Request>) em.createQuery("from Request").getResultList();
@@ -87,12 +90,12 @@ public class RequestDaoImpl
 		}
 		catch(RuntimeException e)
 		{
-			tx.rollback();
+			
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+//			em.close();	
 		}
 	}
 	
@@ -100,6 +103,7 @@ public class RequestDaoImpl
 	public Request deleteRequest(long reqId) 
 	{
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try
 		{

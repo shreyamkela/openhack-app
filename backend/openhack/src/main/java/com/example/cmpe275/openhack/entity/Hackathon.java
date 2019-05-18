@@ -42,35 +42,32 @@ public class Hackathon {
 	private double discount; // percentage
 	
 	//@ManyToMany(mappedBy="judgedHackathons",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
-	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@ManyToMany(cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH},fetch=FetchType.LAZY)
 	@JoinTable(
 			name="Judge_Hackathons",
 			joinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="User",referencedColumnName="id")})
-	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
+	
 	private Set<User> judges;
 
 	//@ManyToMany(mappedBy="sponsoredHackathons",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
-	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	@JoinTable(
 			name="Sponsored_Hackathons",
 			joinColumns= {@JoinColumn(name="Hackathon",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="Organization",referencedColumnName="id")})
-	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
 	private Set<Organization> sponsors;
 
-	@OneToMany(mappedBy="hackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
-	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
+	@OneToMany(mappedBy="hackathon",fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})	
 	private Set<Submission> submissions;
-//
-	@OneToMany(mappedBy="participatedHackathon",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
-	@Fetch(value = org.hibernate.annotations.FetchMode.SELECT)
+	
+	@OneToMany(mappedBy="participatedHackathon",fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	private Set<Team> teams;
 	
 	@ColumnDefault(value="false")
 	private boolean isFinalized;
 	
-	@OneToOne(fetch=FetchType.EAGER,cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+	@OneToOne(fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	private Team winner;
 	
 	public Hackathon() 

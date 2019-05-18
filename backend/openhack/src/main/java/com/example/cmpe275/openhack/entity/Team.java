@@ -47,24 +47,24 @@ public class Team {
 	private User teamLead;
 	
 	//@ManyToMany(mappedBy="teams", fetch=FetchType.EAGER)
-	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST})
 	@JoinTable(
 			name="User_Teams",
 			joinColumns= {@JoinColumn(name="Team",referencedColumnName="id")},
 			inverseJoinColumns= {@JoinColumn(name="User",referencedColumnName="id")})
 	private Set<User> members;
 
-	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToOne(fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST})
 	@JoinColumn(name="participatedHackathon")
 	private Hackathon participatedHackathon;
 
-	@ColumnDefault(value="false")
+	
 	private boolean paymentStatus;
 	
-	@ColumnDefault(value="false")
+	
 	private boolean submitted;
 	
-	@ColumnDefault(value="false")
+	
 	private boolean graded;
 	
 	public long getId() {
