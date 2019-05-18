@@ -67,7 +67,7 @@ class OrganizationDetails extends Component {
                         console.log("Status Code : ", response.status);
                         
                         if (response.status === 200) {
-                            console.log("\nResponse received from backend after decliing the join request");
+                            console.log("\nResponse received from backend after approving the join request");
                             console.log("\n"+JSON.stringify(response.data));
                             window.location.reload()
                         }
@@ -93,7 +93,7 @@ class OrganizationDetails extends Component {
                         console.log("Status Code : ", response.status);
                         
                         if (response.status === 200) {
-                            console.log("\nResponse received from backend after decliing the join request");
+                            console.log("\nResponse received from backend after declining the join request");
                             console.log("\n"+JSON.stringify(response.data));
                             window.location.reload()
                         }
