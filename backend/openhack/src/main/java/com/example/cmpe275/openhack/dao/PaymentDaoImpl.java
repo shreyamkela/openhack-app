@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.transaction.Transactional;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +26,15 @@ public class PaymentDaoImpl implements PaymentDao{
 	
 	public PaymentDaoImpl() {
 		// TODO Auto-generated constructor stub
-		emfactory = emfactory.getInstance();
+		emfactory = EntityManagerSingleton.getInstance();
 	}
+	
 	@Override
+	@Transactional
 	public Payment createPayment(Payment payment) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -47,27 +51,31 @@ public class PaymentDaoImpl implements PaymentDao{
 	}
 
 	@Override
+	@Transactional
 	public List<Payment> findPaymentByTeamId(long id) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.emfactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
+		
 		try {
-			tx.begin();
+			
 			return (List<Payment>) em.createQuery("select p from Payment p where p.teamId = :teamId",
 				    Payment.class).setParameter("teamId",id).getResultList();
 		}catch (Exception e) {
 			// TODO: handle exception
-			tx.rollback();
+			
 			throw e;
 		}finally {
-			em.close();
+//			em.close();
 		}
 	}
 
 	@Override
+	@Transactional
 	public Payment updatePayment(Payment payment) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -82,28 +90,34 @@ public class PaymentDaoImpl implements PaymentDao{
 			em.close();
 		}
 	}
+	
 	@Override
+	@Transactional
 	public Payment getPaymentById(long id) {
 		// TODO Auto-generated method stub
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
-			tx.begin();
+			
 			Payment payment = em.find(Payment.class, id);
-			tx.commit();
+			
 			return payment;
 		}catch (Exception e) {
 			// TODO: handle exception
-			tx.rollback();
+			
 			throw e;
 		}finally {
-			em.close();
+//			em.close();
 		}
 	}
+	
 	@Override
+	@Transactional
 	public Payment deletePayment(Payment payment) {
 		// TODO Auto-generated method stub
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();

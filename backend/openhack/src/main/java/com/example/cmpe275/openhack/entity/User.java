@@ -51,20 +51,20 @@ public class User {
 	private String usertype;
 	private String lastname;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToOne(fetch=FetchType.EAGER,cascade= {CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	@JoinColumn(name="organization_id")
 	private Organization organization;
 
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany(mappedBy="judges",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch=FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	private Set<Hackathon> judgedHackathons;
 	
 //	@ManyToMany(fetch=FetchType.EAGER)
-	@ManyToMany(mappedBy="members", fetch=FetchType.EAGER)
+	@ManyToMany(mappedBy="members", fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	private Set<Team> teams;
 	
-	@OneToMany(mappedBy="requested_by_user", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="requested_by_user", fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
 	private Set<Request> join_requests;
 	
 //	@OneToMany(fetch=FetchType.EAGER, cascade={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REFRESH})

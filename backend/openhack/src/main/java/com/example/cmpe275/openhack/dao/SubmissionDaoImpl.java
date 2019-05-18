@@ -23,13 +23,14 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	private EntityManagerSingleton emfactory;
 
 	public SubmissionDaoImpl() {
-		emfactory = emfactory.getInstance();
+		emfactory = EntityManagerSingleton.getInstance();
 	}
 
 	@Override
 	@Transactional
 	public Submission create(Submission submission) {
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
@@ -48,38 +49,16 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	@Transactional
 	public Submission updateById(long id, Submission submission) {
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
+		EntityTransaction tx = em.getTransaction();
 		try {
-			em.getTransaction().begin();
+			tx.begin();
 			Submission updatedSubmission = em.merge(submission);
-			em.getTransaction().commit();
+			tx.commit();
 			System.out.println("\n - - - - - - - - - - Submission " + submission.getURL() + " updated to "
 					+ updatedSubmission.getURL() + " successfully! - - - - - - - - - - -\n");
 			return updatedSubmission;
 		} catch (RuntimeException e) {
-			em.getTransaction().rollback();
-			throw e;
-		} finally {
-			em.close();
-		}
-	}
-
-	@Override
-	public Submission deleteById(long Id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	@Transactional
-	public Submission findById(long id) {
-		EntityManager em = emfactory.emfactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
-		try {
-			tx.begin();
-			Submission submission = em.find(Submission.class, id);
-			tx.commit();
-			return submission;
-		} catch (Exception e) {
 			tx.rollback();
 			throw e;
 		} finally {
@@ -89,21 +68,48 @@ public class SubmissionDaoImpl implements SubmissionDao {
 
 	@Override
 	@Transactional
+	public Submission deleteById(long Id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	@Transactional
+	public Submission findById(long id) {
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
+		
+		try {
+		
+			Submission submission = em.find(Submission.class, id);
+		
+			return submission;
+		} catch (Exception e) {
+		
+			throw e;
+		} finally {
+//			em.close();
+		}
+	}
+
+	@Override
+	@Transactional
 	public List<Submission> findAll() {
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		try
 		{
-			em.getTransaction().begin();
+			
 			return (List<Submission>) em.createQuery("select s from Submission s",Submission.class).getResultList();
 		}
 		catch(RuntimeException e)
 		{
-			em.getTransaction().rollback();
+		
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+//			em.close();	
 		}
 		
 		// TODO Auto-generated method stub

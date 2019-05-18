@@ -9,6 +9,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ public class SubmissionController {
 
 	@PostMapping("/addSubmission")
 	@ResponseBody
+	@Transactional
 	public Long addSubmission(@RequestBody HashMap<String, String> map) {
 		System.out.println("\naddSubmission method called for the Submission");
 		System.out.println("Submission data from post " + map);
@@ -103,11 +105,14 @@ public class SubmissionController {
 
 	@PostMapping("/gradeSubmission/{submissionId}")
 	@ResponseBody
-	public Long gradeSubmission(@RequestBody HashMap<String, String> map,
-			@PathVariable long submissionId) {
+	@Transactional
+	public Map<Object,Object> gradeSubmission(@RequestBody HashMap<String, String> map,
+			@PathVariable long submissionId,
+			HttpServletResponse response,
+			HttpServletRequest request) {
 		System.out.println("\ngradeSubmission method called for the Submission");
 		System.out.println("Submission data from post " + map);
-
+		Map<Object,Object> responseBody = new HashMap<>();
 		try {
 			
 			Submission submission = submissionDao.findById(submissionId);
@@ -116,7 +121,8 @@ public class SubmissionController {
 			Team team = updatedSubmission.getTeam();
 			team.setGraded(true);
 			teamDao.updateTeam(team);
-			return 1l;
+			responseBody.put("msg", "graded successfully");
+			return responseBody;
 //			Long hackathonId = new Long((String) map.get("hackathonId"));
 //			Hackathon hackathon = hackathonDao.findById(hackathonId);
 //			Set<Submission> allSubmissions = hackathon.getSubmissions();
@@ -137,13 +143,16 @@ public class SubmissionController {
 
 		} catch (Exception e) {
 			System.out.println("Exception while creating/updating submission: " + e);
-			return 0l;
+			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
+			responseBody.put("msg",e);
+			return responseBody;
 		}
 	}
 
 
 	@GetMapping("/submission/{hackathonId}")
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> getAllSubmissions(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="hackathonId") long hackathonId){

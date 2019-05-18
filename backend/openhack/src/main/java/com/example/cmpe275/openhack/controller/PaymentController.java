@@ -16,6 +16,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,6 +68,7 @@ public class PaymentController {
 
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> getPayment(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="id") long paymentId){
@@ -88,6 +90,7 @@ public class PaymentController {
 	
 	@RequestMapping(value="/{id}",method=RequestMethod.POST)
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> doPayment(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="id") long paymentId,

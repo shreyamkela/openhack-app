@@ -25,7 +25,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	
 	public OrganizationDaoImpl()
 	{
-		emfactory = emfactory.getInstance();
+		emfactory = EntityManagerSingleton.getInstance();
 	}
 
 	@Override
@@ -33,11 +33,12 @@ public class OrganizationDaoImpl implements OrganizationDao
 	public Organization create(Organization org) 
 	{
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
 			tx.begin();
-			em.persist(org);
+			em.merge(org);
 			tx.commit();
 			System.out.println("\n - - - - - - - - - - Organization "+org.getName()+" added successfully! - - - - - - - - - - -\n");
 			return org;
@@ -58,22 +59,23 @@ public class OrganizationDaoImpl implements OrganizationDao
 	public Organization findOrganizationById(long orgId) 
 	{
 		EntityManager em = emfactory.emfactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
+//		EntityManager em = emfactory.em;
+//		EntityTransaction tx = em.getTransaction();
 		try
 		{
-			tx.begin();
+//			tx.begin();
 			Organization org = em.find(Organization.class, orgId);
-			tx.commit();
+//			tx.commit();
 			return org;
 		}
 		catch(RuntimeException e)
 		{
-			tx.rollback();
+//			tx.rollback();
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+//			em.close();	
 		}
 	}
 	
@@ -81,47 +83,51 @@ public class OrganizationDaoImpl implements OrganizationDao
 	@Transactional
 	public Organization findOrganizationByName(String name) 
 	{
-		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.emfactory.createEntityManager();
+		EntityManager em = emfactory.em;
 		Organization org =null;
 		try
 		{
-			em.getTransaction().begin();
+//			em.getTransaction().begin();
 			 Query query = em.createQuery("SELECT o FROM Organization o WHERE o.name = :name");
 		        query.setParameter("name", name);
 		        org = (Organization) query.getSingleResult();
-			em.getTransaction().commit();
+//			em.getTransaction().commit();
 			return org;
 		}
 		catch(RuntimeException e)
 		{
-			em.getTransaction().rollback();
+//			em.getTransaction().rollback();
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+			//em.close();	
 		}
 	}
 	
 	@Override
-	@Transactional
+//	@Transactional
 	public List<Organization> findAllOrganization() 
 	{
 		EntityManager em = emfactory.emfactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
+//		EntityManager em = emfactory.em;
+//		EntityTransaction tx = em.getTransaction();
 		try
 		{
+//			tx.begin();
 			List<Organization> organizations = (List<Organization>) em.createQuery("from Organization").getResultList();
+//			tx.commit();
 	        return organizations;
 		}
 		catch(RuntimeException e)
 		{
-			tx.rollback();
+//			tx.rollback();
 			throw e;
 		}
 		finally
 		{
-			em.close();	
+//			em.close();	
 		}
 	}
 
@@ -130,6 +136,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	public Organization update(Organization org) 
 	{
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try
 		{
@@ -155,6 +162,7 @@ public class OrganizationDaoImpl implements OrganizationDao
 	public Organization delete(long orgId) 
 	{
 		EntityManager em = emfactory.emfactory.createEntityManager();
+//		EntityManager em = emfactory.em;
 		EntityTransaction tx = em.getTransaction();
 		try
 		{

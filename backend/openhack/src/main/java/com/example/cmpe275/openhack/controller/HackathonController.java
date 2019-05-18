@@ -25,6 +25,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -82,6 +83,7 @@ public class HackathonController {
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	@ResponseBody
+	@Transactional
 	public Map<Object, Object> createHackathon(
 			@RequestBody HashMap<Object,Object> map,
 			HttpServletRequest request,
@@ -128,6 +130,7 @@ public class HackathonController {
 		}
 		try {
 			hackathonDao.create(hackathon);
+			System.out.println("Successfully created");
 			responseObject.put("msg", "Successfully created");
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -139,6 +142,7 @@ public class HackathonController {
 	
 	@RequestMapping(value="{id}",method=RequestMethod.POST)
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> getHackathonDetails(HttpServletRequest request,
 												HttpServletResponse response,
 												@RequestBody Map<Object,Object> map,
@@ -248,6 +252,7 @@ public class HackathonController {
 	
 	@RequestMapping(value="register/{id}",method=RequestMethod.POST)
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> registerHackathon(HttpServletRequest request,
 				HttpServletResponse response,
 				@PathVariable(name="id") long hackathonId,
@@ -264,6 +269,7 @@ public class HackathonController {
 		team.setIdea(idea);
 		team.setGraded(false);
 		team.setSubmitted(false);
+		team.setPaymentStatus(false);
 		final Hackathon hackathon = hackathonDao.findById(hackathonId);
 		team.setParticipatedHackathon(hackathon);
 		final User teamLead = userDao.findUserbyID(leadId);
@@ -322,6 +328,7 @@ public class HackathonController {
 	
 	@RequestMapping(value="/getAllHackathons/{userId}",method=RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> getAllHackathons(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="userId") long userId) {
@@ -414,6 +421,7 @@ public class HackathonController {
 	@RequestMapping(value = "open", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 	"application/JSON" })
 	@ResponseBody
+	@Transactional
 	public Hackathon openHackathon(HttpServletRequest request, HttpServletResponse response,
 	@RequestBody HashMap<Object, Object> map) throws ParseException {
 		System.out.println("POST /hackathon/open - Open hackathon - Request Body: " + map);
@@ -449,6 +457,7 @@ public class HackathonController {
 	@RequestMapping(value = "close", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 	"application/JSON" })
 	@ResponseBody
+	@Transactional
 	public Hackathon closeHackathon(HttpServletRequest request, HttpServletResponse response,
 		@RequestBody HashMap<Object, Object> map) throws ParseException 
 	{
@@ -501,13 +510,14 @@ public class HackathonController {
 	@RequestMapping(value = "/finalize", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 		"application/JSON" }) // TODO check params
 	@ResponseBody
-	public String finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
+	@Transactional
+	public Map<Object,Object> finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
 		@RequestBody HashMap<Object, Object> map) {
 	System.out.println("\nGET /hackathon/finalize - Finalize hackathon - Request Params: " + map);
 	Long hackathonId = new Long((String) map.get("hackathonId"));
 	Hackathon hackathon = hackathonDao.findById(hackathonId);
 	Set<Submission> allSubmissions = hackathon.getSubmissions();
-	
+	Map<Object,Object> responseBody = new HashMap<>();
 	System.out.println("Hackathon name:" + hackathon.getName());
 	// TODO Check whether grades for all teams have been assigned. If all grades have not been assigned then cannot finalize hackathon
 	Set<Team> allTeams = hackathon.getTeams();
@@ -517,7 +527,7 @@ public class HackathonController {
 		if (currentTeam.getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean flag
 			System.out.println("No grade found for team: " + currentTeam.getId() + ". Cannot finalize hackathon!");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
-			return null;
+			return responseBody;
 			// TODO check this 400 response
 		} else {
 			for (Submission submission : allSubmissions) {
@@ -527,17 +537,22 @@ public class HackathonController {
 					winner = currentTeam;
 					hackathon.setWinner(currentTeam);
 					hackathon.setIsFinalized(true);
+					try {
+						hackathonDao.updateById(hackathon.getId(), hackathon);
+						responseBody.put("msg", "Finalized");
+						System.out.println("Winner Team: " + winner);
+						System.out.println(" - - - - - - - Returning : "+winner.getTeamName());
+						return responseBody;
+					}catch (Exception e) {
+						// TODO: handle exception
+						response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
+						responseBody.put("msg", e);
+						return responseBody;
+					}
 				}
 			}
 		}
 	}
-	
-	// If all grades have been assigned
-	System.out.println("Winner Team: " + winner);
-	System.out.println(" - - - - - - - Returning : "+winner.getTeamName());
-	return winner.getTeamName();
-//	return null;
-	}
-	
-	
+	return responseBody;
+	}	
 }

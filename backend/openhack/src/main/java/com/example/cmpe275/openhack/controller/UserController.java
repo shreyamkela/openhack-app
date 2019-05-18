@@ -211,6 +211,7 @@ public class UserController {
 
 	@GetMapping(value="/user/notHackathon/{hackathonId}/{userId}")
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> getUsersNotInHackathon(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="hackathonId") long hackathonId,
@@ -241,8 +242,10 @@ public class UserController {
 				responseBody.put("userDetails", userDetails);
 				return responseBody;
 			}
+	
 	@GetMapping("/getalluser")
 	@ResponseBody
+	@Transactional
 	public Map<Object,Object> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
 		Map<Object,Object> map = new HashMap<>();
@@ -307,6 +310,8 @@ public class UserController {
 		}
 		return listScreenNames;
 	}
+	
+	
 	public Map<Object, Object> formUserObject(User user)
 	{
 		Map<Object, Object> hmap = new HashMap<Object, Object>();
@@ -345,6 +350,7 @@ public class UserController {
 		}
 		hmap.put("organization",hmap_org);
 		
+		System.out.println("Will try to get judged hackathons");
 		Set<Hackathon> judged_hackathon = user.getJudgedHackathons();
 		List<Map<Object,Object>> hackathonDetails = new ArrayList<>();
 		if(judged_hackathon!=null)
@@ -364,6 +370,8 @@ public class UserController {
 		
 		return hmap;
 	}
+	
+	
 	public List<Map<Object, Object>> UsersObject(List<User> users)
 	{
 		List<Map<Object, Object>> outerlist = new ArrayList<Map<Object, Object>>();
