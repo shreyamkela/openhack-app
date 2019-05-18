@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import '../../App.css'
 import { Menu, Icon } from 'antd';
-import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input, Card, Pagination } from 'antd';
+import { Row, Col, Badge, Button, Skeleton, Form, Input, Card, Pagination } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 import NavBar from '../Navbar/Navbar';
@@ -22,7 +22,8 @@ class organizationAll extends Component {
             organizationOwnSize : 0, 
             organizationAllPage : 1,
             organizationOwnPage : 1,
-            user_id : localStorage.getItem("userId")
+            user_id : localStorage.getItem("userId"),
+            info_received : false
         }
     }
 
@@ -39,7 +40,8 @@ class organizationAll extends Component {
                             console.log("\n"+JSON.stringify(response.data.own_organizations));
                             this.setState({
                                 organizationAllData : response.data.other_organizations,
-                                organizationOwnData : response.data.own_organizations
+                                organizationOwnData : response.data.own_organizations,
+                                info_received : true
                             }, () => {
                                 this.setState({
                                     organizationAllSize:Math.ceil(this.state.organizationAllData.length),
@@ -88,50 +90,65 @@ class organizationAll extends Component {
         if(!localStorage.getItem("userId")){
             redirect = <Redirect to="/login"/>
         }
-        var organizationAllCards = this.state.viewOrganizationAll && this.state.viewOrganizationAll.map(card => {
-            return(
-                <div class="px-3 py-5">
-                <Col span={6}>
-                    <a href="#">
-                        <Card
-                            cover={<img alt="example" src="https://www.humanresourcesmba.net/wp-content/uploads/2014/10/morgan-mccall-e1412343960471.jpg?x58695" />}
-                            title={card && card.name}
-                            bordered={true}
-                            style={{ width: 350 }}>
-                            <center>{card && card.description}</center>
-                            <hr></hr>
-                            <center class="py-2">
-                                <Button type="primary" onClick = {() => {this.viewOrganizationDetails(card.id)}}>View</Button>
-                            </center>
-                        </Card>
-                    </a>
-                </Col>
-            </div>
-            )
-        })
+        var organizationAllCards = null
+        var organizationOwnCards = null
 
-        var organizationOwnCards = this.state.viewOrganizationOwn && this.state.viewOrganizationOwn.map(card => {
-            return(
-                <div class="px-3 py-5">
-                {redirect}
-                <Col span={6}>
-                    <a href="#">
-                        <Card
-                            cover={<img alt="example" src="https://www.humanresourcesmba.net/wp-content/uploads/2014/10/morgan-mccall-e1412343960471.jpg?x58695" />}
-                            title={card && card.name}
-                            bordered={true}
-                            style={{ width: 350 }}>
-                            <center>{card && card.description}</center>
-                            <hr></hr>
-                            <center class="py-2">
-                                <Button type="primary" onClick = {() => {this.viewOrganizationDetails(card.id)}}>View</Button>
-                            </center>
-                        </Card>
-                    </a>
-                </Col>
-            </div>
+        if(this.state.info_received)
+        {
+            organizationAllCards = this.state.viewOrganizationAll && this.state.viewOrganizationAll.map(card => {
+                return(
+                    <div class="px-3 py-5">
+                    <Col span={6}>
+                        <a href="#">
+                            <Card
+                                cover={<img alt="example" src="https://www.humanresourcesmba.net/wp-content/uploads/2014/10/morgan-mccall-e1412343960471.jpg?x58695" />}
+                                title={card && card.name}
+                                bordered={true}
+                                style={{ width: 350 }}>
+                                <center>{card && card.description}</center>
+                                <hr></hr>
+                                <center class="py-2">
+                                    <Button type="primary" onClick = {() => {this.viewOrganizationDetails(card.id)}}>View</Button>
+                                </center>
+                            </Card>
+                        </a>
+                    </Col>
+                </div>
+                )
+            })
+    
+            var organizationOwnCards = this.state.viewOrganizationOwn && this.state.viewOrganizationOwn.map(card => {
+                return(
+                    <div class="px-3 py-5">
+                    {redirect}
+                    <Col span={6}>
+                        <a href="#">
+                            <Card
+                                cover={<img alt="example" src="https://www.humanresourcesmba.net/wp-content/uploads/2014/10/morgan-mccall-e1412343960471.jpg?x58695" />}
+                                title={card && card.name}
+                                bordered={true}
+                                style={{ width: 350 }}>
+                                <center>{card && card.description}</center>
+                                <hr></hr>
+                                <center class="py-2">
+                                    <Button type="primary" onClick = {() => {this.viewOrganizationDetails(card.id)}}>View</Button>
+                                </center>
+                            </Card>
+                        </a>
+                    </Col>
+                </div>
+                )
+            })
+        }
+        else
+        {
+            organizationAllCards = (
+                <Skeleton active />
             )
-        })
+            organizationOwnCards = (
+                <Skeleton active />
+            )
+        }
 
 
         return(

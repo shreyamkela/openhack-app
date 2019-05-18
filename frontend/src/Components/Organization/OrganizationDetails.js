@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Tag } from 'antd';
+import { Layout, Skeleton, Icon, Row, Col, Button, Tag } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import {Redirect} from 'react-router'
@@ -24,7 +24,8 @@ class OrganizationDetails extends Component {
             org_id : this.props.match.params.org_id,
             user_status : "",
             member_of_org : false,
-            owner_of_org : false
+            owner_of_org : false,
+            info_received : false
         }
     }
 
@@ -42,7 +43,7 @@ class OrganizationDetails extends Component {
                             console.log("\n"+JSON.stringify(response.data));
                             this.setState({
                                 organizationData : response.data, 
-                                
+                                info_received : true
                             })
                         }
                         else{
@@ -106,6 +107,13 @@ class OrganizationDetails extends Component {
     }
 
     render(){
+        let skl = null
+        if(!this.state.info_received)
+        {
+            skl = (
+            <Skeleton active />
+            )
+        }
         console.log("\nThe set user id is : "+this.state.user_id)
         let membersDisplay = null;
         let sponsoredHackthonsDisplay = null;
@@ -179,6 +187,12 @@ class OrganizationDetails extends Component {
                     )
                 })  
             }
+            else if(!this.state.info_received)
+            {
+                membersDisplay = (
+                    <Skeleton active />
+                )
+            }
             else
             {
                 membersDisplay = (
@@ -211,6 +225,12 @@ class OrganizationDetails extends Component {
                         </div>
                     )
                 })
+            }
+            else if(!this.state.info_received)
+            {
+                sponsoredHackthonsDisplay = (
+                    <Skeleton active />
+                )
             }
             else
             {
@@ -338,6 +358,7 @@ class OrganizationDetails extends Component {
                 <NavBar></NavBar>
                 <div style={{ backgroundImage: "url(" + this.state.cover_image + ")", height: "300px", position: "relative" }}>
                 </div>
+                {skl}
                 {orgDataDisplay}
             </div>
         )

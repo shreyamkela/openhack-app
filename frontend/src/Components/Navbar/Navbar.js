@@ -4,6 +4,7 @@ import { Menu, Icon, Divider } from 'antd';
 import { Row, Col, AutoComplete, Badge, Button, Modal, Form, Input } from 'antd';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
+import Swal from 'sweetalert2'
 import firebase_con from '../../Config/firebase';
 var swal = require('sweetalert');
 const username = localStorage.getItem("userName");
@@ -72,8 +73,9 @@ class NavBar extends Component {
                 modalVisible: false,
                 confirmLoading: false,
             });
-        }, 1000);
+        }, 700);
         console.log("\nOkay button of the modal pressed")
+        window.location.reload();
     }
 
     handleCancel = () => {
@@ -85,6 +87,13 @@ class NavBar extends Component {
 
     createOrganization = (e) => {
         e.preventDefault();
+        Swal.fire({
+            title: 'Creation in Progress',
+            text: 'Please Wait...',
+            showCancelButton: false,
+            showConfirmButton: false,
+            type:'info'
+          })
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
@@ -97,15 +106,18 @@ class NavBar extends Component {
                         console.log("Status Code : ", response.status);
 
                         if (response.status === 200) {
+                            Swal.close();
                             swal("Organization created successfully", "", "success");
                             console.log(JSON.stringify(response.data));
                         }
                         else {
+                            Swal.close();
                             swal("There was some error creating the organization", "", "error");
                         }
                     })
                     .catch(err => {
                         console.log(err)
+                        Swal.close();
                         swal("bad request for creating the organization", "", "error");
                     });
             }
