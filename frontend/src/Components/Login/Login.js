@@ -14,6 +14,8 @@ import Navbar from '../Navbar/Navbar';
 import firebase_con from '../../Config/firebase';
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2'
+
 var swal = require('sweetalert');
 
 // firebase.initializeApp({
@@ -52,7 +54,8 @@ class Login extends Component {
     console.log("user Verified");
     //values.verified = "Y";
     axios.defaults.withCredentials = true;
-    const response = await axios.get(`http://localhost:8080/getuser/${email}`)
+    let response = await axios.get(`http://localhost:8080/getuser/${email}`)
+
     // .then(response => {
     if (response.status === 200) {
       localStorage.setItem("userId", response.data.id);
@@ -77,21 +80,26 @@ class Login extends Component {
       }
 
     }
-    return await response.json;
+    return await response;
     // });
   }
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-
-        firebase_con.auth().signInWithEmailAndPassword(values.email, values.password).then((user) => {
+        Swal.fire({
+          title: 'Logging In...',
+          showConfirmButton: false
+        })
+        firebase_con.auth().signInWithEmailAndPassword(values.email, values.password).then(async (user) => {
           if (!user) {
+            Swal.close(); // Close the Swal when reponse has been fetched
             swal("Account not Registered! Please Register", "", "error");
           }
           else if (user.user.emailVerified) {
-            this.verifyUser(values.email);
+            await this.verifyUser(values.email);
             console.log("this.state.verified" + localStorage.getItem("verified"));
+            Swal.close(); // Close the Swal when reponse has been fetched
             if (localStorage.getItem("verified")) {
               console.log("Not verified first verification");
             }
@@ -101,10 +109,12 @@ class Login extends Component {
             }
           }
           else {
+            Swal.close(); // Close the Swal when reponse has been fetched
             swal("Please verify your Email before Logging In", "", "error");
           }
         }).catch((error) => {
           console.log("Login Error " + error.message);
+          Swal.close(); // Close the Swal when reponse has been fetched
           if (error.message === "There is no user record corresponding to this identifier. The user may have been deleted.") {
             swal("Account not Registered! Please Register", "", "error");
           }

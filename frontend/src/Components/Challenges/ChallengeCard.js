@@ -51,7 +51,7 @@ class ChallengeCard extends Component {
                     <b>Min-Max Team:</b> {this.props.card && this.props.card.teamSizeMin} - {this.props.card && this.props.card.teamSizeMax}<br />
                     <b>SponsorDiscount:</b> {this.props.card && this.props.card.discount}%<br />
                     <center class="py-2">
-                        <Button type="primary">Open</Button>
+                        <Button type="primary">View</Button>
                     </center>
                 </Card>
             </Link>
@@ -71,7 +71,7 @@ class ChallengeCard extends Component {
                     <b>Min-Max Team:</b> {this.props.card && this.props.card.teamSizeMin} - {this.props.card && this.props.card.teamSizeMax}<br />
                     <b>SponsorDiscount:</b> {this.props.card && this.props.card.discount}%<br />
                     <center class="py-2">
-                        <Button type="primary">Open</Button>
+                        <Button type="primary">View</Button>
                     </center>
                 </Card>
             </Link>
