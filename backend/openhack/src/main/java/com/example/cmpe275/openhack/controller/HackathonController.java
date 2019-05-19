@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.cmpe275.openhack.controller.helpers.HackathonResultsTeam;
 import com.example.cmpe275.openhack.dao.HackathonDao;
 import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
 import com.example.cmpe275.openhack.dao.OrganizationDao;
@@ -482,7 +483,7 @@ public class HackathonController {
 	@Transactional
 	public Map<Object, Object> finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) {
-		System.out.println("\nGET /hackathon/finalize - Finalize hackathon - Request Params: " + map);
+		System.out.println("\nPOST /hackathon/finalize - Finalize hackathon - Request Body: " + map);
 		Long hackathonId = new Long((String) map.get("hackathonId"));
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
 		Set<Submission> allSubmissions = hackathon.getSubmissions();
@@ -520,6 +521,51 @@ public class HackathonController {
 			responseBody.put("winner", winner.getTeamName());
 			System.out.println("Winner Team: " + winner);
 			System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
+			return responseBody;
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 500
+			responseBody.put("msg", e);
+			return responseBody;
+		}
+	}
+	
+	@RequestMapping(value = "/results", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
+	"application/JSON" })
+	@ResponseBody
+	@Transactional
+	public Map<Object, Object> hackathonResults(HttpServletRequest request, HttpServletResponse response,
+		@RequestBody HashMap<Object, Object> map) {
+		System.out.println("\nPOST /hackathon/results - Hackathon Results - Request Body: " + map);
+		Long hackathonId = new Long((String) map.get("hackathonId"));
+		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		Set<Submission> allSubmissions = hackathon.getSubmissions();
+		Map<Object, Object> responseBody = new HashMap<>();
+		System.out.println("Hackathon name:" + hackathon.getName());
+		// TODO Return the TeamName, Members, and Grade (if assigned), of all the teams that have participated in the hackathon. The sorting according to the grades is to be done at the frontend
+		Set<Team> allTeams = hackathon.getTeams();
+		ArrayList<HackathonResultsTeam> resultsData = new ArrayList<>(); // HackathonResultsTeam is the class containing the TeamName, Members, and Grade for a particular team
+		
+		for (Team currentTeam : allTeams) {
+			if (currentTeam.getGraded() == true) { // If a grade is assigned then only consider this team to be included into resultsData
+				HackathonResultsTeam newHackathonResultsTeam = new HackathonResultsTeam();
+				newHackathonResultsTeam.setTeamName(currentTeam.getTeamName());
+				ArrayList<String> teamMembers = new ArrayList<>();
+				for(User currentUser : currentTeam.getMembers()) { // All team member names for this team
+					teamMembers.add(currentUser.getName());
+				}
+				newHackathonResultsTeam.setTeamMembers(teamMembers);
+				for (Submission submission : allSubmissions) {
+					if (currentTeam == submission.getTeam()) {
+						// TODO grade for this team
+						newHackathonResultsTeam.setGrade(submission.getGrade());
+					}
+				}	
+				resultsData.add(newHackathonResultsTeam);
+			}
+		}
+		
+		try {
+			responseBody.put("hackathonResults", resultsData);
 			return responseBody;
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 500

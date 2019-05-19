@@ -340,6 +340,15 @@ class HackathonDetails extends Component {
     }
 
 
+
+
+
+    routeToResults = () => {
+        this.props.history.push(`/hackathon_details/${this.state.hackathonId}/results`);
+    }
+
+
+
     render() {
         var content = null
         var buttons = null
@@ -464,90 +473,12 @@ class HackathonDetails extends Component {
                 )
             })
         }
-        if (this.state.message === "registered") {
-            buttons = <div>
-                <Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal}>View Team</Button><br />
-                <Modal
-                    title="Your Team"
-                    visible={this.state.visibleTeamModal}
-                    onCancel={this.handleCancel}
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
-                    ]}
-                >
-                    <p>{teamModalContent}</p>
-                </Modal>
-                <Button type="primary" size="large" style={{ marginTop: "10px" }} onClick={this.showSubmissionModal} disabled={submissionButtonFlag}>Submit/Edit Work</Button>
-                <Modal
-                    title="Submission"
-                    visible={this.state.visibleSubmissionModal}
-                    onCancel={this.handleCancel}
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
-                    ]}
-                >
-                    <Form>
-                        <Form.Item
-                            label="Submission URL"
-                        >
-                            {getFieldDecorator('submissionUrl', {
-                                rules: [{ required: true, message: "URL cannot be empty" }],
-                            })(
-                                <input type="text" disabled={submissionButtonFlag} value={this.state.submissionUrl} onChange={this.handleSubmission} placeholder={this.state.submissionUrl} />
-                            )}
-                        </Form.Item>
-                        <Form.Item>
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                disabled={submissionButtonFlag}
-                                onClick={this.submitWork}
-                            >
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Modal>
-            </div>
-        } else if (this.state.message === "payment pending") {
-            buttons = <div>
-                <Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal}>View Team</Button><br />
-                <Modal
-                    title="Your Team"
-                    visible={this.state.visibleTeamModal}
-                    onCancel={this.handleCancel}
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>Back</Button>,
-                    ]}
-                    style={{ height: "300px" }}
-                >
-                    <div style={{ "height": "50px" }}>
-                        <Row type="flex">
-                            {teamModalContent}
-                        </Row>
-                    </div>
-                </Modal>
-                <p class="text-warning large">Team Payment Due</p>
-            </div>
-        } else if (this.state.message === "judge") {
-            buttons = <div>
-                <Link to="/hackathon/grade">
-                    <Button type="primary" size="large" style={{ marginTop: "25%" }} disabled={gradeButtonFlag}>Grade Submission</Button>
-                </Link>
-            </div>
-        }
-        else if (this.state.message === "admin") {
 
-            buttons = <div>
-                <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonOpen}>Open</Button><Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonClose}>Close</Button>
-                <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonFinalize}>Finalize</Button><br />
-            </div>
-        }
-        else {
-            buttons = <div>
-                <Link to={`/hackathon/register/${this.props.match.params.id}`}><Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal} disabled={registerButtonFlag}>Register</Button><br /></Link>
-            </div>
-        }
+        buttons = <div>
+            <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonOpen}>Open</Button><Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonClose}>Close</Button>
+            <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonFinalize}>Finalize</Button><br />
+        </div>
+
 
         console.log("Printing this.state.message : ", this.state.message)
 
@@ -558,6 +489,20 @@ class HackathonDetails extends Component {
         //         <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonFinalize}>Finalize</Button><br />
         //     </div>
         // }
+
+
+        let resultsButton = null
+        let resultsModal = null
+        var enddateconv = new Date(this.state.endDate)
+        var end_sec = enddateconv.getTime()
+        let currentDate = Date.now()
+        if (currentDate > end_sec) {
+            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
+        } else {
+            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
+        }
+
+
 
         return (
             <div>
@@ -573,8 +518,11 @@ class HackathonDetails extends Component {
                             {detailsContent}
                             <Col span={6}>
                                 {buttons}
+                                {resultsButton}
                             </Col>
+
                         </Row>
+
 
                     </div>
                 </div>
