@@ -92,8 +92,8 @@ class NavBar extends Component {
             text: 'Please Wait...',
             showCancelButton: false,
             showConfirmButton: false,
-            type:'info'
-          })
+            type: 'info'
+        })
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
@@ -128,6 +128,7 @@ class NavBar extends Component {
         localStorage.removeItem("userId");
         localStorage.removeItem("userName");
         localStorage.removeItem("userType");
+        localStorage.removeItem("firebaseui::rememberedAccounts");
         window.location.reload();
         //this.props.history.push('/login');
     }
@@ -177,7 +178,7 @@ class NavBar extends Component {
                 <Menu.Item>
                     <Link to="/home">
                         OpenHack
-                        
+
                 </Link>
                 </Menu.Item>
                 <Menu.Item key="Challenges">
@@ -299,8 +300,8 @@ class NavBar extends Component {
                 mode="horizontal"
             >
                 <Menu.Item>
-                    <p style = {{fontSize : "20px", margin : "0px"}}> <b>OpenHack</b></p>
-            </Menu.Item>
+                    <p style={{ fontSize: "20px", margin: "0px" }}> <b>OpenHack</b></p>
+                </Menu.Item>
             </Menu>
             rightMenuItems = <div>
                 <br></br>
@@ -308,7 +309,7 @@ class NavBar extends Component {
                     <Col span={24}>
 
                         <Link to="/login">
-                            <Icon type="user" /> <span style = {{fontSize : "15px"}}> <b>Login</b></span>
+                            <Icon type="user" /> <span style={{ fontSize: "15px" }}> <b>Login</b></span>
                         </Link>
 
                     </Col>

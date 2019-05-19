@@ -38,9 +38,9 @@ class Login extends Component {
   uiConfig = {
     signInFlow: "popup",
     signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID
       // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      firebase.auth.EmailAuthProvider.PROVIDER_ID
+      //firebase.auth.EmailAuthProvider.PROVIDER_ID
     ],
     callbacks: {
       signInSuccess: () => false
@@ -48,6 +48,63 @@ class Login extends Component {
     //Start it here 
     credentialHelper: firebaseui.auth.CredentialHelper.NONE
     //End it here 
+  }
+  componentDidMount = () => {
+    var values = {}
+    firebase.auth().onAuthStateChanged(user => {
+      this.setState({ isSignedIn: !!user })
+      //console.log("user", user)
+      //console.log("user.email ", user.email)
+      if(user!=null){
+      axios.defaults.withCredentials = true;
+      axios.get(`http://localhost:8080/getuser/${user.email}`)
+        .then(response => {
+          if (response.status == 200 && response.data.email !== user.email) {
+            values.name = user.displayName.substr(0, user.displayName.indexOf(" "))
+            values.lastname = user.displayName.substr(user.displayName.indexOf(" "))
+            values.imgurl = user.photoURL
+            values.screenName = user.displayName
+            values.email = user.email
+            if (user.email.includes("@sjsu.edu")) {
+              values.usertype = "admin";
+            }
+            else {
+              values.usertype = "user";
+            }
+            if (user.emailVerified) {
+              values.verified = "Y"
+            }
+            else {
+              values.verified = "N"
+            };
+            console.log("Send Axios ");
+            axios.defaults.withCredentials = true;
+            axios.post('http://localhost:8080/adduser', values)
+              .then(response => {
+                console.log("Status Code : ", response.status);
+                console.log("Here", JSON.stringify(response));
+                if (response.status === 200) {
+                  localStorage.setItem("userId", response.data.id);
+                  localStorage.setItem("userName", response.data.screenName);
+                  localStorage.setItem("userType", response.data.usertype);
+                  this.props.history.push("/home");
+                }
+                // else {
+                //     swal("Kindly Register again with correct data", "", "error");
+                // }
+              });
+          }
+          else {
+            localStorage.setItem("userId", response.data.id);
+            localStorage.setItem("userName", response.data.screenName);
+            localStorage.setItem("userType", response.data.usertype);
+            this.props.history.push("/home");
+          }
+        })
+      }
+    });
+
+
   }
 
   async verifyUser(email) {
@@ -59,7 +116,7 @@ class Login extends Component {
     // .then(response => {
     if (response.status === 200) {
       localStorage.setItem("userId", response.data.id);
-      localStorage.setItem("userName", response.data.name);
+      localStorage.setItem("userName", response.data.screenName);
       localStorage.setItem("userType", response.data.usertype);
 
       if (response.data.verified === "N") {
@@ -185,13 +242,13 @@ class Login extends Component {
             )}
           </Form.Item>
           <Form.Item>
-            {getFieldDecorator('remember', {
+            {/* {getFieldDecorator('remember', {
               valuePropName: 'checked',
               initialValue: true,
             })(
               <Checkbox>Remember me</Checkbox>
             )}
-            <a className="login-form-forgot" href="">Forgot password</a>
+            <a className="login-form-forgot" href="">Forgot password</a> */}
             <Button type="primary" htmlType="submit" className="login-form-button">
               Log in
             </Button>
