@@ -16,6 +16,7 @@ import OrganizationsAll from './Organization/OrganizationAll';
 import OrganizationDetails from './Organization/OrganizationDetails'
 import HackathonPayment from './Hackathon/HackathonPayment';
 import ViewSubmissions from './Submission/ViewSubmissions';
+import LandingPage from './Navbar/LandingPage';
 //import HackathonPayment from './Hackathon/HackathonPayment';
 //import ViewSubmissions from './Submission/ViewSubmissions';
 
@@ -25,7 +26,8 @@ class Main extends Component {
     render() {
         return (
             <div>
-                <Route exact path="/" component={Navbar}></Route>
+                {/* <Route exact path="/" component={Navbar}></Route> */}
+                <Route exact path="/" component={LandingPage}></Route>
                 <Route exact path="/home" component={Home}></Route>
                 <Route exact path="/signup" component={Signup}></Route>
                 <Route exact path="/login" component={Login}></Route>

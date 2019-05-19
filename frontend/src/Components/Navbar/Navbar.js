@@ -175,6 +175,7 @@ class NavBar extends Component {
                 <Menu.Item>
                     <Link to="/home">
                         OpenHack
+                        
                 </Link>
                 </Menu.Item>
                 <Menu.Item key="Challenges">
@@ -296,7 +297,7 @@ class NavBar extends Component {
                 mode="horizontal"
             >
                 <Menu.Item>
-                    OpenHack
+                    <p style = {{fontSize : "20px", margin : "0px"}}> <b>OpenHack</b></p>
             </Menu.Item>
             </Menu>
             rightMenuItems = <div>
@@ -305,7 +306,7 @@ class NavBar extends Component {
                     <Col span={24}>
 
                         <Link to="/login">
-                            <Icon type="user" /> Login
+                            <Icon type="user" /> <span style = {{fontSize : "15px"}}> <b>Login</b></span>
                         </Link>
 
                     </Col>
