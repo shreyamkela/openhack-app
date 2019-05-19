@@ -522,7 +522,7 @@ public class HackathonController {
 			System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
 			return responseBody;
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 400
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 500
 			responseBody.put("msg", e);
 			return responseBody;
 		}
