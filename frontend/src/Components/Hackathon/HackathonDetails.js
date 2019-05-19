@@ -7,6 +7,7 @@ import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
 import {Redirect} from 'react-router'
+import Swal from 'sweetalert2';
 const { Content, Sider } = Layout;
 
 
@@ -143,6 +144,13 @@ class HackathonDetails extends Component {
     }
 
     submitWork = (e) => {
+        Swal.fire({
+            title: 'Submission in progress',
+            text: 'Please Wait...',
+            showCancelButton: false,
+            showConfirmButton: false,
+            type:'info'
+          })
         console.log(this.state.submissionUrl)
         let body = {
             "hackathonId":this.props.match.params.id,
@@ -153,6 +161,7 @@ class HackathonDetails extends Component {
         axios.post("http://localhost:8080/addSubmission",body)
             .then(response => {
                 if(response.status===200){
+                    Swal.close()
                     swal("Submitted work","success")
                     window.location.reload();      
                 }

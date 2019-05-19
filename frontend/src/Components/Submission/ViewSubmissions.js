@@ -7,6 +7,7 @@ import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
 import {Redirect} from 'react-router'
+import Swal from 'sweetalert2';
 const { Content, Sider } = Layout;
 
 // 4 states:
@@ -45,6 +46,13 @@ class ViewSubmission extends Component {
     }
 
     gradeSubmit = (e,sub_id) => {
+        Swal.fire({
+            title: 'Grading in progress',
+            text: 'Please Wait...',
+            showCancelButton: false,
+            showConfirmButton: false,
+            type:'info'
+          })
         console.log("Grade submission button pressed")
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -59,6 +67,7 @@ class ViewSubmission extends Component {
             axios.post(`http://localhost:8080/gradeSubmission/${submission_id}`,body)
                 .then(response => {
                     if(response.status === 200){
+                        Swal.close()
                         swal("Successfully graded!","success")
                         .then(() => {
                             window.location.reload()

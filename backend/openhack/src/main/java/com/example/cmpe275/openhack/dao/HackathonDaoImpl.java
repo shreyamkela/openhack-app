@@ -108,13 +108,13 @@ public class HackathonDaoImpl implements HackathonDao{
 //		EntityManager em = emfactory.em;
 		try
 		{
-			em.getTransaction().begin();
+//			em.getTransaction().begin();
 			return (List<Hackathon>) em.createQuery("select h from Hackathon h",
 				    Hackathon.class).getResultList();
 		}
 		catch(RuntimeException e)
 		{
-			em.getTransaction().rollback();
+//			em.getTransaction().rollback();
 			throw e;
 		}
 		finally

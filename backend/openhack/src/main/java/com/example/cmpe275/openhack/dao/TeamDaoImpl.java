@@ -73,15 +73,15 @@ public class TeamDaoImpl implements TeamDao{
 		// TODO Auto-generated method stub
 //		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityManager em = emfactory.em;
-		EntityTransaction tx = em.getTransaction();
+//		EntityTransaction tx = em.getTransaction();
 		try {
-			tx.begin();
+//			tx.begin();
 			Team team = em.find(Team.class, id);
-			tx.commit();
+//			tx.commit();
 			return team;
 		}catch (Exception e) {
 			// TODO: handle exception
-			tx.rollback();
+//			tx.rollback();
 			throw e;
 		}finally {
 //			em.close();

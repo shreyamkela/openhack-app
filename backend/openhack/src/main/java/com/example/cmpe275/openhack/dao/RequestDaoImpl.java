@@ -58,17 +58,17 @@ public class RequestDaoImpl
 	{
 //		EntityManager em = emfactory.emfactory.createEntityManager();
 		EntityManager em = emfactory.em;
-		EntityTransaction tx = em.getTransaction();
+//		EntityTransaction tx = em.getTransaction();
 		try
 		{
-			tx.begin();
+//			tx.begin();
 			Request req = em.find(Request.class, requestId);
-			tx.commit();
+//			tx.commit();
 			return req;
 		}
 		catch(RuntimeException e)
 		{
-			tx.rollback();
+//			tx.rollback();
 			throw e;
 		}
 		finally
