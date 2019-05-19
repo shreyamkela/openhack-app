@@ -55,9 +55,21 @@ class HackathonRegister extends Component {
                     min: response.data.teamSizeMin,
                     max: response.data.teamSizeMax
                 }, () => {
-                    if (this.state.min === 1) {
+                    //
+                    if (this.state.max === 1) {
                         this.setState({
+                            membersErr: "Maximum Size reached! Please dont add now!",
                             membersErrFlag: false
+                        })
+                    } else if (1 === this.state.min) {
+                        this.setState({
+                            membersErr: "Minimum members done",
+                            membersErrFlag: false
+                        })
+                    } else {
+                        this.setState({
+                            membersErr: "More members needed",
+                            membersErrFlag: true
                         })
                     }
 
@@ -119,8 +131,15 @@ class HackathonRegister extends Component {
             this.setState({
                 users: users,
                 members: members,
-                membersErr: "Maximum members selected, Dont add now!",
+                membersErr: "Maximum Size reached! Please dont add now!",
                 membersErrFlag: false
+            })
+        } else if (members.length + 1 > this.state.max) {
+            this.setState({
+                users: users,
+                members: members,
+                membersErr: "Members exceeded",
+                membersErrFlag: true
             })
         }
     }
