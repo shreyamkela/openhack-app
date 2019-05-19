@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,9 @@ import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 //@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600,allowedHeaders=
 //{"Origin", "Content-Type", "Accept"})
@@ -58,9 +62,11 @@ public class UserController {
 	@GetMapping("/getuser/{email}")
 	@ResponseBody
 	@Transactional
-	public  Map<Object, Object> getUser(@PathVariable("email") String email){
+	public  Map<Object, Object>  getUser(@PathVariable("email") String email){
 		System.out.println("\ngetUSer method called for the User");	
 		User user = new User();
+//		Map<String, String> hmap = new HashMap<>();
+//		MappingJacksonValue mapping = null;
 		try
 		{
 			user = userdao.findUserbyEmail(email);
@@ -68,6 +74,9 @@ public class UserController {
 			{
 				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
 				return formUserObject(user);
+//				mapping = new MappingJacksonValue(user);
+//				hmap.put("msg", "No such user exists!");
+//				return hmap;
 			}
 		}
 		catch(Exception e)
@@ -75,10 +84,20 @@ public class UserController {
 			if(e.getMessage()!=null)
 			{
 				System.out.println("Error :"+e.getMessage());
-				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+//				response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
 				return formUserObject(user);
+//				hmap.put("msg", e.getMessage());
+//				return hmap;
+				//return mapping;
 			}
 		}
+//		FilterProvider filters = new SimpleFilterProvider()
+//	            .addFilter("userFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name", "id", "email", "password", "screenName", "address", "aboutMe", "title", "verified", "usertype", "lastname", "organization", "judgedHackathons"))
+//	            .addFilter("organizationFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id", "name"))
+//				.addFilter("hackathonFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id", "name", "startDate", "endDate"));
+//		mapping = new MappingJacksonValue(user);
+//	    mapping.setFilters(filters);
+//	    return mapping;
 		return formUserObject(user);
 	}
 	

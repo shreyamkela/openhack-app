@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import {Redirect} from 'react-router'
+import Swal from 'sweetalert2'
 var swal = require('sweetalert');
 
 const { Option } = Select;
@@ -121,10 +122,18 @@ class Profile extends Component {
             swal("You are already a part of this Organization", "", "error");
         }
         else {
+            Swal.fire({
+                title: 'Request being sent',
+                text: 'Please Wait...',
+                showCancelButton: false,
+                showConfirmButton: false,
+                type:'info'
+              })
             axios.defaults.withCredentials = true;
             axios.put(`http://localhost:8080/hacker/requestJoinOrganization/${localStorage.getItem("userId")}/${org[0].id}`)
                 .then(response => {
                     if (response.status === 200) {
+                        Swal.close();
                         swal("Approval request sent to join the organization", "", "success");
                     }
                 })
