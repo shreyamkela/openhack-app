@@ -22,9 +22,11 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 
 import com.example.cmpe275.openhack.entity.*;
+import com.fasterxml.jackson.annotation.JsonFilter;
 
 @Entity
 @Table
+//@JsonFilter("hackathonFilter")
 public class Hackathon {
 
 	@Id

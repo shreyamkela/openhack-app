@@ -23,9 +23,11 @@ import org.hibernate.FetchMode;
 import org.hibernate.annotations.Fetch;
 
 import com.example.cmpe275.openhack.entity.User;
+import com.fasterxml.jackson.annotation.JsonFilter;
 
 @Entity
 @Table
+//@JsonFilter("organizationFilter")
 public class Organization {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
