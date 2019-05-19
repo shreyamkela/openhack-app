@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import '../../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input, message } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input, message, Skeleton } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
@@ -49,7 +49,9 @@ class HackathonDetails extends Component {
             gradeButtonFlag: false,
             registerButtonFlag: false,
             hackathonId: this.props.match.params.id,
-            winnerTeam: null
+            winnerTeam: null,
+            isLoaded: false,
+            isFinalized: false
         }
     }
 
@@ -86,7 +88,9 @@ class HackathonDetails extends Component {
                         judgeDetails: response.data.judgeDetails,
                         sponsorDetails: response.data.sponsorDetails,
                         submissionUrl: response.data.submissionUrl,
-                        winnerTeam: response.data.winnerTeam
+                        winnerTeam: response.data.winnerTeam,
+                        isLoaded: true,
+                        isFinalized: response.data.isFinalize
                     })
                 }
             })
@@ -286,6 +290,11 @@ class HackathonDetails extends Component {
         console.log("Finalize hackathon: ", this.state.hackathonId)
         console.log("Start date, end date: ", this.state.startDate, this.state.endDate)
 
+        if (this.state.isFinalized === true) {
+            message.warning("Hackathon already finalized!");
+            return
+        }
+
         if (this.state.startDate === undefined || this.state.endDate === undefined) {
             message.error("Unable to finalize hackathon at the moment. Please refresh the page and try again.")
         } else {
@@ -339,6 +348,24 @@ class HackathonDetails extends Component {
         var submissionButtonFlag = false
         var gradeButtonFlag = false
         var redirect = null
+        var winnerTeam = null
+        var loaded = null
+        var detailsContent = null
+        if (this.state.winnerTeam != null) {
+            winnerTeam = `${this.state.winnerTeam}`
+        }
+        if (!this.state.isLoaded) {
+            loaded = <Skeleton active />
+            detailsContent = null
+        } else {
+            loaded = null
+            detailsContent = <Col span={18}>
+                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
+                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
+                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
+                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : <b>{winnerTeam}</b></p>
+            </Col>
+        }
         if (!localStorage.getItem("userId")) {
             redirect = <Redirect to="/login" />
         }
@@ -532,12 +559,6 @@ class HackathonDetails extends Component {
         //     </div>
         // }
 
-        let winnerTeam = null;
-        if (this.state.winnerTeam !== "" && this.state.winnerTeam !== undefined) {
-            winnerTeam = <b>{this.state.winnerTeam}</b>
-        }
-
-
         return (
             <div>
                 {redirect}
@@ -548,14 +569,8 @@ class HackathonDetails extends Component {
                 <div style={{ backgroundColor: "#EAECEE", height: "200px" }}>
                     <div style={{ marginLeft: "10%" }}>
                         <Row type="flex">
-                            <Col span={18}>
-                                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
-                                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : {winnerTeam}</p>
-
-
-                            </Col>
+                            {loaded}
+                            {detailsContent}
                             <Col span={6}>
                                 {buttons}
                             </Col>

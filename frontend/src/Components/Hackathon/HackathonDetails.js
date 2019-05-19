@@ -60,7 +60,6 @@ class HackathonDetails extends Component {
         axios.defaults.withCredentials = true
         axios.post(`http://localhost:8080/hackathon/${hackathonId}`, body)
             .then(response => {
-                console.log("XXXXXXXXXXXXXXXXXXXXXX", response.data);
                 if (response.status === 200) {
                     this.setState({
                         cover_image: "https://static-fastly.hackerearth.com/static/fight_club/images/Cover_1.jpg",
