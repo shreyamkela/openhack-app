@@ -116,6 +116,7 @@ class NavBar extends Component {
         localStorage.removeItem("userId");
         localStorage.removeItem("userName");
         localStorage.removeItem("userType");
+        localStorage.removeItem("firebaseui::rememberedAccounts");
         //this.props.history.push('/login');
     }
 
