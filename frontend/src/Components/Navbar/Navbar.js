@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import axios from 'axios';
 import firebase_con from '../../Config/firebase';
 var swal = require('sweetalert');
-const username = localStorage.getItem("userName");
 
 class NavBar extends Component {
 
@@ -40,6 +39,7 @@ class NavBar extends Component {
     // }
 
     componentDidMount() {
+
         this.setState({
             owner_id: localStorage.getItem("userId")
         })
@@ -116,6 +116,7 @@ class NavBar extends Component {
         localStorage.removeItem("userId");
         localStorage.removeItem("userName");
         localStorage.removeItem("userType");
+        window.location.reload();
         //this.props.history.push('/login');
     }
 
@@ -150,6 +151,7 @@ class NavBar extends Component {
     // }
 
     render() {
+        const username = localStorage.getItem("userName");
         const { modalVisible, confirmLoading } = this.state;
         const { getFieldDecorator } = this.props.form;
         var leftMenuItems = null;
