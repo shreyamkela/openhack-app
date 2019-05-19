@@ -499,7 +499,6 @@ public class HackathonController {
 				System.out.println("No grade found for team: " + currentTeam.getId() + ". Cannot finalize hackathon!");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
 				return responseBody;
-				// TODO check this 400 response
 			} else {
 				for (Submission submission : allSubmissions) {
 					if (currentTeam == submission.getTeam() && highestGrade <= (float) submission.getGrade()) {
@@ -509,28 +508,23 @@ public class HackathonController {
 						winner = currentTeam;
 						hackathon.setWinner(currentTeam);
 						hackathon.setIsFinalized(true);
-						try {
-							hackathonDao.updateById(hackathon.getId(), hackathon);
-							responseBody.put("msg", "Finalized");
-							System.out.println("Winner Team: " + winner);
-							System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
-							return responseBody;
-						} catch (Exception e) {
-							// TODO: handle exception
-							response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
-							responseBody.put("msg", e);
-							return responseBody;
-						}
+						
 					}
 				}
 			}
-
-			// If all grades have been assigned
-			Hackathon updatedHackathon = hackathonDao.updateById(hackathonId, hackathon);
+		}
+		
+		try {
+			hackathonDao.updateById(hackathonId, hackathon);
+			responseBody.put("msg", "Finalized");
+			responseBody.put("winner", winner.getTeamName());
 			System.out.println("Winner Team: " + winner);
 			System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
-			return winner.getTeamName();
+			return responseBody;
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 400
+			responseBody.put("msg", e);
+			return responseBody;
 		}
-		return responseBody;
 	}
 }

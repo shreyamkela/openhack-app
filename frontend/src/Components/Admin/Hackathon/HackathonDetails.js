@@ -211,6 +211,7 @@ class HackathonDetails extends Component {
                     setTimeout(2000)
                     window.location.reload();
                 } catch (error) {
+                    Swal.close(); // Close the Swal when reponse has been fetched
                     console.log(error.response);
                     message.error("Unable to open hackathon at the moment. Please refresh the page and try again.")
                 }
@@ -268,6 +269,7 @@ class HackathonDetails extends Component {
                 } catch (error) {
                     console.log(error.response);
                     console.log("Error status code: ", error.response.status);
+                    Swal.close(); // Close the Swal when reponse has been fetched
                     if (error.response.status === 400) {
                         message.warning("All team submissions not received yet! Please wait until the original end date.")
                     } else {
@@ -312,11 +314,12 @@ class HackathonDetails extends Component {
                     let response = await API.post(`hackathon/finalize`, params)
                     console.log("Response: ", response.data);
                     Swal.close();
-                    message.success("Hackathon finalized! The winner is Team: " + response.data + "!")
-                    this.setState({ winnerTeam: response.data })
+                    message.success("Hackathon finalized! The winner is Team: " + response.data.winner + "!")
+                    this.setState({ winnerTeam: response.data.winner })
                 } catch (error) {
                     console.log(error.response);
                     console.log("Error status code: ", error.response.status);
+                    Swal.close(); // Close the Swal when reponse has been fetched
                     if (error.response.status === 400) {
                         message.warning("All submission grades not received yet! Cannot finalize hackathon.")
                     } else {
