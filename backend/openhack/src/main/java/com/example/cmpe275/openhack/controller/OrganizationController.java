@@ -153,7 +153,7 @@ public class OrganizationController {
 			}
 		}
 		catch (Exception e) {
-			System.out.println("Exception while fetching the organizations \n"+e);
+			System.out.println("Exception while fetching the organization details for organization id "+orgId+"\n"+e);
 			response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
 			map.put("msg", "Some error occured in getting an organization");
 			return map;
