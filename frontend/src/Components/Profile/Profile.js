@@ -200,7 +200,7 @@ class Profile extends Component {
             <div className='signup-center'>
                 <Form {...formItemLayout} onSubmit={this.handleSubmit} className='signup-form'>
                     <Form.Item
-                        label="Title">
+                        label="Business Title">
                         {getFieldDecorator('title')(
                             <AutoComplete
                                 onChange={this.handleTitleChange}

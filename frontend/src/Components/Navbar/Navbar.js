@@ -7,7 +7,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2'
 import firebase_con from '../../Config/firebase';
 var swal = require('sweetalert');
-const username = localStorage.getItem("userName");
 
 class NavBar extends Component {
 
@@ -41,6 +40,7 @@ class NavBar extends Component {
     // }
 
     componentDidMount() {
+
         this.setState({
             owner_id: localStorage.getItem("userId")
         })
@@ -92,8 +92,8 @@ class NavBar extends Component {
             text: 'Please Wait...',
             showCancelButton: false,
             showConfirmButton: false,
-            type:'info'
-          })
+            type: 'info'
+        })
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
@@ -128,6 +128,8 @@ class NavBar extends Component {
         localStorage.removeItem("userId");
         localStorage.removeItem("userName");
         localStorage.removeItem("userType");
+        localStorage.removeItem("firebaseui::rememberedAccounts");
+        window.location.reload();
         //this.props.history.push('/login');
     }
 
@@ -162,6 +164,7 @@ class NavBar extends Component {
     // }
 
     render() {
+        const username = localStorage.getItem("userName");
         const { modalVisible, confirmLoading } = this.state;
         const { getFieldDecorator } = this.props.form;
         var leftMenuItems = null;
@@ -175,7 +178,7 @@ class NavBar extends Component {
                 <Menu.Item>
                     <Link to="/home">
                         OpenHack
-                        
+
                 </Link>
                 </Menu.Item>
                 <Menu.Item key="Challenges">
@@ -297,8 +300,8 @@ class NavBar extends Component {
                 mode="horizontal"
             >
                 <Menu.Item>
-                    <p style = {{fontSize : "20px", margin : "0px"}}> <b>OpenHack</b></p>
-            </Menu.Item>
+                    <p style={{ fontSize: "20px", margin: "0px" }}> <b>OpenHack</b></p>
+                </Menu.Item>
             </Menu>
             rightMenuItems = <div>
                 <br></br>
@@ -306,7 +309,7 @@ class NavBar extends Component {
                     <Col span={24}>
 
                         <Link to="/login">
-                            <Icon type="user" /> <span style = {{fontSize : "15px"}}> <b>Login</b></span>
+                            <Icon type="user" /> <span style={{ fontSize: "15px" }}> <b>Login</b></span>
                         </Link>
 
                     </Col>

@@ -14,6 +14,8 @@ import Navbar from '../Navbar/Navbar';
 import firebase_con from '../../Config/firebase';
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2'
+
 var swal = require('sweetalert');
 
 // firebase.initializeApp({
@@ -36,9 +38,9 @@ class Login extends Component {
   uiConfig = {
     signInFlow: "popup",
     signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID
       // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      firebase.auth.EmailAuthProvider.PROVIDER_ID
+      //firebase.auth.EmailAuthProvider.PROVIDER_ID
     ],
     callbacks: {
       signInSuccess: () => false
@@ -47,16 +49,74 @@ class Login extends Component {
     credentialHelper: firebaseui.auth.CredentialHelper.NONE
     //End it here 
   }
+  componentDidMount = () => {
+    var values = {}
+    firebase.auth().onAuthStateChanged(user => {
+      this.setState({ isSignedIn: !!user })
+      //console.log("user", user)
+      //console.log("user.email ", user.email)
+      if(user!=null){
+      axios.defaults.withCredentials = true;
+      axios.get(`http://localhost:8080/getuser/${user.email}`)
+        .then(response => {
+          if (response.status == 200 && response.data.email !== user.email) {
+            values.name = user.displayName.substr(0, user.displayName.indexOf(" "))
+            values.lastname = user.displayName.substr(user.displayName.indexOf(" "))
+            values.imgurl = user.photoURL
+            values.screenName = user.displayName
+            values.email = user.email
+            if (user.email.includes("@sjsu.edu")) {
+              values.usertype = "admin";
+            }
+            else {
+              values.usertype = "user";
+            }
+            if (user.emailVerified) {
+              values.verified = "Y"
+            }
+            else {
+              values.verified = "N"
+            };
+            console.log("Send Axios ");
+            axios.defaults.withCredentials = true;
+            axios.post('http://localhost:8080/adduser', values)
+              .then(response => {
+                console.log("Status Code : ", response.status);
+                console.log("Here", JSON.stringify(response));
+                if (response.status === 200) {
+                  localStorage.setItem("userId", response.data.id);
+                  localStorage.setItem("userName", response.data.screenName);
+                  localStorage.setItem("userType", response.data.usertype);
+                  this.props.history.push("/home");
+                }
+                // else {
+                //     swal("Kindly Register again with correct data", "", "error");
+                // }
+              });
+          }
+          else {
+            localStorage.setItem("userId", response.data.id);
+            localStorage.setItem("userName", response.data.screenName);
+            localStorage.setItem("userType", response.data.usertype);
+            this.props.history.push("/home");
+          }
+        })
+      }
+    });
+
+
+  }
 
   async verifyUser(email) {
     console.log("user Verified");
     //values.verified = "Y";
     axios.defaults.withCredentials = true;
-    const response = await axios.get(`http://localhost:8080/getuser/${email}`)
+    let response = await axios.get(`http://localhost:8080/getuser/${email}`)
+
     // .then(response => {
     if (response.status === 200) {
       localStorage.setItem("userId", response.data.id);
-      localStorage.setItem("userName", response.data.name);
+      localStorage.setItem("userName", response.data.screenName);
       localStorage.setItem("userType", response.data.usertype);
 
       if (response.data.verified === "N") {
@@ -77,21 +137,26 @@ class Login extends Component {
       }
 
     }
-    return await response.json;
+    return await response;
     // });
   }
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-
-        firebase_con.auth().signInWithEmailAndPassword(values.email, values.password).then((user) => {
+        Swal.fire({
+          title: 'Logging In...',
+          showConfirmButton: false
+        })
+        firebase_con.auth().signInWithEmailAndPassword(values.email, values.password).then(async (user) => {
           if (!user) {
+            Swal.close(); // Close the Swal when reponse has been fetched
             swal("Account not Registered! Please Register", "", "error");
           }
           else if (user.user.emailVerified) {
-            this.verifyUser(values.email);
+            await this.verifyUser(values.email);
             console.log("this.state.verified" + localStorage.getItem("verified"));
+            Swal.close(); // Close the Swal when reponse has been fetched
             if (localStorage.getItem("verified")) {
               console.log("Not verified first verification");
             }
@@ -101,10 +166,12 @@ class Login extends Component {
             }
           }
           else {
+            Swal.close(); // Close the Swal when reponse has been fetched
             swal("Please verify your Email before Logging In", "", "error");
           }
         }).catch((error) => {
           console.log("Login Error " + error.message);
+          Swal.close(); // Close the Swal when reponse has been fetched
           if (error.message === "There is no user record corresponding to this identifier. The user may have been deleted.") {
             swal("Account not Registered! Please Register", "", "error");
           }
@@ -175,13 +242,13 @@ class Login extends Component {
             )}
           </Form.Item>
           <Form.Item>
-            {getFieldDecorator('remember', {
+            {/* {getFieldDecorator('remember', {
               valuePropName: 'checked',
               initialValue: true,
             })(
               <Checkbox>Remember me</Checkbox>
             )}
-            <a className="login-form-forgot" href="">Forgot password</a>
+            <a className="login-form-forgot" href="">Forgot password</a> */}
             <Button type="primary" htmlType="submit" className="login-form-button">
               Log in
             </Button>

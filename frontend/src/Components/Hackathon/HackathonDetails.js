@@ -34,21 +34,21 @@ class HackathonDetails extends Component {
             teamDetails: [],
             judgeDetails: [],
             sponsorDetails: [],
-            userTeam:[],
-            userTeamId:null,
-            isFinalize:false,
-            winnerTeam:null,
+            userTeam: [],
+            userTeamId: null,
+            isFinalize: false,
+            winnerTeam: null,
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
-            sponsorsContentFlag:false,
+            sponsorsContentFlag: false,
             visibleTeamModal: false,
             visibleSubmissionModal: false,
             submissionUrl: null, // IDK right now
-            submissionButtonFlag:false,
-            gradeButtonFlag:false,
-            registerButtonFlag:false,
-            isLoaded:false
+            submissionButtonFlag: false,
+            gradeButtonFlag: false,
+            registerButtonFlag: false,
+            isLoaded: false
         }
     }
 
@@ -72,17 +72,17 @@ class HackathonDetails extends Component {
                         fee: response.data.fee,
                         teamSizeMin: response.data.teamSizeMin,
                         teamSizeMax: response.data.teamSizeMax,
-                        userTeam:response.data.userTeam,
-                        userTeamId:response.data.userTeamId,
+                        userTeam: response.data.userTeam,
+                        userTeamId: response.data.userTeamId,
                         discount: response.data.discount,
                         message: response.data.message,
                         teamDetails: response.data.teamDetails,
                         judgeDetails: response.data.judgeDetails,
                         sponsorDetails: response.data.sponsorDetails,
                         submissionUrl: response.data.submissionUrl,
-                        isFinalize:response.data.isFinalize,
-                        winnerTeam:response.data.winnerTeam,
-                        isLoaded:true
+                        isFinalize: response.data.isFinalize,
+                        winnerTeam: response.data.winnerTeam,
+                        isLoaded: true
                     })
                 }
             })
@@ -96,31 +96,31 @@ class HackathonDetails extends Component {
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
-            sponsorsContentFlag:false
+            sponsorsContentFlag: false
         })
     }
     loadJudgesContent = (e) => {
         this.setState({
             aboutContentFlag: false,
             teamsContentFlag: false,
-            sponsorsContentFlag:false,
+            sponsorsContentFlag: false,
             judgesContentFlag: true
         })
     }
     loadTeamsContent = (e) => {
-            this.setState({
-                aboutContentFlag: false,
-                teamsContentFlag: true,
-                sponsorsContentFlag:false,
-                judgesContentFlag: false
-            })
+        this.setState({
+            aboutContentFlag: false,
+            teamsContentFlag: true,
+            sponsorsContentFlag: false,
+            judgesContentFlag: false
+        })
     }
 
     loadSponsorsContent = (e) => {
         this.setState({
             aboutContentFlag: false,
             teamsContentFlag: false,
-            sponsorsContentFlag:true,
+            sponsorsContentFlag: true,
             judgesContentFlag: false
         })
     }
@@ -153,12 +153,12 @@ class HackathonDetails extends Component {
           })
         console.log(this.state.submissionUrl)
         let body = {
-            "hackathonId":this.props.match.params.id,
-            "teamId":this.state.userTeamId,
-            "url":this.state.submissionUrl
+            "hackathonId": this.props.match.params.id,
+            "teamId": this.state.userTeamId,
+            "url": this.state.submissionUrl
         }
 
-        axios.post("http://localhost:8080/addSubmission",body)
+        axios.post("http://localhost:8080/addSubmission", body)
             .then(response => {
                 if(response.status===200){
                     Swal.close()
@@ -183,40 +183,41 @@ class HackathonDetails extends Component {
         var winnerTeam = null
         var loaded = null
         var detailsContent = null
-        if(!this.state.isLoaded){
-            loaded = <Skeleton active/>
+        if (this.state.winnerTeam != null) {
+            winnerTeam = `${this.state.winnerTeam}`
+        }
+        if (!this.state.isLoaded) {
+            loaded = <Skeleton active />
             detailsContent = null
-        }else{
+        } else {
             loaded = null
             detailsContent = <Col span={18}>
-            <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
-            <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
-            <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
-            <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : {winnerTeam}</p>
-        </Col>
+                <p style={{ color: "#46535e", fontSize: "15px", paddingTop: "4%" }}> <Icon type="user" />  Allowed team size : {this.state.teamSizeMin} - {this.state.teamSizeMax}</p>
+                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Starts on : {new Date(this.state.startDate).toDateString()}</p>
+                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="calendar" /> Ends on : {new Date(this.state.endDate).toDateString()}</p>
+                <p style={{ color: "#46535e", fontSize: "15px" }}><Icon type="user" /> Winner Team Name : <b>{winnerTeam}</b></p>
+            </Col>
         }
-        if(!localStorage.getItem("userId")){
-            redirect = <Redirect to="/login"/>
+        if (!localStorage.getItem("userId")) {
+            redirect = <Redirect to="/login" />
         }
 
-        if(this.state.winnerTeam!=null){
-            winnerTeam=`${this.state.winnerTeam}`
+
+        const { getFieldDecorator } = this.props.form
+        console.log(new Date(this.state.startDate) > new Date())
+        if (new Date(this.state.startDate) > new Date() || new Date(this.state.endDate) < new Date()) {
+            submissionButtonFlag = true
         }
-        const {getFieldDecorator} = this.props.form
-        console.log(new Date(this.state.startDate) >  new Date())
-        if(new Date(this.state.startDate) >  new Date() || new Date(this.state.endDate) <  new Date()){
-            submissionButtonFlag=true
-        }
-        if(new Date(this.state.startDate) < new Date()){
+        if (new Date(this.state.startDate) < new Date()) {
             registerButtonFlag = true
         }
-        if(new Date(this.state.endDate) > Date.now()){
-            gradeButtonFlag=true
+        if (new Date(this.state.endDate) > Date.now()) {
+            gradeButtonFlag = true
         }
-        if(this.state.isFinalize){
-            submissionButtonFlag=true
-            registerButtonFlag=true
-            gradeButtonFlag=true
+        if (this.state.isFinalize) {
+            submissionButtonFlag = true
+            registerButtonFlag = true
+            gradeButtonFlag = true
         }
         if (this.state.aboutContentFlag) {
             content = <div>
@@ -226,49 +227,49 @@ class HackathonDetails extends Component {
             </div>
         } else if (this.state.teamsContentFlag) {
             content = this.state.teamDetails && this.state.teamDetails.map(team => {
-                return(
-                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
-                        <a href="#" id={team.teamId}> 
-                            <Title level={4} style = {{marginLeft : "20px"}}>Team name : {team && team.teamName}</Title>
+                return (
+                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop: "10px", boxShadow: "5px 5px #FAFAFA", padding: "8px", marginLeft: "20px" }}>
+                        <a href="#" id={team.teamId}>
+                            <Title level={4} style={{ marginLeft: "20px" }}>Team name : {team && team.teamName}</Title>
                         </a>
-                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Members: {team && team.teamSize}</p>
+                        <p style={{ marginLeft: "20px", fontSize: "15px" }}>Members: {team && team.teamSize}</p>
                         <Divider></Divider>
                     </div>
                 )
             })
-        }else if(this.state.judgesContentFlag){
+        } else if (this.state.judgesContentFlag) {
             content = this.state.judgeDetails && this.state.judgeDetails.map(judge => {
-                return(
-                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
-                        <a href="#" id={judge.judgeId}> 
-                            <Title level={4} style = {{marginLeft : "20px"}}> Name : {judge && judge.judgeName}</Title>
+                return (
+                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop: "10px", boxShadow: "5px 5px #FAFAFA", padding: "8px", marginLeft: "20px" }}>
+                        <a href="#" id={judge.judgeId}>
+                            <Title level={4} style={{ marginLeft: "20px" }}> Name : {judge && judge.judgeName}</Title>
                         </a>
-                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Screen name: {judge && judge.judgeScreenName}</p>
-                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Email id: {judge && judge.judgeEmail}</p>
+                        <p style={{ marginLeft: "20px", fontSize: "15px" }}>Screen name: {judge && judge.judgeScreenName}</p>
+                        <p style={{ marginLeft: "20px", fontSize: "15px" }}>Email id: {judge && judge.judgeEmail}</p>
                         <Divider></Divider>
                     </div>
                 )
             })
-        }else if(this.state.sponsorsContentFlag){
+        } else if (this.state.sponsorsContentFlag) {
             content = this.state.sponsorDetails && this.state.sponsorDetails.map(sponsor => {
-                return(
-                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop:"10px", boxShadow:"5px 5px #FAFAFA", padding:"8px", marginLeft:"20px" }}>
-                        <a href="#" id={sponsor.sponsorId}> 
-                            <Title level={4} style = {{marginLeft : "20px"}}> Organization Name : {sponsor && sponsor.sponsorName}</Title>
+                return (
+                    <div style={{ backgroundColor: "#EAECEE", width: "50%", marginTop: "10px", boxShadow: "5px 5px #FAFAFA", padding: "8px", marginLeft: "20px" }}>
+                        <a href="#" id={sponsor.sponsorId}>
+                            <Title level={4} style={{ marginLeft: "20px" }}> Organization Name : {sponsor && sponsor.sponsorName}</Title>
                         </a>
-                        <p style = {{marginLeft : "20px", fontSize : "15px"}}>Description : {sponsor && sponsor.sponsorDescription}</p>
-                        
+                        <p style={{ marginLeft: "20px", fontSize: "15px" }}>Description : {sponsor && sponsor.sponsorDescription}</p>
+
                         <Divider></Divider>
                     </div>
                 )
             })
         }
-        if(this.state.userTeam){
+        if (this.state.userTeam) {
             console.log(this.state.userTeam)
             teamModalContent = this.state.userTeam.map(member => {
-                return(
+                return (
                     <Col span={6}>
-                        <Avatar shape="square" icon="user"/>
+                        <Avatar shape="square" icon="user" />
                         <p><b>{member.name}</b></p>
                         <p>{member.title}</p>
                     </Col>
@@ -297,17 +298,17 @@ class HackathonDetails extends Component {
                         <Button key="back" onClick={this.handleCancel}>Back</Button>,
                     ]}
                 >
-                <Form>
-                <Form.Item
-                    label="Submission URL"
-                >
-                    {getFieldDecorator('submissionUrl', {
-                        rules: [{ required: true, message: "URL cannot be empty" }],
-                    })(
-                        <input type="text" disabled={submissionButtonFlag} value={this.state.submissionUrl} onChange={this.handleSubmission} placeholder={this.state.submissionUrl}/>
-                    )}
-                </Form.Item>
-                <Form.Item>
+                    <Form>
+                        <Form.Item
+                            label="Submission URL"
+                        >
+                            {getFieldDecorator('submissionUrl', {
+                                rules: [{ required: true, message: "URL cannot be empty" }],
+                            })(
+                                <input type="text" disabled={submissionButtonFlag} value={this.state.submissionUrl} onChange={this.handleSubmission} placeholder={this.state.submissionUrl} />
+                            )}
+                        </Form.Item>
+                        <Form.Item>
                             <Button
                                 type="primary"
                                 htmlType="submit"
@@ -316,8 +317,8 @@ class HackathonDetails extends Component {
                             >
                                 Submit
                             </Button>
-                </Form.Item>
-                </Form>
+                        </Form.Item>
+                    </Form>
                 </Modal>
             </div>
         } else if (this.state.message === "payment pending") {
@@ -330,9 +331,9 @@ class HackathonDetails extends Component {
                     footer={[
                         <Button key="back" onClick={this.handleCancel}>Back</Button>,
                     ]}
-                    style={{height:"300px"}}
+                    style={{ height: "300px" }}
                 >
-                    <div style={{"height":"50px"}}>
+                    <div style={{ "height": "50px" }}>
                         <Row type="flex">
                             {teamModalContent}
                         </Row>
@@ -340,7 +341,7 @@ class HackathonDetails extends Component {
                 </Modal>
                 <p class="text-warning large">Team Payment Due</p>
             </div>
-        }else if(this.state.message === "judge"){
+        } else if (this.state.message === "judge") {
             buttons = <div>
                 <Link to={`/hacker/gradeSubmissions/${this.props.match.params.id}`}>
                     <Button type="primary" size="large" style={{ marginTop: "25%" }} disabled={gradeButtonFlag}>Grade Submission</Button>
@@ -360,7 +361,7 @@ class HackathonDetails extends Component {
                 </div>
                 <div style={{ backgroundColor: "#EAECEE", height: "200px" }}>
                     <div style={{ marginLeft: "10%" }}>
-                        
+
                         <Row type="flex">
                             {loaded}
                             {detailsContent}
@@ -372,8 +373,8 @@ class HackathonDetails extends Component {
                     </div>
                 </div>
                 <div>
-                    <Layout style = {{minHeight : "330px"}}>
-                        <Sider style={{ overflow: 'auto', height: '100%', left: 0, marginBottom:"20px" }}>
+                    <Layout style={{ minHeight: "330px" }}>
+                        <Sider style={{ overflow: 'auto', height: '100%', left: 0, marginBottom: "20px" }}>
                             <div className="logo" />
                             <Menu mode="inline" defaultSelectedKeys={['1']}>
                                 <Menu.Item key="1"
@@ -405,11 +406,11 @@ class HackathonDetails extends Component {
                             </Menu>
                         </Sider>
                         <br></br>
-                        <Layout style={{ marginLeft: 10}} >
-                            <Content style={{ margin: '0px 16px 0', overflow: 'initial'}}>
-                                <div style={{ padding: 14, background: '#fff', minHeight : "300px"}}>
-                                {loaded}    
-                                {content}    
+                        <Layout style={{ marginLeft: 10 }} >
+                            <Content style={{ margin: '0px 16px 0', overflow: 'initial' }}>
+                                <div style={{ padding: 14, background: '#fff', minHeight: "300px" }}>
+                                    {loaded}
+                                    {content}
                                 </div>
                             </Content>
                         </Layout>
