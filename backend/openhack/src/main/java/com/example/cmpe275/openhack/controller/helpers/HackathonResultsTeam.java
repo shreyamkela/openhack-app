@@ -2,8 +2,9 @@ package com.example.cmpe275.openhack.controller.helpers;
 
 import java.util.ArrayList;
 
+// This class is being used in displaying the results report of the hackathon, through the /hackathon/results route
 public class HackathonResultsTeam {
-
+	
 	private String teamName;
 	private ArrayList<String> teamMembers;
 	private Float grade;

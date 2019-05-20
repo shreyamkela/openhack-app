@@ -163,6 +163,9 @@ class HackathonDetails extends Component {
             submissionUrl: e.target.value
         })
     }
+    routeToResults = () => {
+        this.props.history.push(`/hackathon_details/${this.props.match.params.id}/results`);
+    }
     render() {
         var content = null
         var buttons = null
@@ -343,6 +346,16 @@ class HackathonDetails extends Component {
                 <Link to={`/hackathon/register/${this.props.match.params.id}`}><Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal} disabled={registerButtonFlag}>Register</Button><br /></Link>
             </div>
         }
+
+        let resultsButton = null
+        var enddateconv = new Date(this.state.endDate)
+        var end_sec = enddateconv.getTime()
+        let currentDate = Date.now()
+        if (currentDate > end_sec) {
+            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
+        } else {
+            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
+        }
         return (
             <div>
                 {redirect}
@@ -358,6 +371,7 @@ class HackathonDetails extends Component {
                             {detailsContent}
                             <Col span={6}>
                                 {buttons}
+                                {resultsButton}
                             </Col>
                         </Row>
 

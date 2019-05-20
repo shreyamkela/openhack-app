@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 
-import { Button, message, Skeleton, Card } from 'antd';
+import { Button, message, Skeleton, Card, Collapse } from 'antd';
 
 import API from '../../utils/API'
+
+const Panel = Collapse.Panel;
 
 class HackathonResults extends Component {
     state = {
@@ -36,12 +38,61 @@ class HackathonResults extends Component {
 
         } else if (this.state.hackathonResults[0] !== undefined) {
             let hackathonResults = this.state.hackathonResults
-            console.log("FFFFFFFFFFFFFFFff", this.state.hackathonResults)
             hackathonResults.sort((a, b) => {
                 return b["grade"] - a["grade"];
             });
-            console.log("FFFFFFFFFFFFFFFff", hackathonResults)
-            resultsContent = <p>Grades assigned.</p>
+
+            let teamsCount = 0;
+            let topPerformersCollapse = hackathonResults.map(key => {
+                teamsCount++;
+                if (teamsCount < 4) {
+                    let rank = `Rank ${teamsCount} - Team "${key.teamName}"`
+                    let teamMembers = "";
+                    for (let teamMember in key.teamMembers) {
+                        teamMembers += key.teamMembers[teamMember] + " "
+                    }
+                    let grade = "No grade assigned yet."
+                    if (key.grade !== null) {
+                        grade = key.grade
+                    }
+                    let participants = `Participants: ${teamMembers}, \n Grade: ${grade}`
+                    return (<Panel header={rank} key={teamsCount}>
+                        <p>{participants}</p>
+                    </Panel>);
+                }
+            })
+            let topPerformers = <Card title="Top Performers" style={{ width: 750 }}><Collapse accordion>{topPerformersCollapse}</Collapse></Card>
+
+
+            let otherTeams = null;
+            if (hackathonResults.length > 3) {
+                let otherTeamsCount = 0;
+                let otherTeamsCollapse = hackathonResults.map(key => {
+                    otherTeamsCount++;
+                    console.log("XXXXXXXX", otherTeamsCount)
+                    if (otherTeamsCount > 3) {
+                        let rank = `Rank ${otherTeamsCount} - Team "${key.teamName}"`
+                        let teamMembers = "";
+                        for (let teamMember in key.teamMembers) {
+                            teamMembers += key.teamMembers[teamMember] + " "
+                        }
+                        let grade = "No grade assigned yet."
+                        if (key.grade !== null) {
+                            grade = key.grade
+                        }
+                        let participants = `Participants: ${teamMembers}, \n Grade: ${grade}`
+                        return (<Panel header={rank} key={otherTeamsCount}>
+                            <p>{participants}</p>
+                        </Panel>);
+                    }
+                })
+                otherTeams = <Card title="Other teams" style={{ width: 750 }}><Collapse accordion>{otherTeamsCollapse}</Collapse></Card>
+            }
+
+            resultsContent = (<div><div>{topPerformers}</div>
+                <div>{otherTeams}</div></div>)
+
+
         }
         else {
             resultsContent = <b>No grades assigned yet.</b>
@@ -50,13 +101,15 @@ class HackathonResults extends Component {
 
 
         return (
-            <div style={{ marginLeft: 280, marginTop: 100 }}>
+            <div style={{ marginLeft: 280, marginTop: 10 }}>
                 <div style={{ textAlign: "center" }}>
                     <Card title="Hackathon Results" style={{ background: '#ECECEC', width: 800 }}>
                         <div style={{ marginLeft: 650 }}>
                             <Button className="mx-2" type="primary" size="medium" onClick={this.handleGoToHome}>Home</Button>
                         </div>
-                        {resultsContent}
+                        <br />
+                        <div >{resultsContent}</div>
+
                     </Card>
 
                 </div>

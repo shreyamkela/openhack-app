@@ -492,7 +492,6 @@ class HackathonDetails extends Component {
 
 
         let resultsButton = null
-        let resultsModal = null
         var enddateconv = new Date(this.state.endDate)
         var end_sec = enddateconv.getTime()
         let currentDate = Date.now()
