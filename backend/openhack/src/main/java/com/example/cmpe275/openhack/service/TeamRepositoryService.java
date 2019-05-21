@@ -19,14 +19,14 @@ public class TeamRepositoryService {
 	@Autowired
 	TeamRepository teamRepository;
 	
-	@Transactional
+
 	public Team createTeam(Team team) {
 			Team createdTeam = teamRepository.save(team);
 			return createdTeam;
 	}
 
 
-	@Transactional
+
 	public Team updateTeam(Team team) {
 			Team updatedTeam = teamRepository.save(team);
 			System.out.println("Team updated"+updatedTeam);
@@ -35,14 +35,14 @@ public class TeamRepositoryService {
 	}
 
 	
-	@Transactional
+
 	public Team getTeamById(long id) {
 			Team team = teamRepository.getOne(id);	
 			return team;
 		
 	}
 
-	@Transactional
+
 	public Team deleteTeamById(long id) {
 		// TODO Auto-generated method stub
 		return null;

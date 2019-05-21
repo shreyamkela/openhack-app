@@ -21,8 +21,7 @@ public class UserRepositoryService {
 	@Autowired
 	EntityManager em;
 	
-	
-	@Transactional
+
 	public User createUser(User user) {
 			User user2 = userRepository.save(user);
 			System.out.println("\n - - - - - - - - - - User "+user.getName()+" added successfully! - - - - - - - - - - -\n");
@@ -30,8 +29,7 @@ public class UserRepositoryService {
 	
 	}
 	
-	
-	@Transactional
+
 	public User updateUser(User user) {
 		
 			User user2 = userRepository.save(user);
@@ -40,7 +38,7 @@ public class UserRepositoryService {
 	}
 	
 	
-	@Transactional
+
 	public User findUserbyEmail(String email) {
 //		
 			 Query query = em.createQuery("SELECT u FROM User u WHERE u.email = :email");
@@ -51,7 +49,6 @@ public class UserRepositoryService {
 	}
 	
 	
-	@Transactional
 	public User findUserbyID(long id) {
 			User user = userRepository.getOne(id);
 			return user;
@@ -59,14 +56,14 @@ public class UserRepositoryService {
 	}
 	
 	
-	@Transactional
+
 	public User deleteUser(long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	
-	@Transactional
+
 	public List<User> findAllUsers(){
 		return userRepository.findAll();
 				

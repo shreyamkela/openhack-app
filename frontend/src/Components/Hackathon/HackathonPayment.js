@@ -64,6 +64,9 @@ class HackathonPayment extends Component {
                     if(response.status===200){
                         Swal.close()
                         swal("Payment Received","Close the window","success")
+                        .then(() => {
+                            window.location.reload()
+                        })
                     }
                 })
                 .catch(err => {

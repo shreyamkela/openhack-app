@@ -23,7 +23,7 @@ public class OrganizationRepositoryService {
 	@Autowired
 	EntityManager em;
 	
-	@Transactional
+
 	public Organization create(Organization org) 
 	{
 			Organization org1 = organizationRepository.save(org);
@@ -31,7 +31,7 @@ public class OrganizationRepositoryService {
 		}
 
 	
-	@Transactional
+
 	public Organization findOrganizationById(long orgId) 
 	{
 			Organization org = organizationRepository.getOne(orgId);
@@ -40,7 +40,7 @@ public class OrganizationRepositoryService {
 	}
 	
 
-	@Transactional
+
 	public Organization findOrganizationByName(String name) 
 	{
 			List<Organization> organizations = organizationRepository.findAll();
@@ -54,7 +54,7 @@ public class OrganizationRepositoryService {
 	}
 	
 
-//	@Transactional
+
 	public List<Organization> findAllOrganization() 
 	{
 			List<Organization> organizations = organizationRepository.findAll();

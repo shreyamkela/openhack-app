@@ -20,12 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.cmpe275.openhack.dao.HackathonDao;
-import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
-import com.example.cmpe275.openhack.dao.SubmissionDao;
-import com.example.cmpe275.openhack.dao.SubmissionDaoImpl;
-import com.example.cmpe275.openhack.dao.TeamDao;
-import com.example.cmpe275.openhack.dao.TeamDaoImpl;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
@@ -71,64 +65,86 @@ public class SubmissionController {
 
 	@PostMapping("/addSubmission")
 	@ResponseBody
-	@Transactional
-	public Long addSubmission(@RequestBody HashMap<String, String> map) {
+	public Map<Object,Object> addSubmission(@RequestBody HashMap<String, String> map,HttpServletRequest request,
+			HttpServletResponse response) {
 		System.out.println("\naddSubmission method called for the Submission");
 		System.out.println("Submission data from post " + map);
+		Map<Object,Object> responseBody = new HashMap<>();
 		Submission submission = new Submission();
 
 		try {
 			// Check if Team Id and Hackathon Id is already Present in the Submission table. If it is present then the hacker is resubmitting the url. If not present then the hacker is making a new submission
-			boolean newSubmission = true;
 			Long hackathonId = new Long((String) map.get("hackathonId"));
 			Hackathon hackathon = hackathonDao.findById(hackathonId);
-			Set<Submission> allSubmissions = hackathon.getSubmissions();
 			Long teamId = new Long((String) map.get("teamId"));
-
-			System.out.println("Hackathon found:" + hackathon.getName());
-
-			// Checking if this is resubmission
-			for (Submission currentSubmission : allSubmissions) {
-				if (currentSubmission.getTeam().getId() == teamId
-						&& currentSubmission.getHackathon().getId() == hackathonId) {
-					newSubmission = false;
-					System.out.println("Submission found! Old URL: " + currentSubmission.getURL());
-					currentSubmission.setURL(map.get("url"));
-					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
-					System.out.println("Resubmission successful! New URL, submissionId: " + currentSubmission.getURL()
-					+ currentSubmission.getId());
-				}
-			}
-
-			// If this is a new submission
-			if (newSubmission == true) {
+			Team team = teamDao.getTeamById(teamId);
+			Submission searchedSubmission = submissionDao.findByTeamIdAndHackathonId(teamId, hackathonId);
+			if(searchedSubmission==null) {
 				submission.setURL(map.get("url"));
 				submission.setHackathon(hackathon);
-				Set<Team> teams = hackathon.getTeams();
-				for (Team team : teams) {
-					if (team.getId() == teamId) {
-						System.out.println("Team found:" + team.getTeamName());
-						submission.setTeam(team);
-						team.setSubmitted(true);
-						team.setGraded(false);
-						Team updatedTeam = teamDao.updateTeam(team);
-						
-					}
-				}
-				submission = submissionDao.create(submission);
-				System.out.println(
-						"New submission successful! URL, submissionId: " + submission.getURL() + submission.getId());
+				submission.setTeam(team);
+				submissionDao.create(submission);
+				responseBody.put("msg", "submitted");
+				return responseBody;
+			}else {
+				searchedSubmission.setURL(map.get("url"));
+				submissionDao.update(searchedSubmission);
+				responseBody.put("msg", "submitted");
+				return responseBody;
 			}
+//			boolean newSubmission = true;
+//			
+//			
+//			Set<Submission> allSubmissions = hackathon.getSubmissions();
+//			
+//
+//			System.out.println("Hackathon found:" + hackathon.getName());
+//
+//			// Checking if this is resubmission
+//			for (Submission currentSubmission : allSubmissions) {
+//				if (currentSubmission.getTeam().getId() == teamId
+//						&& currentSubmission.getHackathon().getId() == hackathonId) {
+//					newSubmission = false;
+//					System.out.println("Submission found! Old URL: " + currentSubmission.getURL());
+//					currentSubmission.setURL(map.get("url"));
+//					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
+//					System.out.println("Resubmission successful! New URL, submissionId: " + currentSubmission.getURL()
+//					+ currentSubmission.getId());
+//				}
+//			}
+//
+//			// If this is a new submission
+//			if (newSubmission == true) {
+//				submission.setURL(map.get("url"));
+//				submission.setHackathon(hackathon);
+//				Set<Team> teams = hackathon.getTeams();
+//				for (Team team : teams) {
+//					if (team.getId() == teamId) {
+//						System.out.println("Team found:" + team.getTeamName());
+//						submission.setTeam(team);
+//						team.setSubmitted(true);
+//						team.setGraded(false);
+//						Team updatedTeam = teamDao.updateTeam(team);
+//						
+//					}
+//				}
+//				submission = submissionDao.create(submission);
+//				System.out.println(
+//						"New submission successful! URL, submissionId: " + submission.getURL() + submission.getId());
+//			}
 
 		} catch (Exception e) {
 			System.out.println("Exception while creating/updating submission: " + e);
+			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
+			responseBody.put("msg",e);
+			return responseBody;
 		}
-		return submission.getId();
+		
 	}
 
 	@PostMapping("/gradeSubmission/{submissionId}")
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> gradeSubmission(@RequestBody HashMap<String, String> map,
 			@PathVariable long submissionId,
 			HttpServletResponse response,
@@ -140,7 +156,7 @@ public class SubmissionController {
 			
 			Submission submission = submissionDao.findById(submissionId);
 			submission.setGrade(Float.parseFloat((String)map.get("grade")));
-			Submission updatedSubmission = submissionDao.updateById(submissionId, submission);
+			Submission updatedSubmission = submissionDao.update(submission);
 			Team team = updatedSubmission.getTeam();
 			team.setGraded(true);
 			teamDao.updateTeam(team);
@@ -175,7 +191,7 @@ public class SubmissionController {
 
 	@GetMapping("/submission/{hackathonId}")
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> getAllSubmissions(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="hackathonId") long hackathonId){
@@ -212,3 +228,12 @@ public class SubmissionController {
 
 	}
 }
+
+/*Long hackathonId = new Long((String) map.get("hackathonId"));
+Hackathon hackathon = hackathonDao.findById(hackathonId);
+Long teamId = new Long((String) map.get("teamId"));
+Team team = teamDao.getTeamById(teamId);
+submission.setURL(map.get("url"));
+submission.setHackathon(hackathon);
+submission.setTeam(team);
+Submission addedSubmission = submissionDao.create(submission);*/

@@ -21,7 +21,7 @@ public class SubmissionRepositoryService {
 	@Autowired
 	EntityManager em;
 	
-	@Transactional
+	
 	public Submission create(Submission submission) {
 		
 			Submission createdSubmission = submissionRepository.save(submission);
@@ -30,8 +30,8 @@ public class SubmissionRepositoryService {
 	}
 
 	
-	@Transactional
-	public Submission updateById(long id, Submission submission) {
+	
+	public Submission update(Submission submission) {
 	
 			Submission updatedSubmission = submissionRepository.save(submission);
 	
@@ -41,14 +41,14 @@ public class SubmissionRepositoryService {
 		}
 
 	
-	@Transactional
+	
 	public Submission deleteById(long Id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
-	@Transactional
+	
 	public Submission findById(long id) {
 			Submission submission = submissionRepository.getOne(id);		
 			return submission;
@@ -56,10 +56,21 @@ public class SubmissionRepositoryService {
 	}
 
 	
-	@Transactional
 	public List<Submission> findAll() {
 			return submissionRepository.findAll();
 			
+	}
+	
+	public Submission findByTeamIdAndHackathonId(long teamId, long hackathonId) {
+		List<Submission> submissions = submissionRepository.findAll();
+		Submission result=null;
+		for(Submission submission:submissions) {
+			if(submission.getHackathon().getId()==hackathonId && submission.getTeam().getId()==teamId) {
+				result=submission;
+				break;
+			}
+		}
+		return result;
 	}
 
 }

@@ -37,16 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.cmpe275.openhack.controller.helpers.HackathonResultsTeam;
-import com.example.cmpe275.openhack.dao.HackathonDao;
-import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
-import com.example.cmpe275.openhack.dao.PaymentDao;
-import com.example.cmpe275.openhack.dao.PaymentDaoImpl;
-import com.example.cmpe275.openhack.dao.TeamDao;
-import com.example.cmpe275.openhack.dao.TeamDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
-import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Payment;
@@ -105,7 +95,7 @@ public class HackathonController {
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> createHackathon(@RequestBody HashMap<Object, Object> map, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		System.out.println("\n Hackathon to be created");
@@ -161,7 +151,7 @@ public class HackathonController {
 
 	@RequestMapping(value = "{id}", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> getHackathonDetails(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<Object, Object> map, @PathVariable(name = "id") long hackathonId) {
 		System.out.print("Getting hackathon details");
@@ -269,7 +259,7 @@ public class HackathonController {
 
 	@RequestMapping(value = "register/{id}", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> registerHackathon(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable(name = "id") long hackathonId, @RequestBody Map<Object, Object> requestBody) {
 
@@ -429,7 +419,7 @@ public class HackathonController {
 	@RequestMapping(value = "open", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
 	@ResponseBody
-	@Transactional
+	
 	public Hackathon openHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) throws ParseException {
 		System.out.println("POST /hackathon/open - Open hackathon - Request Body: " + map);
@@ -461,7 +451,7 @@ public class HackathonController {
 	@RequestMapping(value = "close", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
 	@ResponseBody
-	@Transactional
+	
 	public Hackathon closeHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) throws ParseException {
 		System.out.println("POST /hackathon/close - Close hackathon - Request Body: " + map);
@@ -509,7 +499,7 @@ public class HackathonController {
 	@RequestMapping(value = "/finalize", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) {
 		System.out.println("\nPOST /hackathon/finalize - Finalize hackathon - Request Body: " + map);
@@ -561,7 +551,7 @@ public class HackathonController {
 	@RequestMapping(value = "/results", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 	"application/JSON" })
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> hackathonResults(HttpServletRequest request, HttpServletResponse response,
 		@RequestBody HashMap<Object, Object> map) {
 		System.out.println("\nPOST /hackathon/results - Hackathon Results - Request Body: " + map);

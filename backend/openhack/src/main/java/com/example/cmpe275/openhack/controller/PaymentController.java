@@ -26,16 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.cmpe275.openhack.dao.HackathonDao;
-import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
-import com.example.cmpe275.openhack.dao.PaymentDao;
-import com.example.cmpe275.openhack.dao.PaymentDaoImpl;
-import com.example.cmpe275.openhack.dao.TeamDao;
-import com.example.cmpe275.openhack.dao.TeamDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
-import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Payment;
 import com.example.cmpe275.openhack.entity.Team;
@@ -90,7 +80,7 @@ public class PaymentController {
 
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> getPayment(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="id") long paymentId){
@@ -113,7 +103,7 @@ public class PaymentController {
 	
 	@RequestMapping(value="/{id}",method=RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> doPayment(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="id") long paymentId,

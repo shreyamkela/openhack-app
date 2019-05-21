@@ -25,14 +25,14 @@ public class PaymentRepositoryService {
 	EntityManager em;
 	
 	
-	@Transactional
+	
 	public Payment createPayment(Payment payment) {
 			Payment createdPayment = paymentRepository.save(payment);
 			return createdPayment;
 			}
 
 	
-	@Transactional
+	
 	public List<Payment> findPaymentByTeamId(long id) {
 		List<Payment> result = new ArrayList<>();
 		List<Payment> payments = paymentRepository.findAll();
@@ -46,7 +46,7 @@ public class PaymentRepositoryService {
 	}
 
 	
-	@Transactional
+	
 	public Payment updatePayment(Payment payment) {
 			Payment updatedPayment = paymentRepository.save(payment);
 			return updatedPayment;
@@ -54,7 +54,7 @@ public class PaymentRepositoryService {
 	}
 	
 	
-	@Transactional
+	
 	public Payment getPaymentById(long id) {
 			Payment payment = paymentRepository.getOne(id); 		
 			return payment;
@@ -62,7 +62,7 @@ public class PaymentRepositoryService {
 	}
 	
 	
-	@Transactional
+	
 	public Payment deletePayment(Payment payment) {
 			paymentRepository.delete(payment);
 			return payment;

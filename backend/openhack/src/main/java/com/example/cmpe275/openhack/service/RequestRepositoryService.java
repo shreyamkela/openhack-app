@@ -22,7 +22,7 @@ public class RequestRepositoryService {
 	@Autowired
 	EntityManager em;
 
-	@Transactional
+
 	public Request addRequest(Request request) 
 	{
 			requestRepository.save(request);
@@ -31,7 +31,7 @@ public class RequestRepositoryService {
 		
 	}
 	
-	@Transactional
+
 	public Request findRequestById(long requestId) 
 	{
 		Request req = requestRepository.getOne(requestId);
@@ -39,7 +39,7 @@ public class RequestRepositoryService {
 		
 	}
 	
-	@Transactional
+
 	public List<Request> getAllRequests() 
 	{
 //		
@@ -47,7 +47,7 @@ public class RequestRepositoryService {
 		
 	}
 	
-	@Transactional
+
 	public Request deleteRequest(long reqId) 
 	{
 			Request delete_request = requestRepository.getOne(reqId);

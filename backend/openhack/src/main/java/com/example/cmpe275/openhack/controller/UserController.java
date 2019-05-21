@@ -25,12 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.cmpe275.openhack.dao.HackathonDao;
-import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
-import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Address;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
@@ -83,7 +77,7 @@ public class UserController {
 //	
 	@GetMapping("/getuser/{email}")
 	@ResponseBody
-	@Transactional
+	
 	public  Map<Object, Object>  getUser(@PathVariable("email") String email){
 		System.out.println("\ngetUSer method called for the User");	
 		User user = new User();
@@ -125,7 +119,7 @@ public class UserController {
 	
 	@GetMapping("/getuserid/{id}")
 	@ResponseBody
-	@Transactional
+	
 	public  Map<Object, Object>  getUserByID(@PathVariable("id") long id){
 		System.out.println("\ngetUserByID method called for the User");	
 		User user = new User();
@@ -152,7 +146,7 @@ public class UserController {
 	
 	@PostMapping("/adduser")
 	@ResponseBody
-	@Transactional
+	
 	public User addUser(@RequestBody HashMap<String,String> map){
 		System.out.println("\n addUser method called for the User");
 		System.out.println("User data from post "+ map.get("email") +"maap "+map);
@@ -182,7 +176,7 @@ public class UserController {
 	
 	@PutMapping("/updateuser/{id}")
 	@ResponseBody
-	@Transactional
+	
 	public User updateUser(@PathVariable long id,@RequestBody HashMap<String,String> map){
 		System.out.println("\n updateUser method called for the User");
 		System.out.println("User data from put "+map);
@@ -233,7 +227,7 @@ public class UserController {
 
 	@GetMapping(value="/user/notHackathon/{hackathonId}/{userId}")
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> getUsersNotInHackathon(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="hackathonId") long hackathonId,
@@ -267,7 +261,7 @@ public class UserController {
 	
 	@GetMapping("/getalluser")
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> getAllUser(){
 		System.out.println("\ngetAllUser method called for the User");	
 		Map<Object,Object> map = new HashMap<>();
@@ -301,7 +295,7 @@ public class UserController {
 	
 	@GetMapping("/getallscreennames")
 	@ResponseBody
-	@Transactional
+	
 	public List<String> getAllScreenNames(){
 		System.out.println("\ngetAllScreenNames method called for the User");	
 		List<String> listScreenNames =new ArrayList<String>();

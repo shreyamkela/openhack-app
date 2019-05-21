@@ -18,7 +18,7 @@ public class HackathonRepositoryService {
 	@Autowired
 	HackathonRepository hackathonRepository;
 
-
+	
 	public Hackathon create(Hackathon hackathon) {	
 		Hackathon createdHackathon = hackathonRepository.save(hackathon);
 		System.out.println("Successfull creation inside DAO");
