@@ -23,29 +23,44 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
-import com.example.cmpe275.openhack.dao.RequestDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
-import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Address;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Request;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.PaymentRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.SubmissionRepositoryService;
+import com.example.cmpe275.openhack.service.TeamRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 
 @Controller
 public class OrganizationController {
 	
-	private OrganizationDao orgdao;
-	private UserDao userdao;
-	private RequestDaoImpl reqdao;
-	
+//	private OrganizationDao orgdao;
+//	private UserDao userdao;
+//	private RequestDaoImpl reqdao;
+	@Autowired
+	HackathonRepositoryService hackathonDao;
+	@Autowired
+	UserRepositoryService userdao;
+	@Autowired
+	OrganizationRepositoryService orgdao;
+	@Autowired
+	TeamRepositoryService teamDao;
+	@Autowired
+	PaymentRepositoryService paymentDao;
+	@Autowired
+	RequestRepositoryService reqdao;
+	@Autowired
+	SubmissionRepositoryService submissionDao;
 	public OrganizationController() 
 	{
-		orgdao =  new OrganizationDaoImpl();
-		userdao = new UserDaoImpl();
-		reqdao = new RequestDaoImpl();
+//		orgdao =  new OrganizationDaoImpl();
+//		userdao = new UserDaoImpl();
+//		reqdao = new RequestDaoImpl();
 	}
 //	@Autowired 
 //	OrganizationDaoImpl orgdao;
@@ -57,7 +72,7 @@ public class OrganizationController {
 	@RequestMapping(value = "/hacker/createOrganization", method = RequestMethod.POST, produces = { "application/json"},
 					consumes = {"application/JSON"})
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> createOrganization(HttpServletRequest request,
 			HttpServletResponse response, @RequestBody HashMap<String,String> params_map) throws Exception 
 	{
@@ -106,7 +121,7 @@ public class OrganizationController {
 	
 	@RequestMapping(value = "/hacker/getOrganizations", method = RequestMethod.GET, produces = { "application/json"})
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> getAllOrganizations(HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{
 		System.out.println("\ngetAllOrganizations method called for the organization : ");
@@ -128,7 +143,7 @@ public class OrganizationController {
 	
 	@RequestMapping(value = "/hacker/getOneOrganization/{user_id}/{org_id}", method = RequestMethod.GET, produces = { "application/json"})
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> getOneOrganization(@PathVariable("org_id") long orgId, @PathVariable("user_id") long userId, 
 			HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{
@@ -164,7 +179,7 @@ public class OrganizationController {
 	
 	@RequestMapping(value = "/hacker/joinOrganization/{user_id}/{org_id}/{request_id}", method = RequestMethod.PUT, produces = { "application/json"})
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> joinOrganization(@PathVariable("user_id") long userId, @PathVariable("org_id") long orgId, 
 			@PathVariable("request_id") long requestId, HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{
@@ -228,7 +243,7 @@ public class OrganizationController {
 	
 	@RequestMapping(value = "/hacker/declineJoinOrganization/{user_id}/{org_id}/{request_id}", method = RequestMethod.PUT, produces = { "application/json"})
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> DeclineJoinOrganization(@PathVariable("user_id") long userId, @PathVariable("org_id") long orgId, 
 			@PathVariable("request_id") long requestId, HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{
@@ -261,7 +276,7 @@ public class OrganizationController {
 	
 	@RequestMapping(value = "/hacker/requestJoinOrganization/{user_id}/{org_id}", method = RequestMethod.PUT, produces = { "application/json"})
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> requestJoinOrganization(@PathVariable("user_id") long userId, @PathVariable("org_id") long orgId, 
 			HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{
@@ -340,7 +355,7 @@ public class OrganizationController {
 	
 	@RequestMapping(value = "hacker/getOtherOrganizations/{user_id}", method = RequestMethod.GET, produces = { "application/json"})
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> getOtherOrganizations(@PathVariable("user_id") long userId, 
 			HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{

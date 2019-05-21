@@ -6,7 +6,8 @@ import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Inp
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
-import { Redirect } from 'react-router'
+import {Redirect} from 'react-router'
+import Swal from 'sweetalert2';
 const { Content, Sider } = Layout;
 
 
@@ -143,6 +144,13 @@ class HackathonDetails extends Component {
     }
 
     submitWork = (e) => {
+        Swal.fire({
+            title: 'Submission in progress',
+            text: 'Please Wait...',
+            showCancelButton: false,
+            showConfirmButton: false,
+            type:'info'
+          })
         console.log(this.state.submissionUrl)
         let body = {
             "hackathonId": this.props.match.params.id,
@@ -152,9 +160,10 @@ class HackathonDetails extends Component {
 
         axios.post("http://localhost:8080/addSubmission", body)
             .then(response => {
-                if (response.status === 200) {
-                    swal("Submitted work", "success")
-                    window.location.reload();
+                if(response.status===200){
+                    Swal.close()
+                    swal("Submitted work","success")
+                    window.location.reload();      
                 }
             })
     }
@@ -162,6 +171,9 @@ class HackathonDetails extends Component {
         this.setState({
             submissionUrl: e.target.value
         })
+    }
+    routeToResults = () => {
+        this.props.history.push(`/hackathon_details/${this.props.match.params.id}/results`);
     }
     render() {
         var content = null
@@ -343,6 +355,16 @@ class HackathonDetails extends Component {
                 <Link to={`/hackathon/register/${this.props.match.params.id}`}><Button type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.showTeamModal} disabled={registerButtonFlag}>Register</Button><br /></Link>
             </div>
         }
+
+        let resultsButton = null
+        var enddateconv = new Date(this.state.endDate)
+        var end_sec = enddateconv.getTime()
+        let currentDate = Date.now()
+        if (currentDate > end_sec) {
+            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
+        } else {
+            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
+        }
         return (
             <div>
                 {redirect}
@@ -358,6 +380,7 @@ class HackathonDetails extends Component {
                             {detailsContent}
                             <Col span={6}>
                                 {buttons}
+                                {resultsButton}
                             </Col>
                         </Row>
 

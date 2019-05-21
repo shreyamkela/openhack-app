@@ -18,6 +18,7 @@ import HackathonPayment from './Hackathon/HackathonPayment';
 import ViewSubmissions from './Submission/ViewSubmissions';
 import LandingPage from './Navbar/LandingPage';
 import RegistrationPaymentReport from './Report/RegistrationPaymentReport';
+import HackathonResults from './Hackathon/HackathonResults';
 //import HackathonPayment from './Hackathon/HackathonPayment';
 //import ViewSubmissions from './Submission/ViewSubmissions';
 
@@ -42,6 +43,7 @@ class Main extends Component {
         <Route exact path="/hacker/gradeSubmissions/:hackathonId" component={ViewSubmissions}></Route>
         <Route exact path="/admin/hackathon_details/:id" component={adminHackathonDetails}></Route>
         <Route exact path="/admin/registrationPaymentReport" component={RegistrationPaymentReport}></Route>
+        <Route exact path="/hackathon_details/:id/results" component={HackathonResults}></Route>
         {/* <Route exact path="/admin/hackathon/create" component={HackathonCreate}></Route> */}
       </div>
     )

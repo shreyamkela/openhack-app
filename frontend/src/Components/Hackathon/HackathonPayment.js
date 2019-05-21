@@ -7,6 +7,7 @@ import Title from 'antd/lib/typography/Title';
 import NavBar from '../Navbar/Navbar';
 import axios from 'axios'
 import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 class HackathonPayment extends Component {
 
     constructor(props) {
@@ -15,7 +16,8 @@ class HackathonPayment extends Component {
             paymentId: this.props.match.params.paymentId,
             fee: null,
             memberId: null,
-            teamId: null
+            teamId: null,
+            status:false
         }
     }
 
@@ -28,7 +30,8 @@ class HackathonPayment extends Component {
                     this.setState({
                         fee: response.data.fee,
                         memberId: response.data.memberId,
-                        teamId: response.data.teamId
+                        teamId: response.data.teamId,
+                        status:response.data.status
                     })
                 }
             })
@@ -38,25 +41,46 @@ class HackathonPayment extends Component {
     }
 
     doPayment = (e) => {
-
-        let body = {
-            "teamId":this.state.teamId,
-            "memberId":this.state.memberId
+        if(this.state.status){
+            Swal.fire({
+            showCancelButton: false,
+            showConfirmButton: true,
+            text:"Payment already received",
+            "type":"info"
+            })
+        }else{
+            Swal.fire({
+                showCancelButton: false,
+                showConfirmButton: true,
+                title:"Processing Payment",
+                "type":"info"
+                })
+            let body = {
+                "teamId":this.state.teamId,
+                "memberId":this.state.memberId
+            }
+            axios.post(`http://localhost:8080/payment/${this.state.paymentId}`,body)
+                .then(response => {
+                    if(response.status===200){
+                        Swal.close()
+                        swal("Payment Received","Close the window","success")
+                        .then(() => {
+                            window.location.reload()
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         }
-        axios.post(`http://localhost:8080/payment/${this.state.paymentId}`,body)
-            .then(response => {
-                if(response.status===200){
-                    swal("Payment Done","success")
-                    this.props.history.push("/home")
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        
 
     }
     render() {
-
+        var msg=null;
+        if(this.state.status){
+            msg=<p class="text-warning">Already Paid. Close the window</p>
+        }
         const { getFieldDecorator } = this.props.form
         return (
 
@@ -98,6 +122,7 @@ class HackathonPayment extends Component {
                                 </Form.Item>
                             </Col>
                         </Row>
+                        <center>{msg}</center>
                         <Form.Item>
                                     <Button
                                         type="primary"
@@ -105,10 +130,12 @@ class HackathonPayment extends Component {
                                         block
                                         size="large"
                                         onClick={this.doPayment}
+                                        disabled={this.state.status}
                                     >
                                         Pay ${this.state.fee}
                                      </Button>
                         </Form.Item>
+                        
                     </Form>
                 </div>
             </div>
