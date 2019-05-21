@@ -511,7 +511,7 @@ public class HackathonController {
 		// TODO Check whether grades for all teams have been assigned. If all grades
 		// have not been assigned then cannot finalize hackathon
 		Set<Team> allTeams = hackathon.getTeams();
-		Team winner = new Team(); // TODO check this new
+		Team winner = null; // TODO check this new
 		Float highestGrade = (float) 0;
 		for (Team currentTeam : allTeams) {
 			if (currentTeam.getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean
@@ -528,14 +528,13 @@ public class HackathonController {
 						winner = currentTeam;
 						hackathon.setWinner(currentTeam);
 						hackathon.setIsFinalized(true);
-						
 					}
 				}
 			}
 		}
-		
 		try {
 			hackathonDao.updateById(hackathonId, hackathon);
+			sendFinalizeMail(hackathon,hackathon.getJudges(),hackathon.getTeams(),winner);
 			responseBody.put("msg", "Finalized");
 			responseBody.put("winner", winner.getTeamName());
 			System.out.println("Winner Team: " + winner);
@@ -547,6 +546,7 @@ public class HackathonController {
 			return responseBody;
 		}
 	}
+	
 	
 	@RequestMapping(value = "/results", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 	"application/JSON" })
@@ -592,4 +592,122 @@ public class HackathonController {
 			return responseBody;
 		}
 	}
+	
+	
+	
+	public void sendFinalizeMail(Hackathon hackathon,Set<User> judges, Set<Team> teams,Team winner) {
+		for(User judge:judges) {
+			final String username = "openhackservice@gmail.com";
+			final String password = "openhack123";
+
+			Properties prop = new Properties();
+			prop.put("mail.smtp.host", "smtp.gmail.com");
+			prop.put("mail.smtp.port", "587");
+			prop.put("mail.smtp.auth", "true");
+			prop.put("mail.smtp.starttls.enable", "true"); // TLS
+
+			Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password);
+				}
+			});
+
+			try {
+
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(username));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(judge.getEmail()));
+				message.setSubject(""+hackathon.getName()+" Hackathon Finalized");
+				message.setText("Dear " + judge.getName() + ", " + "\n\n The Hackathon event: "+hackathon.getName()+"has been finalized."
+						+"\n\n Thank you for being the judge and wish to see ou judge many more hackathons."
+						+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
+						+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
+						+ "\n Hackathon End Date: " + hackathon.getEndDate() + "\n Hackathon Fee: $" + hackathon.getFee()
+						+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+						+ "\n\n Happy Hacking," + "\n OpenHack Service");
+				Transport.send(message);
+				System.out.println("Done");
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+		}
+		for(Team team:teams) {
+			if(team.getId() == winner.getId()) {
+				Set<User> members = team.getMembers();
+				for(User member: members) {
+					final String username = "openhackservice@gmail.com";
+					final String password = "openhack123";
+
+					Properties prop = new Properties();
+					prop.put("mail.smtp.host", "smtp.gmail.com");
+					prop.put("mail.smtp.port", "587");
+					prop.put("mail.smtp.auth", "true");
+					prop.put("mail.smtp.starttls.enable", "true"); // TLS
+
+					Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username, password);
+						}
+					});
+
+					try {
+
+						Message message = new MimeMessage(session);
+						message.setFrom(new InternetAddress(username));
+						message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(member.getEmail()));
+						message.setSubject("Congratulations: "+hackathon.getName()+" Hackathon Winner");
+						message.setText("Dear " + member.getName() + ", " + "\n\n The Hackathon event: "+hackathon.getName()+"has been finalized."
+								+"\n\n Congratulations on winning the hackathon. Wish to see you participate in our future events as well."
+								+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
+								+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
+								+ "\n Hackathon End Date: " + hackathon.getEndDate()
+								+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+								+ "\n\n Happy Hacking," + "\n OpenHack Service");
+						Transport.send(message);
+						System.out.println("Done");
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				}
+			}else {
+				for(User member:team.getMembers()) {
+					final String username = "openhackservice@gmail.com";
+					final String password = "openhack123";
+
+					Properties prop = new Properties();
+					prop.put("mail.smtp.host", "smtp.gmail.com");
+					prop.put("mail.smtp.port", "587");
+					prop.put("mail.smtp.auth", "true");
+					prop.put("mail.smtp.starttls.enable", "true"); // TLS
+
+					Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username, password);
+						}
+					});
+
+					try {
+						Message message = new MimeMessage(session);
+						message.setFrom(new InternetAddress(username));
+						message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(member.getEmail()));
+						message.setSubject(""+hackathon.getName()+" Hackathon Finalized");
+						message.setText("Dear " + member.getName() + ", " + "\n\n The Hackathon event: "+hackathon.getName()+"has been finalized."
+								+"\n\n Thank you for being the participant and wish to see you participate in many more hackathons."
+								+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
+								+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
+								+ "\n Hackathon End Date: " + hackathon.getEndDate() + "\n Hackathon Fee: $" + hackathon.getFee()
+								+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+								+ "\n\n Happy Hacking," + "\n OpenHack Service");
+						Transport.send(message);
+						System.out.println("Done");
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				}
+				
+			}
+			
+		}
+	}
+
 }

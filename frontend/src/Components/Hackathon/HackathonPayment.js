@@ -51,7 +51,7 @@ class HackathonPayment extends Component {
         }else{
             Swal.fire({
                 showCancelButton: false,
-                showConfirmButton: true,
+                showConfirmButton: false,
                 title:"Processing Payment",
                 "type":"info"
                 })

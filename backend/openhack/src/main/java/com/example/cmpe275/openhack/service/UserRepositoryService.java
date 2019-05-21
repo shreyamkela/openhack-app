@@ -65,8 +65,14 @@ public class UserRepositoryService {
 	
 
 	public List<User> findAllUsers(){
-		return userRepository.findAll();
-				
+		List<User> users = userRepository.findAll();
+		List<User> results = null;
+		for(User user:users) {
+			if(user.getVerified().equals("Y") && user.getUsertype().equals("user")) {
+				results.add(user);
+			}
+		}
+		return results;
 	}
 
 

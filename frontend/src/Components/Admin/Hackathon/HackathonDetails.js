@@ -133,46 +133,6 @@ class HackathonDetails extends Component {
         })
     }
 
-    showTeamModal = () => {
-        this.setState({
-            visibleTeamModal: true
-        })
-    }
-
-    showSubmissionModal = () => {
-        this.setState({
-            visibleSubmissionModal: true
-        })
-    }
-    handleCancel = () => {
-        this.setState({
-            visibleTeamModal: false,
-            visibleSubmissionModal: false
-        })
-    }
-
-    submitWork = (e) => {
-        console.log(this.state.submissionUrl)
-        let body = {
-            "hackathonId": this.props.match.params.id,
-            "teamId": this.state.userTeamId,
-            "url": this.state.submissionUrl
-        }
-
-        axios.post("http://localhost:8080/addSubmission", body)
-            .then(response => {
-                if (response.status === 200) {
-                    swal("Submitted work", "success")
-                    window.location.reload();
-                }
-            })
-    }
-    handleSubmission = (e) => {
-        this.setState({
-            submissionUrl: e.target.value
-        })
-    }
-
 
     handleHackathonOpen = async () => {
 
@@ -317,7 +277,7 @@ class HackathonDetails extends Component {
                 try {
                     Swal.fire({
                         title: 'Finalizing Hackathon',
-                        text: 'In progress...',
+                        text: 'In progress...Wait for few minutes',
                         showConfirmButton: false
                     })
                     let response = await API.post(`hackathon/finalize`, params)
@@ -554,6 +514,12 @@ class HackathonDetails extends Component {
                                 >
                                     <Icon type="dollar" />
                                     <span className="nav-text">Sponsors</span>
+                                </Menu.Item>
+                                <Menu.Item key="5"
+                                    onClick={this.loadPaymentReport}
+                                >
+                                    <Icon type="dollar" />
+                                    <span className="nav-text">Payment Registration Report</span>
                                 </Menu.Item>
                                 <br></br>
                             </Menu>

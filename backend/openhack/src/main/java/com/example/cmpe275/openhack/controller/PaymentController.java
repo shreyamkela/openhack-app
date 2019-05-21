@@ -115,6 +115,7 @@ public class PaymentController {
 
 		Payment payment = paymentDao.getPaymentById(paymentId);
 		payment.setStatus(true);
+		payment.setPaymentDate(null);
 		try {
 			paymentDao.updatePayment(payment);
 			responseObject.put("msg","Payment Successfull");
