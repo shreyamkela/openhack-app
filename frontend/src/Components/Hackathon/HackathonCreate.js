@@ -113,6 +113,9 @@ class HackathonCreate extends Component {
         dateErrFlag: true
       })
     } else {
+      console.log("\n - - - - - - - - - Start date : "+e[0]._d)
+      console.log("Type of start date : "+typeof(e[0]._d))
+      console.log("\n - - - - - - - - - End date : "+e[1]._d)
       this.setState({
         startDate: e[0]._d,
         endDate: e[1]._d,

@@ -170,20 +170,22 @@ public class HackathonController {
 		List<Map<Object, Object>> judgeDetails = new ArrayList<>();
 		List<Map<Object, Object>> sponsorDetails = new ArrayList<>();
 		List<Map<Object, Object>> submissionDetails = new ArrayList<>();
-		for (Team team : teams) {
-			Map<Object, Object> temp = new HashMap<>();
-			temp.put("teamId", team.getId());
-			temp.put("teamSize", team.getMembers().size());
-			temp.put("teamName", team.getTeamName());
-			teamDetails.add(temp);
-			if (team.getMembers().contains(user)) {
-				userTeam = team;
-				if (team.getPaymentStatus()) {
-					message = "registered";
-				} else {
-					message = "payment pending";
+		if(teams!=null) {
+			for (Team team : teams) {
+				Map<Object, Object> temp = new HashMap<>();
+				temp.put("teamId", team.getId());
+				temp.put("teamSize", team.getMembers().size());
+				temp.put("teamName", team.getTeamName());
+				teamDetails.add(temp);
+				if (team.getMembers().contains(user)) {
+					userTeam = team;
+					if (team.getPaymentStatus()) {
+						message = "registered";
+					} else {
+						message = "payment pending";
+					}
+	
 				}
-
 			}
 		}
 		for (User judge : judges) {
@@ -197,12 +199,15 @@ public class HackathonController {
 				message = "judge";
 			}
 		}
-		for (Organization sponsor : sponsors) {
-			Map<Object, Object> temp = new HashMap<>();
-			temp.put("sponsorId", sponsor.getId());
-			temp.put("sponsorName", sponsor.getName());
-			temp.put("sponsorDescription", sponsor.getDescription());
-			sponsorDetails.add(temp);
+		if(sponsors!=null)
+		{
+			for (Organization sponsor : sponsors) {
+				Map<Object, Object> temp = new HashMap<>();
+				temp.put("sponsorId", sponsor.getId());
+				temp.put("sponsorName", sponsor.getName());
+				temp.put("sponsorDescription", sponsor.getDescription());
+				sponsorDetails.add(temp);
+			}
 		}
 		if (userTeam != null) {
 			List<Map<Object, Object>> userTeamDetails = new ArrayList<>();
