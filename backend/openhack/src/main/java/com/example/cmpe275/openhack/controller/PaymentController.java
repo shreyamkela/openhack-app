@@ -1,5 +1,6 @@
 package com.example.cmpe275.openhack.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +100,23 @@ public class PaymentController {
 			responseObject.put("msg",e.getMessage());
 		}
 		return responseObject;
+	}
+	
+	@RequestMapping(value="/team/{id}",method=RequestMethod.GET)
+	@ResponseBody
+	public List<Payment> getPaymentByTeam(HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(name="id") long teamId){
+		
+		List<Payment> paymentByTeam = new ArrayList<>();
+		try {
+			paymentByTeam = paymentDao.findPaymentByTeamId(teamId);
+			return paymentByTeam;
+		}catch (Exception e) {
+			// TODO: handle exception
+			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
+		}
+		return paymentByTeam;
 	}
 	
 	@RequestMapping(value="/{id}",method=RequestMethod.POST)
