@@ -1,5 +1,6 @@
 package com.example.cmpe275.openhack.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,38 +27,50 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.cmpe275.openhack.dao.HackathonDao;
-import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
-import com.example.cmpe275.openhack.dao.PaymentDao;
-import com.example.cmpe275.openhack.dao.PaymentDaoImpl;
-import com.example.cmpe275.openhack.dao.TeamDao;
-import com.example.cmpe275.openhack.dao.TeamDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
-import com.example.cmpe275.openhack.dao.UserDaoImpl;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Payment;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.PaymentRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.SubmissionRepositoryService;
+import com.example.cmpe275.openhack.service.TeamRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 
 @RequestMapping("/payment")
 @Controller
 public class PaymentController {
 	
-	private UserDao userDao;
-	private HackathonDao hackathonDao;
-	private OrganizationDao organizationDao;
-	private TeamDao teamDao;
-	private PaymentDao paymentDao;
+//	private UserDao userDao;
+//	private HackathonDao hackathonDao;
+//	private OrganizationDao organizationDao;
+//	private TeamDao teamDao;
+//	private PaymentDao paymentDao;
+	
+	@Autowired
+	HackathonRepositoryService hackathonDao;
+	@Autowired
+	UserRepositoryService userDao;
+	@Autowired
+	OrganizationRepositoryService organizationDao;
+	@Autowired
+	TeamRepositoryService teamDao;
+	@Autowired
+	PaymentRepositoryService paymentDao;
+	@Autowired
+	RequestRepositoryService requestDao;
+	@Autowired
+	SubmissionRepositoryService submissionDao;
 	
 	public PaymentController() {
 		// TODO Auto-generated constructor stub
-		userDao = new UserDaoImpl();
-		hackathonDao = new HackathonDaoImpl();
-		organizationDao = new OrganizationDaoImpl();
-		teamDao = new TeamDaoImpl();
-		paymentDao = new PaymentDaoImpl();
+//		userDao = new UserDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
+//		organizationDao = new OrganizationDaoImpl();
+//		teamDao = new TeamDaoImpl();
+//		paymentDao = new PaymentDaoImpl();
 	}
 //	@Autowired
 //	UserDaoImpl userDao;
@@ -68,7 +81,7 @@ public class PaymentController {
 
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> getPayment(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="id") long paymentId){
@@ -79,6 +92,7 @@ public class PaymentController {
 			responseObject.put("fee", payment.getFee());
 			responseObject.put("memberId", payment.getMemberId());
 			responseObject.put("teamId", payment.getTeamId());
+			responseObject.put("status", payment.getStatus());
 			return responseObject;
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -88,9 +102,26 @@ public class PaymentController {
 		return responseObject;
 	}
 	
+	@RequestMapping(value="/team/{id}",method=RequestMethod.GET)
+	@ResponseBody
+	public List<Payment> getPaymentByTeam(HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(name="id") long teamId){
+		
+		List<Payment> paymentByTeam = new ArrayList<>();
+		try {
+			paymentByTeam = paymentDao.findPaymentByTeamId(teamId);
+			return paymentByTeam;
+		}catch (Exception e) {
+			// TODO: handle exception
+			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );
+		}
+		return paymentByTeam;
+	}
+	
 	@RequestMapping(value="/{id}",method=RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object,Object> doPayment(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable(name="id") long paymentId,
@@ -105,17 +136,17 @@ public class PaymentController {
 		try {
 			paymentDao.updatePayment(payment);
 			responseObject.put("msg","Payment Successfull");
-			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
-	        emailExecutor.execute(new Runnable() {
-	            @Override
-	            public void run() {
-	                try {	          
+//			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
+//	        emailExecutor.execute(new Runnable() {
+//	            @Override
+//	            public void run() {
+//	                try {	          
 	                	sendEmailConfirmation(userDao.findUserbyID(memberId), teamDao.getTeamById(teamId).getParticipatedHackathon());
 	                	boolean flag = true;
 	                    List<Payment> payments = paymentDao.findPaymentByTeamId(teamId);
 	                    System.out.println(payments);
-	                    for(Payment payment : payments) {
-	                    	if(!payment.getStatus()) {
+	                    for(Payment paymentObj : payments) {
+	                    	if(!paymentObj.getStatus()) {
 	                    		flag=false;
 	                    		break;
 	                    	}
@@ -126,12 +157,12 @@ public class PaymentController {
 	                    	Team updatedTeam = teamDao.updateTeam(team);
 	                    	sendFinalConfirmation(updatedTeam.getTeamLead(),updatedTeam.getParticipatedHackathon());	          
 	                    }
-	                } catch (Exception e) {
-	                	System.out.println("error in sending mails: "+e.getMessage());
-	                }
-	            }
-	        });
-	        emailExecutor.shutdown();
+//	                } catch (Exception e) {
+//	                	System.out.println("error in sending mails: "+e.getMessage());
+//	                }
+//	            }
+//	        });
+//	        emailExecutor.shutdown();
 			return responseObject;
 		}catch (Exception e) {
 			// TODO: handle exception

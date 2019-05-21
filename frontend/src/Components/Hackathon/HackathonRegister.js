@@ -8,6 +8,7 @@ import NavBar from '../Navbar/Navbar';
 import axios from 'axios';
 import swal from 'sweetalert';
 import { Redirect } from 'react-router'
+import Swal from 'sweetalert2';
 
 const Option = Select.Option;
 
@@ -163,6 +164,13 @@ class HackathonRegister extends Component {
     }
 
     registerHackathon = (e) => {
+        Swal.fire({
+            type:"info",
+            title:"Registration in Process",
+            text:"Sending payment details...",
+            showCancelButton: false,
+            showConfirmButton: false,
+        })
         let body = {
             "teamName": this.state.teamName,
             "idea": this.state.idea,
@@ -173,6 +181,7 @@ class HackathonRegister extends Component {
         axios.post(`http://localhost:8080/hackathon/register/${this.props.match.params.id}`, body)
             .then(response => {
                 console.log(response);
+                Swal.close()
                 swal("Successfully registered", "Payment Link Sent", "success")
                 this.props.history.push("/home");
             })

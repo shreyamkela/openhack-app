@@ -246,7 +246,7 @@ class HackathonCreate extends Component {
   }
 
   createHackathon = (e) => {
-    Swal.fire("Creation in Progress", "Please Wait...", "info")
+    
     Swal.fire({
       title: 'Creation in Progress',
       text: 'Please Wait...',

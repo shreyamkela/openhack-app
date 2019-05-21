@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,40 +36,55 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.cmpe275.openhack.dao.HackathonDao;
-import com.example.cmpe275.openhack.dao.HackathonDaoImpl;
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.OrganizationDaoImpl;
-import com.example.cmpe275.openhack.dao.PaymentDao;
-import com.example.cmpe275.openhack.dao.PaymentDaoImpl;
-import com.example.cmpe275.openhack.dao.TeamDao;
-import com.example.cmpe275.openhack.dao.TeamDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
-import com.example.cmpe275.openhack.dao.UserDaoImpl;
+import com.example.cmpe275.openhack.controller.helpers.HackathonResultsTeam;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Payment;
 import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.repository.HackathonRepository;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.PaymentRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.SubmissionRepositoryService;
+import com.example.cmpe275.openhack.service.TeamRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 
 @RequestMapping("/hackathon")
 @Controller
 public class HackathonController {
 
-	private UserDao userDao;
-	private HackathonDao hackathonDao;
-	private OrganizationDao organizationDao;
-	private TeamDao teamDao;
-	private PaymentDao paymentDao;
-
+	
+//	private UserDao userDao;
+//	private HackathonDao hackathonDao;
+//	private OrganizationDao organizationDao;
+//	private TeamDao teamDao;
+//	private PaymentDao paymentDao;
+	
+	@Autowired
+	HackathonRepositoryService hackathonDao;
+	@Autowired
+	UserRepositoryService userDao;
+	@Autowired
+	OrganizationRepositoryService organizationDao;
+	@Autowired
+	TeamRepositoryService teamDao;
+	@Autowired
+	PaymentRepositoryService paymentDao;
+	@Autowired
+	RequestRepositoryService requestDao;
+	@Autowired
+	SubmissionRepositoryService submissionDao;
+	
 	public HackathonController() {
 		// TODO Auto-generated constructor stub
-		userDao = new UserDaoImpl();
-		hackathonDao = new HackathonDaoImpl();
-		organizationDao = new OrganizationDaoImpl();
-		teamDao = new TeamDaoImpl();
-		paymentDao = new PaymentDaoImpl();
+//		userDao = new UserDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
+//		organizationDao = new OrganizationDaoImpl();
+//		teamDao = new TeamDaoImpl();
+//		paymentDao = new PaymentDaoImpl();
 	}
 	// @Autowired
 	// UserDaoImpl userDao;
@@ -79,7 +95,7 @@ public class HackathonController {
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> createHackathon(@RequestBody HashMap<Object, Object> map, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		System.out.println("\n Hackathon to be created");
@@ -135,7 +151,7 @@ public class HackathonController {
 
 	@RequestMapping(value = "{id}", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> getHackathonDetails(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<Object, Object> map, @PathVariable(name = "id") long hackathonId) {
 		System.out.print("Getting hackathon details");
@@ -248,7 +264,7 @@ public class HackathonController {
 
 	@RequestMapping(value = "register/{id}", method = RequestMethod.POST)
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> registerHackathon(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable(name = "id") long hackathonId, @RequestBody Map<Object, Object> requestBody) {
 
@@ -279,11 +295,11 @@ public class HackathonController {
 		try {
 			final Team createdTeam = teamDao.createTeam(team);
 			responseObject.put("msg", "Successfully registered");
-			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
-			emailExecutor.execute(new Runnable() {
-				@Override
-				public void run() {
-					try {
+//			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
+//			emailExecutor.execute(new Runnable() {
+//				@Override
+//				public void run() {
+//					try {
 						for (int i = 0; i < userIds.size(); i++) {
 							boolean isSponsor = false;
 							User temp = userDao.findUserbyID(userIds.get(i));
@@ -302,16 +318,18 @@ public class HackathonController {
 							payment.setTeamId(createdTeam.getId());
 							payment.setMemberId(userIds.get(i));
 							payment.setStatus(false);
+							System.out.println("Payment is to be created");
 							Payment createdPayment = paymentDao.createPayment(payment);
+							System.out.println("Payment created");
 							sendPaymentEmail(temp.getEmail(), hackathon, teamLead, createdPayment.getId(),
 									createdTeam.getId());
 						}
-					} catch (Exception e) {
-						System.out.println("error encountered: " + e.getMessage());
-					}
-				}
-			});
-			emailExecutor.shutdown();
+//					} catch (Exception e) {
+//						System.out.println("error encountered: " + e.getMessage());
+//					}
+//				}
+//			});
+//			emailExecutor.shutdown();
 			return responseObject;
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -323,13 +341,15 @@ public class HackathonController {
 
 	@RequestMapping(value = "/getAllHackathons/{userId}", method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional
 	public Map<Object, Object> getAllHackathons(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable(name = "userId") long userId) {
 
 		Map<Object, Object> responseBody = new HashMap<>();
 		try {
+			System.out.println("Before finding");
 			List<Hackathon> hackathons = hackathonDao.findAll();
+			System.out.println("hackathons are: "+hackathons.size());
+			System.out.println("After finding");
 			User user = userDao.findUserbyID(userId);
 			List<Map<Object, Object>> hackathonDetails = new ArrayList<>();
 			for (Hackathon hackathon : hackathons) {
@@ -404,7 +424,7 @@ public class HackathonController {
 	@RequestMapping(value = "open", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
 	@ResponseBody
-	@Transactional
+	
 	public Hackathon openHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) throws ParseException {
 		System.out.println("POST /hackathon/open - Open hackathon - Request Body: " + map);
@@ -436,7 +456,7 @@ public class HackathonController {
 	@RequestMapping(value = "close", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
 	@ResponseBody
-	@Transactional
+	
 	public Hackathon closeHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) throws ParseException {
 		System.out.println("POST /hackathon/close - Close hackathon - Request Body: " + map);
@@ -484,10 +504,10 @@ public class HackathonController {
 	@RequestMapping(value = "/finalize", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 			"application/JSON" })
 	@ResponseBody
-	@Transactional
+	
 	public Map<Object, Object> finalizeHackathon(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody HashMap<Object, Object> map) {
-		System.out.println("\nGET /hackathon/finalize - Finalize hackathon - Request Params: " + map);
+		System.out.println("\nPOST /hackathon/finalize - Finalize hackathon - Request Body: " + map);
 		Long hackathonId = new Long((String) map.get("hackathonId"));
 		Hackathon hackathon = hackathonDao.findById(hackathonId);
 		Set<Submission> allSubmissions = hackathon.getSubmissions();
@@ -525,6 +545,51 @@ public class HackathonController {
 			responseBody.put("winner", winner.getTeamName());
 			System.out.println("Winner Team: " + winner);
 			System.out.println(" - - - - - - - Returning : " + winner.getTeamName());
+			return responseBody;
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 500
+			responseBody.put("msg", e);
+			return responseBody;
+		}
+	}
+	
+	@RequestMapping(value = "/results", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
+	"application/JSON" })
+	@ResponseBody
+	
+	public Map<Object, Object> hackathonResults(HttpServletRequest request, HttpServletResponse response,
+		@RequestBody HashMap<Object, Object> map) {
+		System.out.println("\nPOST /hackathon/results - Hackathon Results - Request Body: " + map);
+		Long hackathonId = new Long((String) map.get("hackathonId"));
+		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		Set<Submission> allSubmissions = hackathon.getSubmissions();
+		Map<Object, Object> responseBody = new HashMap<>();
+		System.out.println("Hackathon name:" + hackathon.getName());
+		// TODO Return the TeamName, Members, and Grade (if assigned), of all the teams that have participated in the hackathon. The sorting according to the grades is to be done at the frontend
+		Set<Team> allTeams = hackathon.getTeams();
+		ArrayList<HackathonResultsTeam> resultsData = new ArrayList<>(); // HackathonResultsTeam is the class containing the TeamName, Members, and Grade for a particular team
+		
+		for (Team currentTeam : allTeams) {
+			if (currentTeam.getGraded() == true) { // If a grade is assigned then only consider this team to be included into resultsData
+				HackathonResultsTeam newHackathonResultsTeam = new HackathonResultsTeam();
+				newHackathonResultsTeam.setTeamName(currentTeam.getTeamName());
+				ArrayList<String> teamMembers = new ArrayList<>();
+				for(User currentUser : currentTeam.getMembers()) { // All team member names for this team
+					teamMembers.add(currentUser.getName());
+				}
+				newHackathonResultsTeam.setTeamMembers(teamMembers);
+				for (Submission submission : allSubmissions) {
+					if (currentTeam == submission.getTeam()) {
+						// TODO grade for this team
+						newHackathonResultsTeam.setGrade(submission.getGrade());
+					}
+				}	
+				resultsData.add(newHackathonResultsTeam);
+			}
+		}
+		
+		try {
+			responseBody.put("hackathonResults", resultsData);
 			return responseBody;
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 500
