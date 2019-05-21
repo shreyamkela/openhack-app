@@ -26,9 +26,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import com.example.cmpe275.openhack.dao.UserDao;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -41,7 +41,7 @@ public class UserControllerTest {
 	 UserController userController;
 	 
 	 @Mock
-	 UserDao userdao;
+	 UserRepositoryService userdao;
 	 
 	 User user;
 	 

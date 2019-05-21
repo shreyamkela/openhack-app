@@ -28,13 +28,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.example.cmpe275.openhack.dao.HackathonDao;
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.RequestDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -48,11 +47,11 @@ public class HackathonControllerTest {
 	private HackathonController hackController;
 	
 	@Mock
-	HackathonDao hackdao;
+	HackathonRepositoryService hackdao;
 	@Mock
-	UserDao userdao;
+	UserRepositoryService userdao;
 	@Mock
-	RequestDaoImpl reqdao;
+	RequestRepositoryService reqdao;
 	
 	User test_user;
 	User user1;

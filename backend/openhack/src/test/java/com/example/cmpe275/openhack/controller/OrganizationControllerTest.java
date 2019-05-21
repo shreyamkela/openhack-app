@@ -23,12 +23,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.thymeleaf.standard.expression.AndExpression;
 
-import com.example.cmpe275.openhack.dao.OrganizationDao;
-import com.example.cmpe275.openhack.dao.RequestDaoImpl;
-import com.example.cmpe275.openhack.dao.UserDao;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Request;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -42,11 +42,11 @@ public class OrganizationControllerTest {
 	private OrganizationController orgController;
 	
 	@Mock
-	OrganizationDao orgdao;
+	OrganizationRepositoryService orgdao;
 	@Mock
-	UserDao userdao;
+	UserRepositoryService userdao;
 	@Mock
-	RequestDaoImpl reqdao;
+	RequestRepositoryService reqdao;
 
 	Organization test_org;
 	User test_user;
