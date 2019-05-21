@@ -339,6 +339,17 @@ class HackathonDetails extends Component {
         }
     }
 
+    handleGetPaymentReport = async () => {
+        console.log("Get Payment Report")
+        // var data = {
+        //     teamDetails: this.state.teamDetails
+        // }
+        this.props.history.push({
+            pathname: '/admin/registrationPaymentReport',
+            state: { details: this.state.teamDetails }
+        })
+    }
+
 
     render() {
         var content = null
@@ -385,6 +396,8 @@ class HackathonDetails extends Component {
                 <p><b>Overview</b>: {this.state.description}</p>
                 <p><b>Fee</b>: ${this.state.fee}</p>
                 <p><b>Sponsor Discount</b>: {this.state.discount}%</p>
+                <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleGetPaymentReport}>View Payment Registration Report</Button><br />
+
             </div>
         } else if (this.state.teamsContentFlag) {
             content = this.state.teamDetails && this.state.teamDetails.map(team => {
@@ -541,6 +554,7 @@ class HackathonDetails extends Component {
             buttons = <div>
                 <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonOpen}>Open</Button><Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonClose}>Close</Button>
                 <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonFinalize}>Finalize</Button><br />
+
             </div>
         }
         else {
