@@ -33,19 +33,39 @@ import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Request;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.PaymentRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.SubmissionRepositoryService;
+import com.example.cmpe275.openhack.service.TeamRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 
 @Controller
 public class OrganizationController {
 	
-	private OrganizationDao orgdao;
-	private UserDao userdao;
-	private RequestDaoImpl reqdao;
-	
+//	private OrganizationDao orgdao;
+//	private UserDao userdao;
+//	private RequestDaoImpl reqdao;
+	@Autowired
+	HackathonRepositoryService hackathonDao;
+	@Autowired
+	UserRepositoryService userdao;
+	@Autowired
+	OrganizationRepositoryService orgdao;
+	@Autowired
+	TeamRepositoryService teamDao;
+	@Autowired
+	PaymentRepositoryService paymentDao;
+	@Autowired
+	RequestRepositoryService reqdao;
+	@Autowired
+	SubmissionRepositoryService submissionDao;
 	public OrganizationController() 
 	{
-		orgdao =  new OrganizationDaoImpl();
-		userdao = new UserDaoImpl();
-		reqdao = new RequestDaoImpl();
+//		orgdao =  new OrganizationDaoImpl();
+//		userdao = new UserDaoImpl();
+//		reqdao = new RequestDaoImpl();
 	}
 //	@Autowired 
 //	OrganizationDaoImpl orgdao;

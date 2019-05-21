@@ -36,6 +36,13 @@ import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.PaymentRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.SubmissionRepositoryService;
+import com.example.cmpe275.openhack.service.TeamRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -45,15 +52,30 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @RestController
 public class UserController {
-	private UserDao userdao;
-	private OrganizationDao orgdao;
-	private HackathonDao hackathonDao;
+//	private UserDao userdao;
+//	private OrganizationDao orgdao;
+//	private HackathonDao hackathonDao;
 
+	@Autowired
+	HackathonRepositoryService hackathonDao;
+	@Autowired
+	UserRepositoryService userdao;
+	@Autowired
+	OrganizationRepositoryService orgdao;
+	@Autowired
+	TeamRepositoryService teamDao;
+	@Autowired
+	PaymentRepositoryService paymentDao;
+	@Autowired
+	RequestRepositoryService requestDao;
+	@Autowired
+	SubmissionRepositoryService submissionDao;
+	
 	public UserController()
 	{
-		userdao = new UserDaoImpl();
-		orgdao =  new OrganizationDaoImpl();
-		hackathonDao = new HackathonDaoImpl();
+//		userdao = new UserDaoImpl();
+//		orgdao =  new OrganizationDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
 	}
 //	@Autowired
 //	UserDaoImpl userdao;

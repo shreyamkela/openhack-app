@@ -30,17 +30,40 @@ import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.PaymentRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.SubmissionRepositoryService;
+import com.example.cmpe275.openhack.service.TeamRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 
 @RestController
 public class SubmissionController {
-	private HackathonDao hackathonDao;
-	private SubmissionDao submissionDao;
-	private TeamDao teamDao;
+//	private HackathonDao hackathonDao;
+//	private SubmissionDao submissionDao;
+//	private TeamDao teamDao;
 
+	
+	@Autowired
+	HackathonRepositoryService hackathonDao;
+	@Autowired
+	UserRepositoryService userDao;
+	@Autowired
+	OrganizationRepositoryService organizationDao;
+	@Autowired
+	TeamRepositoryService teamDao;
+	@Autowired
+	PaymentRepositoryService paymentDao;
+	@Autowired
+	RequestRepositoryService requestDao;
+	@Autowired
+	SubmissionRepositoryService submissionDao;
+	
 	public SubmissionController() {
-		hackathonDao = new HackathonDaoImpl();
-		submissionDao = new SubmissionDaoImpl();
-		teamDao = new TeamDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
+//		submissionDao = new SubmissionDaoImpl();
+//		teamDao = new TeamDaoImpl();
 	}
 //	@Autowired
 //	HackathonDaoImpl hackathonDao;

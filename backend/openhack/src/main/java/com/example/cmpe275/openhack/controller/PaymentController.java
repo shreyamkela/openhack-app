@@ -40,24 +40,46 @@ import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Payment;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
+import com.example.cmpe275.openhack.service.HackathonRepositoryService;
+import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
+import com.example.cmpe275.openhack.service.PaymentRepositoryService;
+import com.example.cmpe275.openhack.service.RequestRepositoryService;
+import com.example.cmpe275.openhack.service.SubmissionRepositoryService;
+import com.example.cmpe275.openhack.service.TeamRepositoryService;
+import com.example.cmpe275.openhack.service.UserRepositoryService;
 
 @RequestMapping("/payment")
 @Controller
 public class PaymentController {
 	
-	private UserDao userDao;
-	private HackathonDao hackathonDao;
-	private OrganizationDao organizationDao;
-	private TeamDao teamDao;
-	private PaymentDao paymentDao;
+//	private UserDao userDao;
+//	private HackathonDao hackathonDao;
+//	private OrganizationDao organizationDao;
+//	private TeamDao teamDao;
+//	private PaymentDao paymentDao;
+	
+	@Autowired
+	HackathonRepositoryService hackathonDao;
+	@Autowired
+	UserRepositoryService userDao;
+	@Autowired
+	OrganizationRepositoryService organizationDao;
+	@Autowired
+	TeamRepositoryService teamDao;
+	@Autowired
+	PaymentRepositoryService paymentDao;
+	@Autowired
+	RequestRepositoryService requestDao;
+	@Autowired
+	SubmissionRepositoryService submissionDao;
 	
 	public PaymentController() {
 		// TODO Auto-generated constructor stub
-		userDao = new UserDaoImpl();
-		hackathonDao = new HackathonDaoImpl();
-		organizationDao = new OrganizationDaoImpl();
-		teamDao = new TeamDaoImpl();
-		paymentDao = new PaymentDaoImpl();
+//		userDao = new UserDaoImpl();
+//		hackathonDao = new HackathonDaoImpl();
+//		organizationDao = new OrganizationDaoImpl();
+//		teamDao = new TeamDaoImpl();
+//		paymentDao = new PaymentDaoImpl();
 	}
 //	@Autowired
 //	UserDaoImpl userDao;
@@ -79,6 +101,7 @@ public class PaymentController {
 			responseObject.put("fee", payment.getFee());
 			responseObject.put("memberId", payment.getMemberId());
 			responseObject.put("teamId", payment.getTeamId());
+			responseObject.put("status", payment.getStatus());
 			return responseObject;
 		}catch (Exception e) {
 			// TODO: handle exception
@@ -105,17 +128,17 @@ public class PaymentController {
 		try {
 			paymentDao.updatePayment(payment);
 			responseObject.put("msg","Payment Successfull");
-			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
-	        emailExecutor.execute(new Runnable() {
-	            @Override
-	            public void run() {
-	                try {	          
+//			ExecutorService emailExecutor = Executors.newSingleThreadExecutor();
+//	        emailExecutor.execute(new Runnable() {
+//	            @Override
+//	            public void run() {
+//	                try {	          
 	                	sendEmailConfirmation(userDao.findUserbyID(memberId), teamDao.getTeamById(teamId).getParticipatedHackathon());
 	                	boolean flag = true;
 	                    List<Payment> payments = paymentDao.findPaymentByTeamId(teamId);
 	                    System.out.println(payments);
-	                    for(Payment payment : payments) {
-	                    	if(!payment.getStatus()) {
+	                    for(Payment paymentObj : payments) {
+	                    	if(!paymentObj.getStatus()) {
 	                    		flag=false;
 	                    		break;
 	                    	}
@@ -126,12 +149,12 @@ public class PaymentController {
 	                    	Team updatedTeam = teamDao.updateTeam(team);
 	                    	sendFinalConfirmation(updatedTeam.getTeamLead(),updatedTeam.getParticipatedHackathon());	          
 	                    }
-	                } catch (Exception e) {
-	                	System.out.println("error in sending mails: "+e.getMessage());
-	                }
-	            }
-	        });
-	        emailExecutor.shutdown();
+//	                } catch (Exception e) {
+//	                	System.out.println("error in sending mails: "+e.getMessage());
+//	                }
+//	            }
+//	        });
+//	        emailExecutor.shutdown();
 			return responseObject;
 		}catch (Exception e) {
 			// TODO: handle exception
