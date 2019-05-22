@@ -59,8 +59,7 @@ class HackathonDetails extends Component {
             paidRevenue: null,
             unpaidRevenue: null,
             sponsorRevenue: null,
-            expenseDetails: null,
-            revenueDetails:null,
+            expenseDetails: [],
             totalExpense: null,
             expenseModalVisible: false,
         }
@@ -125,6 +124,17 @@ class HackathonDetails extends Component {
             })
             .catch(err => {
                 console.log(err);
+            })
+
+        axios.get(`http://localhost:8080/hackathon/expenseDetails/${this.state.hackathonId}`)
+            .then(response => {
+                if(response.status === 200){
+                    console.log("expense Details",response.data)
+                    this.setState({
+                        totalExpense:response.data.totalExpense,
+                        expenseDetails:response.data.expenseDetails
+                    })
+                }
             })
     }
 
@@ -494,6 +504,26 @@ class HackathonDetails extends Component {
                 </th>
             </tr>
         }
+
+        if(this.state.expenseDetails && this.state.expenseDetails.length>0){
+            expenseReportTable = this.state.expenseDetails.map(expense => {
+                return(
+                    <tr>
+                        <th scope="row">{expense.title}</th>
+                        <td>{expense.description}</td>
+                        <td>{expense.amount}</td>
+                        <td>{new Date(expense.time).toDateString()} {new Date(expense.time).toLocaleTimeString()}</td>
+                    </tr>
+                )
+            })
+        }else{
+            expenseReportTable = <tr>
+            <th>
+                No Expense Added
+            </th>
+        </tr> 
+        }
+        
         if (this.state.aboutContentFlag) {
             content = <div>
                 <p><b>Overview</b>: {this.state.description}</p>
@@ -593,7 +623,26 @@ class HackathonDetails extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {revenueReportTable}
+                        <tr>
+                            <td scope="row">Total Paid Revenue from Registration Fees</td>
+                            <td>${this.state.paidRevenue}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Total Revenue from Sponsors</td>
+                            <td>${this.state.sponsorRevenue}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Total Unpaid Revenue from Registration Fees</td>
+                            <td>${this.state.unpaidRevenue}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">Total Expense</td>
+                            <td>${0 || this.state.totalExpense}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total Profit</th>
+                            <th>${this.state.paidRevenue+this.state.sponsorRevenue+this.state.totalExpense}</th>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -602,10 +651,10 @@ class HackathonDetails extends Component {
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">Expense Name</th>
+                            <th scope="col">Expense Title</th>
                             <th scope="col">Expense Desc.</th>
                             <th scope="col">Expense Amount</th>
-                            <th scope="col">Expense Date</th>
+                            <th scope="col">Expense Time</th>
                         </tr>
                     </thead>
                     <tbody>
