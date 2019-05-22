@@ -391,7 +391,7 @@ public class HackathonController {
 					+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
 					+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
 					+ "\n Hackathon End Date: " + hackathon.getEndDate() + "\n Hackathon Fee: $" + hackathon.getFee()
-					+ "\n\n Go to http://localhost:3000/hackathon/payment/" + paymentId
+					+ "\n\n Go to http://3.86.236.128:3000/hackathon/payment/" + paymentId
 					+ " for payment and confirm your seat." + "\n\n Happy Hacking," + "\n OpenHack Service");
 
 			Transport.send(message);
@@ -625,7 +625,7 @@ public class HackathonController {
 			message.setSubject("OpenHack Invitation - You have been invited to participate!");
 			message.setText("Dear " + inviteEmail + "," + "\n\nYou are invited to participate in the following hackathon event: "
 					+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
-					+ hackathon.getDescription() + "\n\nPlease go to http://localhost:3000/hackathon_details/" + hackathon.getId() + "/"
+					+ hackathon.getDescription() + "\n\nPlease go to http://3.86.236.128:3000/hackathon_details/" + hackathon.getId() + "/"
 					+ " , and register as a new user. Then you can use the same link to participate in the above hackathon. You can also see all the on-going hackathons on the homepage, after you have successfully signed up." + "\n\n Happy Hacking," + "\n OpenHack Service");
 
 			Transport.send(message);
@@ -699,7 +699,7 @@ public class HackathonController {
 						+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
 						+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
 						+ "\n Hackathon End Date: " + hackathon.getEndDate() + "\n Hackathon Fee: $" + hackathon.getFee()
-						+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+						+ "\n\n Go to http://3.86.236.128:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
 						+ "\n\n Happy Hacking," + "\n OpenHack Service");
 				Transport.send(message);
 				System.out.println("Done");
@@ -737,7 +737,7 @@ public class HackathonController {
 								+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
 								+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
 								+ "\n Hackathon End Date: " + hackathon.getEndDate()
-								+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+								+ "\n\n Go to http://3.86.236.128:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
 								+ "\n\n Happy Hacking," + "\n OpenHack Service");
 						Transport.send(message);
 						System.out.println("Done");
@@ -772,7 +772,7 @@ public class HackathonController {
 								+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
 								+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
 								+ "\n Hackathon End Date: " + hackathon.getEndDate() + "\n Hackathon Fee: $" + hackathon.getFee()
-								+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+								+ "\n\n Go to http://3.86.236.128:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
 								+ "\n\n Happy Hacking," + "\n OpenHack Service");
 						Transport.send(message);
 						System.out.println("Done");
