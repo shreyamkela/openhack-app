@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.cmpe275.openhack.controller.helpers.HackathonResultsTeam;
+import com.example.cmpe275.openhack.entity.Expense;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Payment;
@@ -44,6 +45,7 @@ import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
 import com.example.cmpe275.openhack.repository.HackathonRepository;
+import com.example.cmpe275.openhack.service.ExpenseRepositoryService;
 import com.example.cmpe275.openhack.service.HackathonRepositoryService;
 import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
 import com.example.cmpe275.openhack.service.PaymentRepositoryService;
@@ -77,6 +79,8 @@ public class HackathonController {
 	RequestRepositoryService requestDao;
 	@Autowired
 	SubmissionRepositoryService submissionDao;
+	@Autowired 
+	ExpenseRepositoryService expenseDao;
 	
 	public HackathonController() {
 		// TODO Auto-generated constructor stub
@@ -591,5 +595,42 @@ public class HackathonController {
 			responseBody.put("msg", e);
 			return responseBody;
 		}
+	}
+	@RequestMapping(value = "/addExpense", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> addHackathon(@RequestBody HashMap<Object, Object> map, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		System.out.println("\n Expense to be created");
+		Map<Object, Object> responseObject = new HashMap<>();
+		String title = (String) map.get("title");
+		long new_miliseconds = Long.parseLong((String) String.valueOf(map.get("time")));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(new_miliseconds);
+		System.out.println();
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		Date final_new_date = formatter.parse(formatter.format(cal.getTime()));
+		
+//		Date time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S'Z'").parse((String) map.get("time"));
+		String description = (String) map.get("description");
+		Float amount = Float.parseFloat((String) map.get("amount"));
+		Long hackathonId = new Long((String) map.get("hackathonId"));
+		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		Expense expense = new Expense();
+		expense.setTitle(title);
+		expense.setDescription(description);
+		expense.setTime(final_new_date);
+		expense.setAmount(amount);
+		expense.setHackathon(hackathon);
+		try {
+			expenseDao.create(expense);
+			System.out.println("Successfully created");
+			responseObject.put("msg", "Successfully created");
+		} catch (Exception e) {
+			// TODO: handle exception
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			responseObject.put("msg", e.getMessage());
+		}
+		return responseObject;
 	}
 }
