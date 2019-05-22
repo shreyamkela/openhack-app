@@ -61,7 +61,8 @@ class HackathonDetails extends Component {
             sponsorRevenue: null,
             expenseDetails: null,
             revenueDetails:null,
-            totalExpense: null
+            totalExpense: null,
+            expenseModalVisible: false,
         }
     }
 
@@ -378,7 +379,56 @@ class HackathonDetails extends Component {
     routeToResults = () => {
         this.props.history.push(`/hackathon_details/${this.state.hackathonId}/results`);
     }
+    addExpenseModal = () => {
+        console.log("\nAdd Expense Button Clicked ");
+        this.setState({
+            expenseModalVisible: true,
+        });
 
+
+
+    }
+    handleCancel = () => {
+        console.log('Clicked cancel button');
+        this.setState({
+            expenseModalVisible: false,
+        });
+        window.location.reload();
+    }
+    createExpense = (e) => {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+                values.hackathonId =this.state.hackathonId;
+                values.time=Date.now();
+                console.log("\nSending the Expense object data to the backend\n")
+                console.log(JSON.stringify(values))
+                axios.defaults.withCredentials = true;
+                axios.post('http://localhost:8080/hackathon/addExpense', values)
+                    .then(response => {
+                        console.log("Status Code : ", response.status);
+
+                        if (response.status === 200) {
+                            Swal.close();
+                            swal("Expense created successfully", "", "success");
+                            console.log(JSON.stringify(response.data));
+                        }
+                        else {
+                            Swal.close();
+                            swal("There was some error creating the Expense", "", "error");
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        Swal.close();
+                        swal("bad request for creating the Expense", "", "error");
+                    });
+            }
+        });
+
+
+    }
 
 
     render() {
@@ -395,6 +445,7 @@ class HackathonDetails extends Component {
         var paymentReportTable = null
         var revenueReportTable = null
         var expenseReportTable = null
+        const { expenseModalVisible } = this.state;
         if (this.state.winnerTeam != null) {
             winnerTeam = `${this.state.winnerTeam}`
         }
@@ -577,7 +628,8 @@ class HackathonDetails extends Component {
         }
 
         buttons = <div>
-            <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonOpen}>Open</Button><Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonClose}>Close</Button>
+            <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonOpen}>Open</Button>
+            <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonClose}>Close</Button>
             <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleHackathonFinalize}>Finalize</Button><br />
         </div>
 
@@ -598,10 +650,49 @@ class HackathonDetails extends Component {
         var end_sec = enddateconv.getTime()
         let currentDate = Date.now()
         if (currentDate > end_sec) {
-            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
+            resultsButton = <div>
+            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
+            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal}>Add Expense</Button>
+
+            </div>
         } else {
-            resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
+            resultsButton = <div>
+            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
+            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal}>Add Expense</Button>
+            </div>
         }
+        let addExpense = <Modal
+            title="Add a new Expense"
+            visible={expenseModalVisible}
+            onOk={this.handleCancel}
+            // confirmLoading={confirmLoading}
+            onCancel={this.handleCancel}
+        >
+
+            <Form
+                layout="vertical"
+                onSubmit={this.createExpense}
+            >
+                <Form.Item label="Expense title">
+                    {getFieldDecorator('title', {
+                        rules: [{ required: true, message: 'Please input the title of the Expense' }],
+                    })(<Input />)}
+                </Form.Item>
+                <Form.Item label="Description">
+                    {getFieldDecorator('description', {
+                        rules: [{ required: true, message: 'Please input the title of the Expense' }],
+                    })(<Input type="textarea" rows="3" cols="10" />)}
+                </Form.Item>
+                <Form.Item label="Amount">
+                    {getFieldDecorator('amount', {
+                        rules: [{ required: true, message: 'Please input the title of the Expense' }],
+                    })(<Input />)}
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">Add Expense</Button>
+                </Form.Item>
+            </Form>
+        </Modal>
 
 
 
@@ -609,6 +700,7 @@ class HackathonDetails extends Component {
             <div>
                 {redirect}
                 <NavBar></NavBar>
+                {addExpense}
                 <div style={{ backgroundImage: "url(" + this.state.cover_image + ")", height: "300px", position: "relative" }}>
                     <h3 class="hackathon-name"><b>{this.state.name}</b></h3>
                 </div>
