@@ -262,7 +262,7 @@ class HackathonCreate extends Component {
       "teamSizeMin": this.state.teamSizeMin,
       "teamSizeMax": this.state.teamSizeMax,
       "fee": this.state.fee.toString(),
-      "discount": this.state.discount.toString(),
+      "discount": this.state.discount && this.state.discount.toString(),
       "judgesId": this.state.judges,
       "sponsorsId": this.state.sponsors
     }
