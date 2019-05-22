@@ -641,7 +641,7 @@ class HackathonDetails extends Component {
                         </tr>
                         <tr>
                             <th scope="row">Total Profit</th>
-                            <th>${this.state.paidRevenue+this.state.sponsorRevenue+this.state.totalExpense}</th>
+                            <th>${this.state.paidRevenue+this.state.sponsorRevenue-this.state.totalExpense}</th>
                         </tr>
                     </tbody>
                 </table>
@@ -701,13 +701,13 @@ class HackathonDetails extends Component {
         if (currentDate > end_sec) {
             resultsButton = <div>
             <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
-            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal}>Add Expense</Button>
+            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal} disabled={this.state.isFinalized}>Add Expense</Button>
 
             </div>
         } else {
             resultsButton = <div>
             <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
-            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal}>Add Expense</Button>
+            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal} disabled={this.state.isFinalized}>Add Expense</Button>
             </div>
         }
         let addExpense = <Modal
