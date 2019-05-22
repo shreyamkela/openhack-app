@@ -190,22 +190,20 @@ public class HackathonController {
 		List<Map<Object, Object>> judgeDetails = new ArrayList<>();
 		List<Map<Object, Object>> sponsorDetails = new ArrayList<>();
 		List<Map<Object, Object>> submissionDetails = new ArrayList<>();
-		if(teams!=null) {
-			for (Team team : teams) {
-				Map<Object, Object> temp = new HashMap<>();
-				temp.put("teamId", team.getId());
-				temp.put("teamSize", team.getMembers().size());
-				temp.put("teamName", team.getTeamName());
-				teamDetails.add(temp);
-				if (team.getMembers().contains(user)) {
-					userTeam = team;
-					if (team.getPaymentStatus()) {
-						message = "registered";
-					} else {
-						message = "payment pending";
-					}
-	
+		for (Team team : teams) {
+			Map<Object, Object> temp = new HashMap<>();
+			temp.put("teamId", team.getId());
+			temp.put("teamSize", team.getMembers().size());
+			temp.put("teamName", team.getTeamName());
+			teamDetails.add(temp);
+			if (team.getMembers().contains(user)) {
+				userTeam = team;
+				if (team.getPaymentStatus()) {
+					message = "registered";
+				} else {
+					message = "payment pending";
 				}
+
 			}
 		}
 		for (User judge : judges) {
@@ -219,15 +217,12 @@ public class HackathonController {
 				message = "judge";
 			}
 		}
-		if(sponsors!=null)
-		{
-			for (Organization sponsor : sponsors) {
-				Map<Object, Object> temp = new HashMap<>();
-				temp.put("sponsorId", sponsor.getId());
-				temp.put("sponsorName", sponsor.getName());
-				temp.put("sponsorDescription", sponsor.getDescription());
-				sponsorDetails.add(temp);
-			}
+		for (Organization sponsor : sponsors) {
+			Map<Object, Object> temp = new HashMap<>();
+			temp.put("sponsorId", sponsor.getId());
+			temp.put("sponsorName", sponsor.getName());
+			temp.put("sponsorDescription", sponsor.getDescription());
+			sponsorDetails.add(temp);
 		}
 		if (userTeam != null) {
 			List<Map<Object, Object>> userTeamDetails = new ArrayList<>();
@@ -637,5 +632,38 @@ public class HackathonController {
 			responseObject.put("msg", e.getMessage());
 		}
 		return responseObject;
+	}
+	@RequestMapping(value = "/expenseDetails/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Object, Object> getExpenseDetails(HttpServletRequest request,HttpServletResponse response
+			,@PathVariable(name = "id") long hackathonId) throws Exception {
+		System.out.println("\nAll Expenses for Hackathon");
+		
+		Map<Object, Object> responseBody = new HashMap<>();
+		try {
+			System.out.println("Before finding");
+			List<Expense> expenses = expenseDao.findExpenseByHackathonId(hackathonId);
+			System.out.println("hackathons are: "+expenses.size());
+			System.out.println("After finding");
+			List<Map<Object,Object>> expenseDetails=new ArrayList<>();
+			float totalExpense=0;
+			for (Expense expense : expenses) {
+				Map<Object,Object> temp = new HashMap<>();
+				temp.put("title",expense.getTitle());
+				temp.put("description", expense.getDescription());
+				temp.put("amount",expense.getAmount());
+				temp.put("time", expense.getTime());
+				expenseDetails.add(temp);
+				totalExpense=totalExpense+expense.getAmount();
+			}
+			System.out.println("totalExpense"+totalExpense);
+			responseBody.put("totalExpense", totalExpense);
+			responseBody.put("expenseDetails", expenseDetails);
+			return responseBody;
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			responseBody.put("msg", e);
+			return responseBody;
+		}		
 	}
 }
