@@ -8,6 +8,8 @@ Shreyam Kela          shreyam.kela@sjsu.edu                 013775411
 
 URL: http://3.86.236.128:3000
 
+Instructional video showing the demo and walk through of the application - https://drive.google.com/drive/folders/1Gk4fihrDWvUvOVeqDGHqsQCeixxT0YXh?usp=sharing
+
 
 Build instructions to run the application on Localhost:
     A) Run Spring Boot backend server - Go to folder path from terminal: /backend
