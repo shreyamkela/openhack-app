@@ -669,6 +669,8 @@ public class HackathonController {
 			responseBody.put("msg", e);
 			return responseBody;
 		}
+	}
+	
 	public void sendFinalizeMail(Hackathon hackathon,Set<User> judges, Set<Team> teams,Team winner) {
 		for(User judge:judges) {
 			final String username = "openhackservice@gmail.com";
