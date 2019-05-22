@@ -407,8 +407,10 @@ class HackathonDetails extends Component {
         window.location.reload();
     }
     createExpense = (e) => {
+        console.log("Expense should be created")
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        console.log("Expense should be created2")
+        this.props.form.validateFields(['title','description','amount'],(err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
                 values.hackathonId = this.state.hackathonId;
@@ -435,6 +437,8 @@ class HackathonDetails extends Component {
                         Swal.close();
                         swal("bad request for creating the Expense", "", "error");
                     });
+            }else{
+                console.log(err)
             }
         });
 
@@ -458,7 +462,7 @@ class HackathonDetails extends Component {
     handleInviteModalOk = e => {
         //console.log(e);
         e.preventDefault();
-        this.props.form.validateFields(async (err, values) => {
+        this.props.form.validateFields(['email'],async (err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
 
