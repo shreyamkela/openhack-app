@@ -1,3 +1,4 @@
+// Reference: https://github.com/redhat-cop/spring-rest/blob/master/src/main/java/hello/utils/SimpleCORSFilter.java
 package com.example.cmpe275.openhack.config;
 
 import java.io.IOException;
