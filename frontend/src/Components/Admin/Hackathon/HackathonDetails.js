@@ -129,11 +129,11 @@ class HackathonDetails extends Component {
 
         axios.get(`http://localhost:8080/hackathon/expenseDetails/${this.state.hackathonId}`)
             .then(response => {
-                if(response.status === 200){
-                    console.log("expense Details",response.data)
+                if (response.status === 200) {
+                    console.log("expense Details", response.data)
                     this.setState({
-                        totalExpense:response.data.totalExpense,
-                        expenseDetails:response.data.expenseDetails
+                        totalExpense: response.data.totalExpense,
+                        expenseDetails: response.data.expenseDetails
                     })
                 }
             })
@@ -411,8 +411,8 @@ class HackathonDetails extends Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                values.hackathonId =this.state.hackathonId;
-                values.time=Date.now();
+                values.hackathonId = this.state.hackathonId;
+                values.time = Date.now();
                 console.log("\nSending the Expense object data to the backend\n")
                 console.log(JSON.stringify(values))
                 axios.defaults.withCredentials = true;
@@ -575,9 +575,9 @@ class HackathonDetails extends Component {
             </tr>
         }
 
-        if(this.state.expenseDetails && this.state.expenseDetails.length>0){
+        if (this.state.expenseDetails && this.state.expenseDetails.length > 0) {
             expenseReportTable = this.state.expenseDetails.map(expense => {
-                return(
+                return (
                     <tr>
                         <th scope="row">{expense.title}</th>
                         <td>{expense.description}</td>
@@ -586,14 +586,14 @@ class HackathonDetails extends Component {
                     </tr>
                 )
             })
-        }else{
+        } else {
             expenseReportTable = <tr>
-            <th>
-                No Expense Added
+                <th>
+                    No Expense Added
             </th>
-        </tr> 
+            </tr>
         }
-        
+
         if (this.state.aboutContentFlag) {
             content = <div>
                 <p><b>Overview</b>: {this.state.description}</p>
@@ -711,7 +711,7 @@ class HackathonDetails extends Component {
                         </tr>
                         <tr>
                             <th scope="row">Total Profit</th>
-                            <th>${this.state.paidRevenue+this.state.sponsorRevenue-this.state.totalExpense}</th>
+                            <th>${this.state.paidRevenue + this.state.sponsorRevenue - this.state.totalExpense}</th>
                         </tr>
                     </tbody>
                 </table>
@@ -770,14 +770,14 @@ class HackathonDetails extends Component {
         let currentDate = Date.now()
         if (currentDate > end_sec) {
             resultsButton = <div>
-            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
-            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal} disabled={this.state.isFinalized}>Add Expense</Button>
+                <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.routeToResults}>Results</Button>
+                <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal} disabled={this.state.isFinalized}>Add Expense</Button>
 
             </div>
         } else {
             resultsButton = <div>
-            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
-            <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal} disabled={this.state.isFinalized}>Add Expense</Button>
+                <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
+                <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} onClick={this.addExpenseModal} disabled={this.state.isFinalized}>Add Expense</Button>
             </div>
         }
         let addExpense = <Modal
@@ -813,7 +813,7 @@ class HackathonDetails extends Component {
             </Form>
         </Modal>
 
-        let inviteButton = <Button className="mx-2" type="primary" shape="round" size="large" onClick={this.showInviteModal}>Invite</Button>
+        let inviteButton = <Button className="mx-2" type="primary" shape="round" size="large" onClick={this.showInviteModal} style={{ marginTop: "1%" }}>Invite</Button>
 
 
         return (
