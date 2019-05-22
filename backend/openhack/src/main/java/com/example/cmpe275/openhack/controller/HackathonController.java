@@ -597,4 +597,78 @@ public class HackathonController {
 			return responseBody;
 		}
 	}
+	
+	
+	
+	
+	public void sendInviteEmail(String inviteEmail, Hackathon hackathon) {
+
+		final String username = "openhackservice@gmail.com";
+		final String password = "openhack123";
+
+		Properties prop = new Properties();
+		prop.put("mail.smtp.host", "smtp.gmail.com");
+		prop.put("mail.smtp.port", "587");
+		prop.put("mail.smtp.auth", "true");
+		prop.put("mail.smtp.starttls.enable", "true"); // TLS
+
+		Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		});
+
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(username));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(inviteEmail));
+			message.setSubject("OpenHack Invitation - You have been invited to participate!");
+			message.setText("Dear " + inviteEmail + "," + "\n\nYou are invited to participate in the following hackathon event: "
+					+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
+					+ hackathon.getDescription() + "\n\nPlease go to http://localhost:3000/hackathon_details/" + hackathon.getId() + "/"
+					+ " , and register as a new user. Then you can use the same link to participate in the above hackathon. You can also see all the on-going hackathons on the homepage, after you have successfully signed up." + "\n\n Happy Hacking," + "\n OpenHack Service");
+
+			Transport.send(message);
+			System.out.println("Done");
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	@RequestMapping(value = "/invite", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
+	"application/JSON" })
+	@ResponseBody
+	public Map<Object, Object> hackathonInvite(HttpServletRequest request, HttpServletResponse response,
+		@RequestBody HashMap<Object, Object> map) {
+		System.out.println("\nPOST /hackathon/invite - Send Invitation - Request Body: " + map);
+		Map<Object, Object> responseBody = new HashMap<>();
+		Long hackathonId = new Long((String) map.get("hackathonId"));
+		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		String inviteEmail = (String) map.get("inviteEmail");
+
+		List<User> allUsers = userDao.findAllUsers();
+		// Check if invite email is already registered
+		for (User currentUser : allUsers) {
+			if (currentUser.getEmail().toString().equals(inviteEmail)) { // Checking equality in string in Java - https://www.geeksforgeeks.org/compare-two-strings-in-java/
+				System.out.println("Invite email is already registered: " + currentUser.getEmail() + ". Cannot send invitation!");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Throw 400
+				responseBody.put("msg", "Invite email is already registered. Cannot send invitation!");
+				return responseBody;
+			}
+		}
+		
+		// If invite email is not registered, then send the invite
+		try {
+			sendInviteEmail(inviteEmail, hackathon);
+			responseBody.put("msg", "Success");
+			return responseBody;
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Throw 500
+			responseBody.put("msg", e);
+			return responseBody;
+		}
+	}
 }
