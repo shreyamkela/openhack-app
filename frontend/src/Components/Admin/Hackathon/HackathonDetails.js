@@ -42,6 +42,9 @@ class HackathonDetails extends Component {
             teamsContentFlag: false,
             judgesContentFlag: false,
             sponsorsContentFlag: false,
+            paymentReportContentFlag: false,
+            revenueReportContentFlag: false,
+            expenseReportContentFlag: false,
             visibleTeamModal: false,
             visibleSubmissionModal: false,
             submissionUrl: null, // IDK right now
@@ -51,7 +54,14 @@ class HackathonDetails extends Component {
             hackathonId: this.props.match.params.id,
             winnerTeam: null,
             isLoaded: false,
-            isFinalized: false
+            isFinalized: false,
+            paymentReport: [],
+            paidRevenue: null,
+            unpaidRevenue: null,
+            sponsorRevenue: null,
+            expenseDetails: null,
+            revenueDetails:null,
+            totalExpense: null
         }
     }
 
@@ -60,7 +70,6 @@ class HackathonDetails extends Component {
         console.log("Printing the userID that was stored in the local storage", localStorage.getItem("userId"))
         let body = {
             "userId": localStorage.getItem("userId")
-            // "userId": "5"
         }
         let hackathonId = this.props.match.params.id
         console.log("from route", hackathonId)
@@ -97,6 +106,25 @@ class HackathonDetails extends Component {
             .catch(err => {
                 console.log(err)
             })
+
+        let body2 = {
+            "hackathonId": this.state.hackathonId
+        }
+        axios.post("http://localhost:8080/payment/report", body2)
+            .then(response => {
+                console.log("report is: ", response.data)
+                if (response.status === 200) {
+                    this.setState({
+                        "paymentReport": response.data.paymentReport,
+                        "paidRevenue": response.data.paidRevenue,
+                        "unpaidRevenue": response.data.unpaidRevenue,
+                        "sponsorRevenue": response.data.sponsorRevenue
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     loadAboutContent = (e) => {
@@ -104,6 +132,9 @@ class HackathonDetails extends Component {
             aboutContentFlag: true,
             teamsContentFlag: false,
             judgesContentFlag: false,
+            paymentReportContentFlag: false,
+            revenueReportContentFlag: false,
+            expenseReportContentFlag: false,
             sponsorsContentFlag: false
         })
     }
@@ -112,6 +143,9 @@ class HackathonDetails extends Component {
             aboutContentFlag: false,
             teamsContentFlag: false,
             sponsorsContentFlag: false,
+            paymentReportContentFlag: false,
+            revenueReportContentFlag: false,
+            expenseReportContentFlag: false,
             judgesContentFlag: true
         })
     }
@@ -120,6 +154,9 @@ class HackathonDetails extends Component {
             aboutContentFlag: false,
             teamsContentFlag: true,
             sponsorsContentFlag: false,
+            paymentReportContentFlag: false,
+            revenueReportContentFlag: false,
+            expenseReportContentFlag: false,
             judgesContentFlag: false
         })
     }
@@ -129,7 +166,46 @@ class HackathonDetails extends Component {
             aboutContentFlag: false,
             teamsContentFlag: false,
             sponsorsContentFlag: true,
+            paymentReportContentFlag: false,
+            revenueReportContentFlag: false,
+            expenseReportContentFlag: false,
             judgesContentFlag: false
+        })
+    }
+
+    loadPaymentReport = (e) => {
+        this.setState({
+            aboutContentFlag: false,
+            teamsContentFlag: false,
+            sponsorsContentFlag: false,
+            judgesContentFlag: false,
+            revenueReportContentFlag: false,
+            expenseReportContentFlag: false,
+            paymentReportContentFlag: true
+        })
+    }
+
+    loadRevenueReport = (e) => {
+        this.setState({
+            aboutContentFlag: false,
+            teamsContentFlag: false,
+            sponsorsContentFlag: false,
+            judgesContentFlag: false,
+            revenueReportContentFlag: true,
+            expenseReportContentFlag: false,
+            paymentReportContentFlag: false
+        })
+    }
+
+    loadExpenseReport = (e) => {
+        this.setState({
+            aboutContentFlag: false,
+            teamsContentFlag: false,
+            sponsorsContentFlag: false,
+            judgesContentFlag: false,
+            revenueReportContentFlag: false,
+            expenseReportContentFlag: true,
+            paymentReportContentFlag: false
         })
     }
 
@@ -299,21 +375,6 @@ class HackathonDetails extends Component {
         }
     }
 
-    handleGetPaymentReport = async () => {
-        console.log("Get Payment Report")
-        // var data = {
-        //     teamDetails: this.state.teamDetails
-        // }
-        this.props.history.push({
-            pathname: '/admin/registrationPaymentReport',
-            state: { details: this.state.teamDetails }
-        })
-    }
-
-
-
-
-
     routeToResults = () => {
         this.props.history.push(`/hackathon_details/${this.state.hackathonId}/results`);
     }
@@ -331,6 +392,9 @@ class HackathonDetails extends Component {
         var winnerTeam = null
         var loaded = null
         var detailsContent = null
+        var paymentReportTable = null
+        var revenueReportTable = null
+        var expenseReportTable = null
         if (this.state.winnerTeam != null) {
             winnerTeam = `${this.state.winnerTeam}`
         }
@@ -360,12 +424,30 @@ class HackathonDetails extends Component {
         if (new Date(this.state.endDate) > Date.now()) {
             gradeButtonFlag = true
         }
+        if (this.state.paymentReport && this.state.paymentReport.length > 0) {
+            paymentReportTable = this.state.paymentReport.map(payment => {
+                return (
+                    <tr>
+                        <th scope="row">{payment.userName} - {payment.userEmail}</th>
+                        <td>{payment.userTeam}</td>
+                        <td>{payment.fee}</td>
+                        <td>{payment.status}</td>
+                        <td>{new Date(payment.paymentDate).toDateString()} {new Date(payment.paymentDate).toLocaleTimeString()}</td>
+                    </tr>
+                )
+            })
+        } else {
+            paymentReportTable = <tr>
+                <th>
+                    No Data
+                </th>
+            </tr>
+        }
         if (this.state.aboutContentFlag) {
             content = <div>
                 <p><b>Overview</b>: {this.state.description}</p>
                 <p><b>Fee</b>: ${this.state.fee}</p>
                 <p><b>Sponsor Discount</b>: {this.state.discount}%</p>
-                <Button className="mx-2" type="primary" size="large" style={{ marginTop: "20%" }} onClick={this.handleGetPaymentReport}>View Payment Registration Report</Button><br />
 
             </div>
         } else if (this.state.teamsContentFlag) {
@@ -433,6 +515,53 @@ class HackathonDetails extends Component {
                     </div>
                 )
             })
+        } else if (this.state.paymentReportContentFlag) {
+            content = <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Member</th>
+                            <th scope="col">Team</th>
+                            <th scope="col">Fee</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Payment Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paymentReportTable}
+                    </tbody>
+                </table>
+            </div>
+        } else if (this.state.revenueReportContentFlag) {
+            content = <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Metric</th>
+                            <th scope="col">Revenue/Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {revenueReportTable}
+                    </tbody>
+                </table>
+            </div>
+        } else if (this.state.expenseReportContentFlag) {
+            content = <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Expense Name</th>
+                            <th scope="col">Expense Desc.</th>
+                            <th scope="col">Expense Amount</th>
+                            <th scope="col">Expense Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {expenseReportTable}
+                    </tbody>
+                </table>
+            </div>
         }
         if (this.state.userTeam) {
             console.log(this.state.userTeam)
@@ -533,6 +662,18 @@ class HackathonDetails extends Component {
                                 >
                                     <Icon type="dollar" />
                                     <span className="nav-text">Payment Registration Report</span>
+                                </Menu.Item>
+                                <Menu.Item key="6"
+                                    onClick={this.loadExpenseReport}
+                                >
+                                    <Icon type="dollar" />
+                                    <span className="nav-text">Expense Report</span>
+                                </Menu.Item>
+                                <Menu.Item key="7"
+                                    onClick={this.loadRevenueReport}
+                                >
+                                    <Icon type="dollar" />
+                                    <span className="nav-text">Revenue Report</span>
                                 </Menu.Item>
                                 <br></br>
                             </Menu>

@@ -105,7 +105,7 @@ class HackathonResults extends Component {
                 <div style={{ textAlign: "center" }}>
                     <Card title="Hackathon Results" style={{ background: '#ECECEC', width: 800 }}>
                         <div style={{ marginLeft: 650 }}>
-                            {/*<Button className="mx-2" type="primary" size="medium" onClick={this.handleGoToHome}>Home</Button>*/}
+                            <Button className="mx-2" type="primary" size="medium" onClick={this.handleGoToHome}>Home</Button>
                         </div>
                         <br />
                         <div >{resultsContent}</div>
