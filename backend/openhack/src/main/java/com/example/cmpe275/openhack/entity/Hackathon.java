@@ -43,6 +43,9 @@ public class Hackathon {
 	private int teamSizeMax; // inclusive
 	private double discount; // percentage
 	
+	@OneToMany(mappedBy="hackathon",fetch=FetchType.LAZY,cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})	
+	private Set<Expense> expense;
+	
 	//@ManyToMany(mappedBy="judgedHackathons",cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE})
 	@ManyToMany(cascade= {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH},fetch=FetchType.LAZY)
 	@JoinTable(

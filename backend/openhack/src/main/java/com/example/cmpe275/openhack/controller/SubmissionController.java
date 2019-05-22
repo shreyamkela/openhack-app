@@ -59,9 +59,6 @@ public class SubmissionController {
 //		submissionDao = new SubmissionDaoImpl();
 //		teamDao = new TeamDaoImpl();
 	}
-//	@Autowired
-//	HackathonDaoImpl hackathonDao;
-//	SubmissionDaoImpl submissionDao;
 
 	@PostMapping("/addSubmission")
 	@ResponseBody
@@ -84,6 +81,8 @@ public class SubmissionController {
 				submission.setHackathon(hackathon);
 				submission.setTeam(team);
 				submissionDao.create(submission);
+				team.setSubmitted(true);
+				teamDao.updateTeam(team);
 				responseBody.put("msg", "submitted");
 				return responseBody;
 			}else {
@@ -92,47 +91,6 @@ public class SubmissionController {
 				responseBody.put("msg", "submitted");
 				return responseBody;
 			}
-//			boolean newSubmission = true;
-//			
-//			
-//			Set<Submission> allSubmissions = hackathon.getSubmissions();
-//			
-//
-//			System.out.println("Hackathon found:" + hackathon.getName());
-//
-//			// Checking if this is resubmission
-//			for (Submission currentSubmission : allSubmissions) {
-//				if (currentSubmission.getTeam().getId() == teamId
-//						&& currentSubmission.getHackathon().getId() == hackathonId) {
-//					newSubmission = false;
-//					System.out.println("Submission found! Old URL: " + currentSubmission.getURL());
-//					currentSubmission.setURL(map.get("url"));
-//					submission = submissionDao.updateById(currentSubmission.getId(), currentSubmission);
-//					System.out.println("Resubmission successful! New URL, submissionId: " + currentSubmission.getURL()
-//					+ currentSubmission.getId());
-//				}
-//			}
-//
-//			// If this is a new submission
-//			if (newSubmission == true) {
-//				submission.setURL(map.get("url"));
-//				submission.setHackathon(hackathon);
-//				Set<Team> teams = hackathon.getTeams();
-//				for (Team team : teams) {
-//					if (team.getId() == teamId) {
-//						System.out.println("Team found:" + team.getTeamName());
-//						submission.setTeam(team);
-//						team.setSubmitted(true);
-//						team.setGraded(false);
-//						Team updatedTeam = teamDao.updateTeam(team);
-//						
-//					}
-//				}
-//				submission = submissionDao.create(submission);
-//				System.out.println(
-//						"New submission successful! URL, submissionId: " + submission.getURL() + submission.getId());
-//			}
-
 		} catch (Exception e) {
 			System.out.println("Exception while creating/updating submission: " + e);
 			response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR  );

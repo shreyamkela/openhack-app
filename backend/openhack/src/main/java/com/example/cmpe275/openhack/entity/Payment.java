@@ -1,5 +1,7 @@
 package com.example.cmpe275.openhack.entity;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +27,8 @@ public class Payment {
 	private double fee;
 	
 	private boolean status;
+	
+	private Date paymentDate;
 
 	public long getId() {
 		return id;
@@ -64,6 +68,14 @@ public class Payment {
 
 	public void setStatus(boolean status) {
 		this.status = status;
+	}
+
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
 	}
 	
 }

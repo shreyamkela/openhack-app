@@ -2,13 +2,16 @@ import React, { Component } from 'react'
 import '../../App.css'
 import { Link } from 'react-router-dom'
 import NavBar from '../Navbar/Navbar';
-import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input, Skeleton } from 'antd';
+import { Layout, Menu, Icon, Row, Col, Button, Modal, Divider, Avatar, Form, Input, Skeleton, message } from 'antd';
 import axios from 'axios'
 import Title from 'antd/lib/typography/Title';
 import swal from 'sweetalert';
-import {Redirect} from 'react-router'
+import { Redirect } from 'react-router'
 import Swal from 'sweetalert2';
+import API from '../../utils/API'
+
 const { Content, Sider } = Layout;
+
 
 
 // 4 states: nothing means no registration, 
@@ -48,7 +51,8 @@ class HackathonDetails extends Component {
             submissionButtonFlag: false,
             gradeButtonFlag: false,
             registerButtonFlag: false,
-            isLoaded: false
+            isLoaded: false,
+            visibleInviteModal: false
         }
     }
 
@@ -149,8 +153,8 @@ class HackathonDetails extends Component {
             text: 'Please Wait...',
             showCancelButton: false,
             showConfirmButton: false,
-            type:'info'
-          })
+            type: 'info'
+        })
         console.log(this.state.submissionUrl)
         let body = {
             "hackathonId": this.props.match.params.id,
@@ -160,10 +164,10 @@ class HackathonDetails extends Component {
 
         axios.post("http://localhost:8080/addSubmission", body)
             .then(response => {
-                if(response.status===200){
+                if (response.status === 200) {
                     Swal.close()
-                    swal("Submitted work","success")
-                    window.location.reload();      
+                    swal("Submitted work", "success")
+                    window.location.reload();
                 }
             })
     }
@@ -175,6 +179,80 @@ class HackathonDetails extends Component {
     routeToResults = () => {
         this.props.history.push(`/hackathon_details/${this.props.match.params.id}/results`);
     }
+
+    showInviteModal = () => {
+        console.log("Show invite modal!")
+        this.setState({
+            visibleInviteModal: true
+        });
+    }
+
+    handleInviteModalCancel = e => {
+        //console.log(e);
+        this.setState({
+            visibleInviteModal: false,
+        });
+    };
+
+    handleInviteModalOk = e => {
+        //console.log(e);
+        e.preventDefault();
+        this.props.form.validateFields(async (err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+
+                // Cannot invite a new user if hackathon has been declared open
+                var startdateconv = new Date(this.state.startDate)
+                var start_sec = startdateconv.getTime()
+                let currentDate = Date.now()
+                if (currentDate > start_sec) {
+                    message.warning("Cannot send invitation as the Hackathon is open for submission!")
+                } else {
+                    if (values.email.includes("@sjsu.edu")) {
+                        message.warning("Cannot send invitation to an SJSU email Id. Please invite users with a non-SJSU email id.")
+                        setTimeout(2000)
+                    } else if (values.email.includes(".") === false || values.email.includes("@") === false) {
+                        message.error("Please enter a valid email id!")
+                    } else {
+                        let body = {
+                            "hackathonId": this.props.match.params.id,
+                            "userId": localStorage.getItem("userId"),
+                            "inviteEmail": values.email
+                        }
+                        try {
+                            Swal.fire({
+                                title: 'Sending Invite',
+                                text: 'In progress...',
+                                showConfirmButton: false
+                            })
+                            let response = await API.post(`hackathon/invite`, body);
+                            console.log("Response: ", response.data);
+                            Swal.close(); // Close the Swal when reponse has been fetched
+                            message.success("Invititation sent!")
+                            setTimeout(2000)
+                            this.setState({ visibleInviteModal: false })
+                        } catch (error) {
+                            Swal.close(); // Close the Swal when reponse has been fetched
+                            console.log(error.response);
+                            if (error.response.status === 400) {
+                                message.warning("Input email id already registered!")
+                            } else {
+                                message.error("Unable to send invitation at the moment. Please refresh the page and try again.")
+                            }
+                        }
+
+                    }
+
+                }
+
+
+
+            }
+        });
+    };
+
+
+
     render() {
         var content = null
         var buttons = null
@@ -342,7 +420,7 @@ class HackathonDetails extends Component {
                         </Row>
                     </div>
                 </Modal>
-                <p class="text-warning large">Team Payment Due</p>
+                <p class="text-danger large">Team Payment Due</p>
             </div>
         } else if (this.state.message === "judge") {
             buttons = <div>
@@ -365,6 +443,9 @@ class HackathonDetails extends Component {
         } else {
             resultsButton = <Button className="mx-2" type="primary" shape="round" size="large" style={{ marginTop: "5%" }} disabled>Results</Button>
         }
+
+        let inviteButton = <Button className="mx-2" type="primary" shape="round" size="large" onClick={this.showInviteModal}>Invite</Button>
+
         return (
             <div>
                 {redirect}
@@ -381,6 +462,7 @@ class HackathonDetails extends Component {
                             <Col span={6}>
                                 {buttons}
                                 {resultsButton}
+                                {inviteButton}
                             </Col>
                         </Row>
 
@@ -430,6 +512,29 @@ class HackathonDetails extends Component {
                         </Layout>
                     </Layout>
                 </div>
+                <div><Modal
+                    title="Invite a new user"
+                    visible={this.state.visibleInviteModal}
+                    onOk={this.handleInviteModalOk}
+                    onCancel={this.handleInviteModalCancel}
+                    destroyOnClose="true"
+                >
+                    <b>Enter email:</b>
+                    <br />
+                    <Form>
+                        <Form.Item>
+                            {getFieldDecorator('email', {
+                                rules: [{ required: true, message: 'Please input an email!' }],
+                            })(
+                                <Input
+                                    prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                    placeholder="Email"
+                                />,
+                            )}
+                        </Form.Item>
+
+                    </Form>
+                </Modal></div>
             </div>
         )
     }

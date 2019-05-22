@@ -65,8 +65,11 @@ public class UserRepositoryService {
 	
 
 	public List<User> findAllUsers(){
-		return userRepository.findAll();
-				
+		
+		String verified="Y";
+		String usertype="user";
+		return (List<User>) em.createQuery("select e from User e where e.verified = :verified and e.usertype= :usertype ",
+			    User.class).setParameter("verified",verified ).setParameter("usertype",usertype ).getResultList();
 	}
 
 
