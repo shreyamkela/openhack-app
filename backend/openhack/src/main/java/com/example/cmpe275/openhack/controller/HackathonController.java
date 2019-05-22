@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.cmpe275.openhack.controller.helpers.HackathonResultsTeam;
+import com.example.cmpe275.openhack.entity.Expense;
 import com.example.cmpe275.openhack.entity.Hackathon;
 import com.example.cmpe275.openhack.entity.Organization;
 import com.example.cmpe275.openhack.entity.Payment;
@@ -44,6 +45,7 @@ import com.example.cmpe275.openhack.entity.Submission;
 import com.example.cmpe275.openhack.entity.Team;
 import com.example.cmpe275.openhack.entity.User;
 import com.example.cmpe275.openhack.repository.HackathonRepository;
+import com.example.cmpe275.openhack.service.ExpenseRepositoryService;
 import com.example.cmpe275.openhack.service.HackathonRepositoryService;
 import com.example.cmpe275.openhack.service.OrganizationRepositoryService;
 import com.example.cmpe275.openhack.service.PaymentRepositoryService;
@@ -77,6 +79,8 @@ public class HackathonController {
 	RequestRepositoryService requestDao;
 	@Autowired
 	SubmissionRepositoryService submissionDao;
+	@Autowired 
+	ExpenseRepositoryService expenseDao;
 	
 	public HackathonController() {
 		// TODO Auto-generated constructor stub
@@ -186,22 +190,20 @@ public class HackathonController {
 		List<Map<Object, Object>> judgeDetails = new ArrayList<>();
 		List<Map<Object, Object>> sponsorDetails = new ArrayList<>();
 		List<Map<Object, Object>> submissionDetails = new ArrayList<>();
-		if(teams!=null) {
-			for (Team team : teams) {
-				Map<Object, Object> temp = new HashMap<>();
-				temp.put("teamId", team.getId());
-				temp.put("teamSize", team.getMembers().size());
-				temp.put("teamName", team.getTeamName());
-				teamDetails.add(temp);
-				if (team.getMembers().contains(user)) {
-					userTeam = team;
-					if (team.getPaymentStatus()) {
-						message = "registered";
-					} else {
-						message = "payment pending";
-					}
-	
+		for (Team team : teams) {
+			Map<Object, Object> temp = new HashMap<>();
+			temp.put("teamId", team.getId());
+			temp.put("teamSize", team.getMembers().size());
+			temp.put("teamName", team.getTeamName());
+			teamDetails.add(temp);
+			if (team.getMembers().contains(user)) {
+				userTeam = team;
+				if (team.getPaymentStatus()) {
+					message = "registered";
+				} else {
+					message = "payment pending";
 				}
+
 			}
 		}
 		for (User judge : judges) {
@@ -215,15 +217,12 @@ public class HackathonController {
 				message = "judge";
 			}
 		}
-		if(sponsors!=null)
-		{
-			for (Organization sponsor : sponsors) {
-				Map<Object, Object> temp = new HashMap<>();
-				temp.put("sponsorId", sponsor.getId());
-				temp.put("sponsorName", sponsor.getName());
-				temp.put("sponsorDescription", sponsor.getDescription());
-				sponsorDetails.add(temp);
-			}
+		for (Organization sponsor : sponsors) {
+			Map<Object, Object> temp = new HashMap<>();
+			temp.put("sponsorId", sponsor.getId());
+			temp.put("sponsorName", sponsor.getName());
+			temp.put("sponsorDescription", sponsor.getDescription());
+			sponsorDetails.add(temp);
 		}
 		if (userTeam != null) {
 			List<Map<Object, Object>> userTeamDetails = new ArrayList<>();
@@ -516,7 +515,7 @@ public class HackathonController {
 		// TODO Check whether grades for all teams have been assigned. If all grades
 		// have not been assigned then cannot finalize hackathon
 		Set<Team> allTeams = hackathon.getTeams();
-		Team winner = new Team(); // TODO check this new
+		Team winner = null; // TODO check this new
 		Float highestGrade = (float) 0;
 		for (Team currentTeam : allTeams) {
 			if (currentTeam.getGraded() == false) { // TODO add getGraded() and setGraded() methods and graded boolean
@@ -533,14 +532,13 @@ public class HackathonController {
 						winner = currentTeam;
 						hackathon.setWinner(currentTeam);
 						hackathon.setIsFinalized(true);
-						
 					}
 				}
 			}
 		}
-		
 		try {
 			hackathonDao.updateById(hackathonId, hackathon);
+			sendFinalizeMail(hackathon,hackathon.getJudges(),hackathon.getTeams(),winner);
 			responseBody.put("msg", "Finalized");
 			responseBody.put("winner", winner.getTeamName());
 			System.out.println("Winner Team: " + winner);
@@ -552,6 +550,7 @@ public class HackathonController {
 			return responseBody;
 		}
 	}
+	
 	
 	@RequestMapping(value = "/results", method = RequestMethod.POST, produces = { "application/json" }, consumes = {
 	"application/JSON" })
@@ -670,5 +669,189 @@ public class HackathonController {
 			responseBody.put("msg", e);
 			return responseBody;
 		}
+	public void sendFinalizeMail(Hackathon hackathon,Set<User> judges, Set<Team> teams,Team winner) {
+		for(User judge:judges) {
+			final String username = "openhackservice@gmail.com";
+			final String password = "openhack123";
+
+			Properties prop = new Properties();
+			prop.put("mail.smtp.host", "smtp.gmail.com");
+			prop.put("mail.smtp.port", "587");
+			prop.put("mail.smtp.auth", "true");
+			prop.put("mail.smtp.starttls.enable", "true"); // TLS
+
+			Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password);
+				}
+			});
+
+			try {
+
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(username));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(judge.getEmail()));
+				message.setSubject(""+hackathon.getName()+" Hackathon Finalized");
+				message.setText("Dear " + judge.getName() + ", " + "\n\n The Hackathon event: "+hackathon.getName()+"has been finalized."
+						+"\n\n Thank you for being the judge and wish to see ou judge many more hackathons."
+						+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
+						+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
+						+ "\n Hackathon End Date: " + hackathon.getEndDate() + "\n Hackathon Fee: $" + hackathon.getFee()
+						+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+						+ "\n\n Happy Hacking," + "\n OpenHack Service");
+				Transport.send(message);
+				System.out.println("Done");
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+		}
+		for(Team team:teams) {
+			if(team.getId() == winner.getId()) {
+				Set<User> members = team.getMembers();
+				for(User member: members) {
+					final String username = "openhackservice@gmail.com";
+					final String password = "openhack123";
+
+					Properties prop = new Properties();
+					prop.put("mail.smtp.host", "smtp.gmail.com");
+					prop.put("mail.smtp.port", "587");
+					prop.put("mail.smtp.auth", "true");
+					prop.put("mail.smtp.starttls.enable", "true"); // TLS
+
+					Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username, password);
+						}
+					});
+
+					try {
+
+						Message message = new MimeMessage(session);
+						message.setFrom(new InternetAddress(username));
+						message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(member.getEmail()));
+						message.setSubject("Congratulations: "+hackathon.getName()+" Hackathon Winner");
+						message.setText("Dear " + member.getName() + ", " + "\n\n The Hackathon event: "+hackathon.getName()+"has been finalized."
+								+"\n\n Congratulations on winning the hackathon. Wish to see you participate in our future events as well."
+								+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
+								+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
+								+ "\n Hackathon End Date: " + hackathon.getEndDate()
+								+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+								+ "\n\n Happy Hacking," + "\n OpenHack Service");
+						Transport.send(message);
+						System.out.println("Done");
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				}
+			}else {
+				for(User member:team.getMembers()) {
+					final String username = "openhackservice@gmail.com";
+					final String password = "openhack123";
+
+					Properties prop = new Properties();
+					prop.put("mail.smtp.host", "smtp.gmail.com");
+					prop.put("mail.smtp.port", "587");
+					prop.put("mail.smtp.auth", "true");
+					prop.put("mail.smtp.starttls.enable", "true"); // TLS
+
+					Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username, password);
+						}
+					});
+
+					try {
+						Message message = new MimeMessage(session);
+						message.setFrom(new InternetAddress(username));
+						message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(member.getEmail()));
+						message.setSubject(""+hackathon.getName()+" Hackathon Finalized");
+						message.setText("Dear " + member.getName() + ", " + "\n\n The Hackathon event: "+hackathon.getName()+"has been finalized."
+								+"\n\n Thank you for being the participant and wish to see you participate in many more hackathons."
+								+ "\n\n Hackathon Name: " + hackathon.getName() + "\n Hackathon Description: "
+								+ hackathon.getDescription() + "\n Hackathon Start Date: " + hackathon.getStartDate()
+								+ "\n Hackathon End Date: " + hackathon.getEndDate() + "\n Hackathon Fee: $" + hackathon.getFee()
+								+ "\n\n Go to http://localhost:3000/hackathon_details/" + hackathon.getId()+ "/results to view the results" 
+								+ "\n\n Happy Hacking," + "\n OpenHack Service");
+						Transport.send(message);
+						System.out.println("Done");
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				}
+				
+			}
+			
+		}
+	}
+
+	@RequestMapping(value = "/addExpense", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<Object, Object> addHackathon(@RequestBody HashMap<Object, Object> map, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		System.out.println("\n Expense to be created");
+		Map<Object, Object> responseObject = new HashMap<>();
+		String title = (String) map.get("title");
+		long new_miliseconds = Long.parseLong((String) String.valueOf(map.get("time")));
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(new_miliseconds);
+		System.out.println();
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		Date final_new_date = formatter.parse(formatter.format(cal.getTime()));
+		
+//		Date time = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S'Z'").parse((String) map.get("time"));
+		String description = (String) map.get("description");
+		Float amount = Float.parseFloat((String) map.get("amount"));
+		Long hackathonId = new Long((String) map.get("hackathonId"));
+		Hackathon hackathon = hackathonDao.findById(hackathonId);
+		Expense expense = new Expense();
+		expense.setTitle(title);
+		expense.setDescription(description);
+		expense.setTime(final_new_date);
+		expense.setAmount(amount);
+		expense.setHackathon(hackathon);
+		try {
+			expenseDao.create(expense);
+			System.out.println("Successfully created");
+			responseObject.put("msg", "Successfully created");
+		} catch (Exception e) {
+			// TODO: handle exception
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			responseObject.put("msg", e.getMessage());
+		}
+		return responseObject;
+	}
+	@RequestMapping(value = "/expenseDetails/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Object, Object> getExpenseDetails(HttpServletRequest request,HttpServletResponse response
+			,@PathVariable(name = "id") long hackathonId) throws Exception {
+		System.out.println("\nAll Expenses for Hackathon");
+		
+		Map<Object, Object> responseBody = new HashMap<>();
+		try {
+			System.out.println("Before finding");
+			List<Expense> expenses = expenseDao.findExpenseByHackathonId(hackathonId);
+			System.out.println("hackathons are: "+expenses.size());
+			System.out.println("After finding");
+			List<Map<Object,Object>> expenseDetails=new ArrayList<>();
+			float totalExpense=0;
+			for (Expense expense : expenses) {
+				Map<Object,Object> temp = new HashMap<>();
+				temp.put("title",expense.getTitle());
+				temp.put("description", expense.getDescription());
+				temp.put("amount",expense.getAmount());
+				temp.put("time", expense.getTime());
+				expenseDetails.add(temp);
+				totalExpense=totalExpense+expense.getAmount();
+			}
+			System.out.println("totalExpense"+totalExpense);
+			responseBody.put("totalExpense", totalExpense);
+			responseBody.put("expenseDetails", expenseDetails);
+			return responseBody;
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			responseBody.put("msg", e);
+			return responseBody;
+		}		
 	}
 }
