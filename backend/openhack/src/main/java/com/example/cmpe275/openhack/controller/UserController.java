@@ -81,16 +81,14 @@ public class UserController {
 	public  Map<Object, Object>  getUser(@PathVariable("email") String email){
 		System.out.println("\ngetUSer method called for the User");	
 		User user = new User();
-//		Map<String, String> hmap = new HashMap<>();
-//		MappingJacksonValue mapping = null;
 		try
 		{
 			user = userdao.findUserbyEmail(email);
 			if(user==null)
 			{
 				//response.setStatus( HttpServletResponse.SC_BAD_REQUEST  );
+				System.out.println("The user object is null");
 				return formUserObject(user);
-//				mapping = new MappingJacksonValue(user);
 //				hmap.put("msg", "No such user exists!");
 //				return hmap;
 			}
@@ -104,16 +102,8 @@ public class UserController {
 				return formUserObject(user);
 //				hmap.put("msg", e.getMessage());
 //				return hmap;
-				//return mapping;
 			}
 		}
-//		FilterProvider filters = new SimpleFilterProvider()
-//	            .addFilter("userFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name", "id", "email", "password", "screenName", "address", "aboutMe", "title", "verified", "usertype", "lastname", "organization", "judgedHackathons"))
-//	            .addFilter("organizationFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id", "name"))
-//				.addFilter("hackathonFilter", SimpleBeanPropertyFilter.filterOutAllExcept("id", "name", "startDate", "endDate"));
-//		mapping = new MappingJacksonValue(user);
-//	    mapping.setFilters(filters);
-//	    return mapping;
 		return formUserObject(user);
 	}
 	
@@ -384,6 +374,7 @@ public class UserController {
 		}
 		hmap.put("judged_hackathons", hackathonDetails);
 		
+		System.out.println("Returning the user map!!!!");
 		return hmap;
 	}
 	
