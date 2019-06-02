@@ -1,5 +1,5 @@
-# OpenHack (Prototype Of HackerEarth) - Hackathon Event Management System
-Project for CmpE 275 Course Lab in the Spring 19 semester at San Jose State University
+# OpenHack (Prototype Of HackerEarth)
+Hackathon Event Management System - Project for CmpE 275 Course Lab in the Spring 19 semester at San Jose State University
 
 ## Project Description 
 Openhack is a Hackathon Management System inspired by the HackerEarth platform. Our application presents to the users a collaborative environment where teams can participate in hackathons, make submissions, and get results based on their performance. We bring together developers, tech volunteers, organizations, social actors, and sponsors to create open-source code for all of humanity, through hackathons. 
