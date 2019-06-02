@@ -29,5 +29,8 @@ Build instructions to run the application on Localhost:
          2. npm start
          3. Go to the URL: localhost:3000
          
+### Technologies utilized 
+Spring, Spring Boot, Java, React, JavaScript, HTML5, CSS3, Bootstrap, Ant Design, AWS EC2 S3 RDS, JPA, ORM, AOP, Hibernate, JavaMail API, REST
+         
 ### Team Members:
-Shreyam Kela, Darshil Kapadia, Sayalee Bhusari, Kavina Desai
+Darshil Kapadia, Shreyam Kela, Sayalee Bhusari, Kavina Desai
