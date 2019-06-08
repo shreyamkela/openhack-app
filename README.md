@@ -17,9 +17,6 @@ Video - https://drive.google.com/drive/folders/1Gk4fihrDWvUvOVeqDGHqsQCeixxT0YXh
 - A hacker can view the leaderboard (results reports) of the hackathons that they have participated in. Congratulatory emails are sent to the winners of the hackathons and can be seen at the top of our leaderboard.
 - A user can invite non-members to participate in hackathons. Whoever gets the invitation needs to go through the registration process.
 
-URL of the deployed application: http://3.86.236.128:3000 
-(Please reach out if the URL is not operational)
-
 Build instructions to run the application on Localhost:
     A) Run Spring Boot backend server - Go to folder path from terminal: /backend
          1. mvn install
