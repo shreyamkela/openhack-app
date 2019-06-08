@@ -2,7 +2,7 @@
 Hackathon Event Management System - Project for CmpE 275 Course Lab in the Spring 19 semester at San Jose State University
 
 ## Project Description 
-Openhack is a Hackathon Management System inspired by the HackerEarth platform. Our application presents to the users a collaborative environment where teams can participate in hackathons, make submissions, and get results based on their performance. We bring together developers, tech volunteers, organizations, social actors, and sponsors to create open-source code for all of humanity, through hackathons. 
+Openhack is a Hackathon Management System inspired by the HackerEarth platform (www.hackerearth.com). Our application presents to the users a collaborative environment where teams can participate in hackathons, make submissions, and get results based on their performance. We bring together developers, tech volunteers, organizations, social actors, and sponsors to create open-source code for all of humanity, through hackathons. 
 
 ### Demo of the application
 Video - https://drive.google.com/drive/folders/1Gk4fihrDWvUvOVeqDGHqsQCeixxT0YXh?usp=sharing
@@ -17,14 +17,14 @@ Video - https://drive.google.com/drive/folders/1Gk4fihrDWvUvOVeqDGHqsQCeixxT0YXh
 - A hacker can view the leaderboard (results reports) of the hackathons that they have participated in. Congratulatory emails are sent to the winners of the hackathons and can be seen at the top of our leaderboard.
 - A user can invite non-members to participate in hackathons. Whoever gets the invitation needs to go through the registration process.
 
-Build instructions to run the application on Localhost:
-    A) Run Spring Boot backend server - Go to folder path from terminal: /backend
-         1. mvn install
-         2. mvn spring-boot:run
-    B) Run React frontend server - Go to folder path from terminal: /frontend
-         1. npm install OR npm install --ignore-scripts
-         2. npm start
-         3. Go to the URL: localhost:3000
+### Build instructions to run the application on Localhost
+- Run Spring Boot backend server - Go to folder path from terminal: /backend
+    - ``` mvn install ```
+    - ``` mvn spring-boot:run ```
+- Run React frontend server - Go to folder path from terminal: /frontend        
+    - ``` npm install OR npm install --ignore-scripts ```
+    - ``` npm start ```
+    - ``` Go to the URL: localhost:3000 ```
          
 ### Technologies utilized 
 Spring, Spring Boot, Java, React, JavaScript, HTML5, CSS3, Bootstrap, Ant Design, AWS EC2 S3 RDS, JPA, ORM, AOP, Hibernate, JavaMail API, REST
