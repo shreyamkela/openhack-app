@@ -4,10 +4,20 @@ Hackathon Event Management System - Project for CmpE 275 Course Lab in the Sprin
 ## Project Description 
 Openhack is a Hackathon Management System inspired by the HackerEarth platform (www.hackerearth.com). Our application presents to the users a collaborative environment where teams can participate in hackathons, make submissions, and get results based on their performance. We bring together developers, tech volunteers, organizations, social actors, and sponsors to create open-source code for all of humanity, through hackathons. 
 
+<p align="middle">
+  <img src="/homepage-thumbnail.jpg" width="400" />
+  <img src="/app-images/app-thumbnail_1.png" width="400" />
+  <img src="/app-images/app-thumbnail_2.png" width="400" />
+  <img src="/app-images/app-thumbnail_3.png" width="400" />
+</p>
+
 ### Demo of the application
 Video - https://drive.google.com/drive/folders/1Gk4fihrDWvUvOVeqDGHqsQCeixxT0YXh?usp=sharing
 
-![Alt text](https://github.com/shreyamkela/openhack-app/blob/master/homepage-thumbnail.jpg?raw=true "Title")
+### Architecture
+<p align="middle">
+  <img src="/app-images/architecture-thumbnail.PNG"/>
+</p>
 
 ### Core features
 - Our application allows user to sign up as an admin or as a hacker (participant). Any user with the sjsu.edu email id will automatically become the admin. All other email ids used for signup will become hackers. 
