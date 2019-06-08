@@ -5,7 +5,7 @@ Hackathon Event Management System - Project for CmpE 275 Course Lab in the Sprin
 Openhack is a Hackathon Management System inspired by the HackerEarth platform (www.hackerearth.com). Our application presents to the users a collaborative environment where teams can participate in hackathons, make submissions, and get results based on their performance. We bring together developers, tech volunteers, organizations, social actors, and sponsors to create open-source code for all of humanity, through hackathons. 
 
 <p align="middle">
-  <img src="/homepage-thumbnail.jpg" width="400" />
+  <img src="https://github.com/shreyamkela/openhack-app/blob/master/app-images/homepage-thumbnail.jpg" width="400" />
   <img src="/app-images/app-thumbnail_1.png" width="400" />
   <img src="/app-images/app-thumbnail_2.png" width="400" />
   <img src="/app-images/app-thumbnail_3.png" width="400" />
